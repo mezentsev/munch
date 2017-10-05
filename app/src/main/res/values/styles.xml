@@ -1,0 +1,13 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    </style>
+
+    <style name="Munch"/>
+
+    <style name="Munch.Omnibox"/>
+
+    <style name="Munch.Omnibox.EditText">
+        <item name="android:padding">@dimen/munch_omnibox_edit_padding</item>
+    </style>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.munch.browser.MunchActivity">
+
+    <com.munch.browser.web.MunchWebView
+        android:id="@+id/munch_webview_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+    </com.munch.browser.web.MunchWebView>
+
+    <com.munch.browser.omnibox.OmniboxView
+        android:id="@+id/munch_omnibox_view"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/munch_omnibox_height">
+    </com.munch.browser.omnibox.OmniboxView>
+
+</LinearLayout>

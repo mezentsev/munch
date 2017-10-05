@@ -1,0 +1,4 @@
+<resources>
+    <string name="munch_app_name">Munch browser</string>
+    <string name="munch_placeholder_text">Search...</string>
+</resources>
