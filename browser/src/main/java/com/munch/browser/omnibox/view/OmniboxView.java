@@ -1,4 +1,4 @@
-package com.munch.browser.suggest;
+package com.munch.browser.omnibox.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

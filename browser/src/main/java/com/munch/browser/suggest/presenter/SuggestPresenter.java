@@ -1,9 +1,11 @@
-package com.munch.browser.suggest;
+package com.munch.browser.suggest.presenter;
 
 import android.support.annotation.NonNull;
 
-class OmniboxPresenter implements IOmniboxContract.IOmniboxPresenter {
-    private static final String TAG = OmniboxPresenter.class.getSimpleName();
+import com.munch.browser.mvp.MvpContract;
+
+class SuggestPresenter implements MvpContract.Presenter {
+    private static final String TAG = SuggestPresenter.class.getSimpleName();
 
     @Override
     public void onCreate() {
@@ -16,7 +18,7 @@ class OmniboxPresenter implements IOmniboxContract.IOmniboxPresenter {
     }
 
     @Override
-    public void attachView(@NonNull IOmniboxContract.IOmniboxView view) {
+    public void attachView(@NonNull MvpContract.View view) {
 
     }
 

@@ -1,1 +1,1 @@
-include ':app'
+include ':browser', ':lib-suggest-yandex'
