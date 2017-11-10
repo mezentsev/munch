@@ -1,8 +1,9 @@
-package com.munch.browser.suggest.model;
+package com.munch.browser.suggest.data;
 
 import android.support.annotation.NonNull;
 
 import com.munch.browser.mvp.Repository;
+import com.munch.browser.suggest.model.SuggestResult;
 
 public abstract class SuggestRepository implements Repository<SuggestResult> {
     @Override
