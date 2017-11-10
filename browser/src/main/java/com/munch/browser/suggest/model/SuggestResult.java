@@ -36,4 +36,22 @@ public interface SuggestResult {
             return mUrl;
         }
     }
+
+    class FactSuggestResult extends FullSuggestResult {
+
+        @NonNull
+        private String mDescription;
+
+        FactSuggestResult(@NonNull String text,
+                          @NonNull Uri url,
+                          @NonNull String description) {
+            super(text, url);
+            mDescription = description;
+        }
+
+        @NonNull
+        public String getDescription() {
+            return mDescription;
+        }
+    }
 }
