@@ -1,15 +1,16 @@
-package com.munch.browser.omnibox;
+package com.munch.browser.suggest;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import com.munch.browser.R;
+import com.munch.browser.mvp.MvpView;
 
-public final class OmniboxView extends FrameLayout {
+public final class OmniboxView
+        extends LinearLayout implements MvpView {
     public OmniboxView(@NonNull Context context) {
         this(context, null, 0);
     }
@@ -23,7 +24,6 @@ public final class OmniboxView extends FrameLayout {
                        @Nullable AttributeSet attrs,
                        int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        View view = inflate(getContext(), R.layout.munch_omnibox, null);
-        addView(view);
+        inflate(getContext(), R.layout.munch_omnibox, this);
     }
 }
