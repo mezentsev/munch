@@ -1,11 +1,3 @@
 <resources>
     <style name="Munch" parent="Theme.AppCompat.DayNight.NoActionBar"/>
-
-    <style name="Munch.Omnibox"/>
-
-    <style name="Munch.Omnibox.EditText">
-        <item name="android:layout_margin">@dimen/munch_omnibox_margin</item>
-        <item name="android:padding">@dimen/munch_omnibox_edit_padding</item>
-        <item name="android:textColor">@android:color/black</item>
-    </style>
 </resources>

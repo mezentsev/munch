@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.munch.browser.MunchActivity">
+    tools:context=".MunchActivity">
 
-    <com.munch.browser.omnibox.view.OmniboxView
+    <com.munch.omnibox.view.OmniboxView
         android:id="@+id/munch_omnibox_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,1 +1,5 @@
-include ':browser', ':lib-suggest-yandex'
+include ':browser'
+include ':lib-omnibox'
+include ':lib-mvp'
+include ':lib-suggest'
+include ':lib-suggest-ya'
