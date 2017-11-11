@@ -1,0 +1,3 @@
+<resources>
+    <style name="Munch" parent="Theme.AppCompat.DayNight.NoActionBar"/>
+</resources>

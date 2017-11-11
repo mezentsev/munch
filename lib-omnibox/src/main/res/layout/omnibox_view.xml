@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="horizontal">
+    <EditText
+        android:id="@+id/munch_omnibox_search"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@drawable/munch_omnibox_view_content_background_rounded"
+        android:ems="10"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:hint="@string/munch_omnibox_placeholder_text"
+        android:inputType="text"
+        android:textColor="@android:color/black"
+        android:textColorHint="@android:color/darker_gray"
+        style="@style/Munch.Omnibox.EditText"/>
+
+</LinearLayout>
