@@ -1,5 +1,7 @@
 package com.munch.helpers;
 
+import android.support.annotation.NonNull;
+
 /**
  * Lazy initialization interface.
  *
@@ -11,5 +13,6 @@ public interface Lazy<T> {
      *
      * @return instance.
      */
+    @NonNull
     T get();
 }

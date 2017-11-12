@@ -7,7 +7,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
+        multiDexEnabled false
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -59,5 +59,6 @@ android {
 
 dependencies {
     implementation project(':lib-mvp')
+
     implementation "com.android.support:support-annotations:${supportLibVersion}"
 }
