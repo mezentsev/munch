@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.widget.LinearLayout;
 
-import com.munch.helpers.Lazy;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
@@ -23,7 +22,7 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
     @Nullable
     private SuggestContract.Presenter mSuggestPresenter;
     @NonNull
-    private Lazy<SuggestInteractor> mSuggestInteractorLazy;
+    private SuggestInteractor.Factory mSuggestInteractorFactory;
 
     public SuggestView(@NonNull Context context) {
         this(context, null);
@@ -38,7 +37,7 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
                        @Nullable AttributeSet attrs,
                        int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        mSuggestInteractorLazy = new YaSuggestInteractor.LazyImpl();
+        mSuggestInteractorFactory = new YaSuggestInteractor.FactoryImpl();
     }
 
     /**
@@ -55,7 +54,7 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (mSuggestPresenter == null) {
-            mSuggestPresenter = new SuggestPresenter(mSuggestInteractorLazy);
+            mSuggestPresenter = new SuggestPresenter(mSuggestInteractorFactory);
             mSuggestPresenter.onCreate();
         }
 

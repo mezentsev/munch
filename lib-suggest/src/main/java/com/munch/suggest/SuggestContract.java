@@ -6,6 +6,7 @@ import android.support.annotation.UiThread;
 
 import com.munch.mvp.MvpContract;
 import com.munch.suggest.model.Suggest;
+import com.munch.suggest.model.SuggestInteractor;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ public interface SuggestContract extends MvpContract {
         void setSuggests(@Nullable List<Suggest> suggests);
     }
     interface Presenter extends MvpContract.Presenter<View> {
+        @UiThread
+        void setInteractorFactory(@NonNull SuggestInteractor.Factory suggestInteractorFactory);
+
         @UiThread
         void setQuery(@NonNull String query);
     }

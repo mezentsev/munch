@@ -3,11 +3,27 @@ package com.munch.suggest.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.util.List;
+import com.munch.suggest.data.SuggestResponse;
 
-import retrofit2.Call;
+import io.reactivex.Observable;
 
 public interface SuggestInteractor {
+    /**
+     * Get list of suggests.
+     *
+     * @param query user query
+     * @return list of suggests
+     */
     @NonNull
-    Call<List<Suggest>> getSuggests(@Nullable String query);
+    Observable<SuggestResponse> getSuggests(@Nullable String query);
+
+    interface Factory {
+        /**
+         * Create instance of SuggestInteractor.
+         *
+         * @return SuggestInteractor
+         */
+        @NonNull
+        SuggestInteractor get();
+    }
 }

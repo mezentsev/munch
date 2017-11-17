@@ -3,13 +3,12 @@ package com.munch.suggest.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.munch.helpers.Lazy;
+import com.munch.suggest.data.SuggestResponse;
+import com.munch.suggest.data.YaSuggestApi;
 
-import java.util.List;
-
-import retrofit2.Call;
+import io.reactivex.Observable;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 public final class YaSuggestInteractor implements SuggestInteractor {
     private static final String BASE_URL = "http://yandex.ru/";
@@ -20,7 +19,8 @@ public final class YaSuggestInteractor implements SuggestInteractor {
     YaSuggestInteractor() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(new YaConverterFactory())
                 .build();
 
         mYaSuggestApi = retrofit.create(YaSuggestApi.class);
@@ -28,15 +28,15 @@ public final class YaSuggestInteractor implements SuggestInteractor {
 
     @NonNull
     @Override
-    public Call<List<Suggest>> getSuggests(@Nullable String query) {
-        return mYaSuggestApi.getSuggestsList(query);
+    public Observable<SuggestResponse> getSuggests(@Nullable String query) {
+        return mYaSuggestApi.get(query);
     }
 
-    public static class LazyImpl implements Lazy<SuggestInteractor> {
+    public static class FactoryImpl implements SuggestInteractor.Factory {
         @Nullable
         private static YaSuggestInteractor mSuggestInteractor;
 
-        public LazyImpl() {
+        public FactoryImpl() {
         }
 
         @NonNull

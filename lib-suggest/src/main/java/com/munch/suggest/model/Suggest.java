@@ -2,56 +2,52 @@ package com.munch.suggest.model;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 public interface Suggest {
+    /**
+     * Get suggest title.
+     *
+     * @return title
+     */
     @NonNull
-    String getText();
+    String getTitle();
 
+    /**
+     * Get suggest description.
+     *
+     * @return description
+     */
+    @Nullable
+    String getDescription();
+
+    /**
+     * Get suggest type.
+     *
+     * @return type
+     */
+    @Nullable
+    SuggestType getType();
+
+    /**
+     * Get suggest url.
+     * It can be search or site url.
+     *
+     * @return url
+     */
     @NonNull
     Uri getUrl();
 
-    class FullSuggest implements Suggest {
+    /**
+     * Suggest priority.
+     *
+     * @return weight
+     */
+    double getWeight();
 
-        @NonNull
-        private final String mText;
-        @NonNull
-        private final Uri mUrl;
-
-        FullSuggest(@NonNull String text,
-                    @NonNull Uri url) {
-
-            mText = text;
-            mUrl = url;
-        }
-
-        @NonNull
-        @Override
-        public String getText() {
-            return mText;
-        }
-
-        @NonNull
-        @Override
-        public Uri getUrl() {
-            return mUrl;
-        }
-    }
-
-    class FactSuggest extends FullSuggest {
-
-        @NonNull
-        private String mDescription;
-
-        FactSuggest(@NonNull String text,
-                    @NonNull Uri url,
-                    @NonNull String description) {
-            super(text, url);
-            mDescription = description;
-        }
-
-        @NonNull
-        public String getDescription() {
-            return mDescription;
-        }
+    enum SuggestType{
+        NAV,
+        FACT,
+        TEXT
     }
 }

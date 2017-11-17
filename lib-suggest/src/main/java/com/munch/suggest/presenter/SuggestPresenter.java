@@ -5,50 +5,88 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 import android.util.Log;
 
-import com.munch.helpers.Lazy;
 import com.munch.suggest.SuggestContract;
+import com.munch.suggest.data.SuggestResponse;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.Request;
 
 public class SuggestPresenter implements SuggestContract.Presenter {
     private static final String TAG = SuggestPresenter.class.getSimpleName();
 
     @NonNull
-    private Lazy<SuggestInteractor> mSuggestInteractorLazy;
+    private SuggestInteractor.Factory mSuggestInteractorFactory;
     @Nullable
     private SuggestContract.View mView;
     @NonNull
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
 
-    public SuggestPresenter(@NonNull Lazy<SuggestInteractor> suggestInteractorLazy) {
-        mSuggestInteractorLazy = suggestInteractorLazy;
+    @Nullable
+    private String mCurrentUserQuery;
+    @Nullable
+    private List<Suggest> mCurrentSuggests;
+    private int mAttachedCount = 0;
+
+    public SuggestPresenter(@NonNull SuggestInteractor.Factory suggestInteractorFactory) {
+        setInteractorFactory(suggestInteractorFactory);
+    }
+
+    @Override
+    public void setInteractorFactory(@NonNull SuggestInteractor.Factory suggestInteractorFactory) {
+        mSuggestInteractorFactory = suggestInteractorFactory;
+    }
+
+    @UiThread
+    public void setQuery(@NonNull String query) {
+        mCurrentUserQuery = query;
+
+        mCompositeDisposable.clear();
+        mCompositeDisposable.add(
+                mSuggestInteractorFactory.get().getSuggests(query)
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeOn(Schedulers.io())
+                        .subscribeWith(new DisposableObserver<SuggestResponse>() {
+                            @Override
+                            public void onComplete() {
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                showSuggests(null);
+                            }
+
+                            @Override
+                            public void onNext(@NonNull SuggestResponse suggests) {
+                                showSuggests(suggests.getSuggests());
+                            }
+                        }));
     }
 
     @Override
     public void onCreate() {
-
+        Log.d(TAG, "onCreate");
     }
 
     @Override
     public void onFirstAttachView() {
-
+        Log.d(TAG, "onFirstAttachView");
     }
 
     @Override
     public void attachView(@NonNull SuggestContract.View view) {
+        if (mAttachedCount == 0) {
+            onFirstAttachView();
+        }
+
+        ++mAttachedCount;
         mView = view;
+        showSuggests(mCurrentSuggests);
     }
 
     @Override
@@ -59,46 +97,15 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
     @Override
     public void onDestroy() {
+        mCompositeDisposable.dispose();
     }
 
     @UiThread
-    public void setQuery(@NonNull String query) {
-        SuggestInteractor suggestInteractor = mSuggestInteractorLazy.get();
-
-        mCompositeDisposable.clear();
-
-        Observable<List<Suggest>> suggestsObservable = Observable.defer(() -> {
-            Request request = mSuggestInteractorLazy.get().getSuggests(query).request();
-
-            // TODO: 12.11.17 irbis parse
-            return Observable.just(new ArrayList<>());
-        });
-
-        mCompositeDisposable.add(
-                suggestsObservable
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeOn(Schedulers.io())
-                        .subscribeWith(new DisposableObserver<List<Suggest>>() {
-                            @Override
-                            public void onComplete() {
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                updateSuggests(null);
-                            }
-
-                            @Override
-                            public void onNext(@Nullable List<Suggest> suggests) {
-                                updateSuggests(suggests);
-                            }
-                        }));
-    }
-
-    @UiThread
-    private void updateSuggests(@Nullable List<Suggest> suggests) {
+    private void showSuggests(@Nullable List<Suggest> suggests) {
         if (mView != null) {
-            mView.setSuggests(suggests);
+            // TODO: 17.11.17 compare curUserQuery and decide: append or replace
+            mCurrentSuggests = suggests;
+            mView.setSuggests(mCurrentSuggests);
         }
     }
 }

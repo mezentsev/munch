@@ -25,6 +25,7 @@ project.ext {
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.5"
     retrofitVersion = "2.3.0"
+    gsonVersion = "2.7"
 }
 
 task clean(type: Delete) {
