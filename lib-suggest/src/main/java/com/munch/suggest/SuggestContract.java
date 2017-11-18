@@ -13,13 +13,20 @@ import java.util.List;
 public interface SuggestContract extends MvpContract {
     interface View extends MvpContract.View {
         @UiThread
-        void setSuggests(@Nullable List<Suggest> suggests);
+        void setSuggests(@Nullable String candidate,
+                         @Nullable List<Suggest> suggests);
+
+        @UiThread
+        void setSuggestInteractor(@NonNull SuggestInteractor.Factory suggestInteractorFactory);
+
+        @UiThread
+        void setUserQuery(@Nullable String query);
     }
     interface Presenter extends MvpContract.Presenter<View> {
         @UiThread
-        void setInteractorFactory(@NonNull SuggestInteractor.Factory suggestInteractorFactory);
+        void setInteractorFactory(@Nullable SuggestInteractor.Factory suggestInteractorFactory);
 
         @UiThread
-        void setQuery(@NonNull String query);
+        void setQuery(@Nullable String query);
     }
 }

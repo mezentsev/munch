@@ -2,16 +2,12 @@ package com.munch.suggest.model;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.munch.suggest.data.SuggestResponse;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -22,10 +18,6 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Converter;
 import retrofit2.Retrofit;
-
-import static com.munch.suggest.model.Suggest.SuggestType.FACT;
-import static com.munch.suggest.model.Suggest.SuggestType.NAV;
-import static com.munch.suggest.model.Suggest.SuggestType.TEXT;
 
 public class YaConverterFactory extends Converter.Factory {
     private static final String BASE_SEARCH_URL = "https://yandex.ru/search/?text=";
@@ -49,13 +41,14 @@ public class YaConverterFactory extends Converter.Factory {
             try {
                 JsonArray jsonArray = new Gson().fromJson(responseBody.string(), JsonArray.class);
                 List<Suggest> suggests = new ArrayList<>();
+                int suggestionId = 0;
 
-                String query = jsonArray.get(0).getAsString();
-                String candidate = jsonArray.get(1).getAsString();
+                String query = jsonArray.get(suggestionId++).getAsString();
+                String candidate = jsonArray.get(suggestionId++).getAsString();
                 //JsonArray wordSuggests = jsonArray.get(2).getAsJsonArray();
 
-                int suggestionsId = 2;
-                for (int i = suggestionsId; i <= 5; ++i) {
+                // check nav and fact suggestions
+                for (int i = suggestionId; i <= 5; ++i) {
                     if (jsonArray.size() > i) {
                         JsonElement jsonElement = jsonArray.get(i);
                         if (jsonElement.isJsonObject()) {
@@ -63,37 +56,36 @@ public class YaConverterFactory extends Converter.Factory {
                         }
 
                         if (jsonElement.isJsonArray()) {
-                            ++suggestionsId;
+                            ++suggestionId;
 
                             JsonArray array = jsonElement.getAsJsonArray();
                             if (array.size() == 5) { // nav
                                 String title = array.get(1).getAsString();
                                 Uri url = Uri.parse(array.get(3).getAsString());
-                                suggests.add(new FullSuggest(
-                                        title,
-                                        url,
-                                        0.,
-                                        null,
-                                        NAV
-                                ));
+
+                                suggests.add(
+                                        SuggestFactory.createNavigationSuggest(
+                                                title,
+                                                url
+                                        ));
                             } else if (array.size() == 3) { // fact
                                 String title = array.get(1).getAsString();
                                 String description = array.get(2).getAsString();
                                 Uri url = Uri.parse(BASE_SEARCH_URL + title);
-                                suggests.add(new FullSuggest(
-                                        title,
-                                        url,
-                                        0.,
-                                        description,
-                                        FACT
-                                ));
+
+                                suggests.add(
+                                        SuggestFactory.createFactSuggest(
+                                                title,
+                                                url,
+                                                description
+                                        ));
                             }
                         }
                     }
                 }
 
-                JsonObject jsonObject = jsonArray.get(suggestionsId).getAsJsonObject();
-
+                // parse text suggestions
+                JsonObject jsonObject = jsonArray.get(suggestionId).getAsJsonObject();
                 JsonElement suggestionsObject = jsonObject.get("suggestions");
                 if (suggestionsObject.isJsonArray()) {
                     JsonArray suggestionsAsJsonArray = suggestionsObject.getAsJsonArray();
@@ -104,12 +96,10 @@ public class YaConverterFactory extends Converter.Factory {
                         Uri url = Uri.parse(BASE_SEARCH_URL + title);
                         double weight = suggestJsonArray.get(1).getAsDouble();
 
-                        suggests.add(new FullSuggest(
+                        suggests.add(SuggestFactory.createTextSuggest(
                                 title,
                                 url,
-                                weight,
-                                null,
-                                TEXT
+                                weight
                         ));
                     }
                 }

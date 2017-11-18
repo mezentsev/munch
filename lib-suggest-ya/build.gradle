@@ -59,6 +59,7 @@ android {
 
 dependencies {
     implementation project(':lib-mvp')
+    implementation project(':lib-suggest')
 
     implementation "com.squareup.retrofit2:retrofit:${retrofitVersion}"
     implementation "com.squareup.retrofit2:adapter-rxjava2:${retrofitVersion}"

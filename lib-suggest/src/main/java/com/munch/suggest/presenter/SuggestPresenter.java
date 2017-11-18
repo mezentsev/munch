@@ -20,7 +20,7 @@ import io.reactivex.schedulers.Schedulers;
 public class SuggestPresenter implements SuggestContract.Presenter {
     private static final String TAG = SuggestPresenter.class.getSimpleName();
 
-    @NonNull
+    @Nullable
     private SuggestInteractor.Factory mSuggestInteractorFactory;
     @Nullable
     private SuggestContract.View mView;
@@ -30,20 +30,34 @@ public class SuggestPresenter implements SuggestContract.Presenter {
     @Nullable
     private String mCurrentUserQuery;
     @Nullable
-    private List<Suggest> mCurrentSuggests;
+    private SuggestResponse mSuggestResponse;
     private int mAttachedCount = 0;
 
-    public SuggestPresenter(@NonNull SuggestInteractor.Factory suggestInteractorFactory) {
-        setInteractorFactory(suggestInteractorFactory);
+    public SuggestPresenter() {
     }
 
+    /**
+     * Set or unset interactor factory for Suggest Engine.
+     *
+     * @param suggestInteractorFactory interactor factory
+     */
     @Override
-    public void setInteractorFactory(@NonNull SuggestInteractor.Factory suggestInteractorFactory) {
+    public void setInteractorFactory(@Nullable SuggestInteractor.Factory suggestInteractorFactory) {
         mSuggestInteractorFactory = suggestInteractorFactory;
     }
 
+    /**
+     * Set current user query and make request to Suggest Engine by {@link SuggestInteractor}
+     *
+     * @param query user query
+     */
     @UiThread
-    public void setQuery(@NonNull String query) {
+    public void setQuery(@Nullable String query) {
+        if (mSuggestInteractorFactory == null) {
+            Log.d(TAG, "Suggest Interator not defined");
+            return;
+        }
+
         mCurrentUserQuery = query;
 
         mCompositeDisposable.clear();
@@ -63,7 +77,7 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
                             @Override
                             public void onNext(@NonNull SuggestResponse suggests) {
-                                showSuggests(suggests.getSuggests());
+                                showSuggests(suggests);
                             }
                         }));
     }
@@ -86,7 +100,8 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
         ++mAttachedCount;
         mView = view;
-        showSuggests(mCurrentSuggests);
+
+        showSuggests(mSuggestResponse);
     }
 
     @Override
@@ -101,11 +116,22 @@ public class SuggestPresenter implements SuggestContract.Presenter {
     }
 
     @UiThread
-    private void showSuggests(@Nullable List<Suggest> suggests) {
+    private void showSuggests(@Nullable SuggestResponse suggestResponse) {
         if (mView != null) {
             // TODO: 17.11.17 compare curUserQuery and decide: append or replace
-            mCurrentSuggests = suggests;
-            mView.setSuggests(mCurrentSuggests);
+            mSuggestResponse = suggestResponse;
+
+            String candidate = null;
+            List<Suggest> suggests = null;
+            if (suggestResponse != null) {
+                candidate = suggestResponse.getCandidate();
+                suggests = suggestResponse.getSuggests();
+            }
+
+            mView.setSuggests(
+                    candidate,
+                    suggests
+            );
         }
     }
 }

@@ -32,11 +32,11 @@ public final class YaSuggestInteractor implements SuggestInteractor {
         return mYaSuggestApi.get(query);
     }
 
-    public static class FactoryImpl implements SuggestInteractor.Factory {
+    public static class Factory implements SuggestInteractor.Factory {
         @Nullable
         private static YaSuggestInteractor mSuggestInteractor;
 
-        public FactoryImpl() {
+        public Factory() {
         }
 
         @NonNull

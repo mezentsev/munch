@@ -20,7 +20,7 @@ allprojects {
 }
 
 project.ext {
-    supportLibVersion = "27.0.0"
+    supportLibVersion = "27.0.1"
     junitVersion = "4.12"
     rxAndroidVersion = "2.0.1"
     rxJavaVersion = "2.1.5"
