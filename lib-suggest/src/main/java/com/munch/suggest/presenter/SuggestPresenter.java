@@ -7,11 +7,14 @@ import android.util.Log;
 
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestResponse;
+import com.munch.suggest.model.QueryInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
@@ -22,6 +25,9 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
     @Nullable
     private SuggestInteractor.Factory mSuggestInteractorFactory;
+    @NonNull
+    private SuggestInteractor mQueryInteractor = new QueryInteractor();
+
     @Nullable
     private SuggestContract.View mView;
     @NonNull
@@ -61,10 +67,65 @@ public class SuggestPresenter implements SuggestContract.Presenter {
         mCurrentUserQuery = query;
 
         mCompositeDisposable.clear();
+
         mCompositeDisposable.add(
-                mSuggestInteractorFactory.get().getSuggests(query)
-                        .observeOn(AndroidSchedulers.mainThread())
+                Observable.concat(
+                        mQueryInteractor.getSuggests(query)
+                                .onErrorReturnItem(SuggestResponse.empty()),
+                        Observable.zip(
+                                mQueryInteractor.getSuggests(query)
+                                        .onErrorReturnItem(SuggestResponse.empty()),
+                                mSuggestInteractorFactory.get().getSuggests(query)
+                                        .onErrorReturnItem(SuggestResponse.empty()),
+                                (queryResponse, interactorResponse) -> {
+                                    List<Suggest> querySuggests = queryResponse.getSuggests();
+                                    List<Suggest> interactorSuggests = interactorResponse.getSuggests();
+
+                                    List<Suggest> suggests = null;
+
+                                    // need to concat suggests responses
+                                    if (querySuggests != null) {
+                                        suggests = new ArrayList<>(querySuggests.size());
+                                        suggests.addAll(querySuggests);
+                                    }
+
+                                    if (interactorSuggests != null) {
+                                        if (suggests == null) {
+                                            suggests = new ArrayList<>(interactorSuggests.size());
+                                        }
+
+                                        if (querySuggests != null) {
+                                            // find exists suggests and skip them
+                                            for (Suggest suggest : interactorSuggests) {
+                                                boolean exists = false;
+                                                for (Suggest querySuggest : querySuggests) {
+                                                    if (querySuggest.getUrl().equals(suggest.getUrl()) ||
+                                                            querySuggest.getTitle().equals(suggest.getTitle())) {
+                                                        exists = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!exists) {
+                                                    suggests.add(suggest);
+                                                }
+                                            }
+                                        } else {
+                                            suggests.addAll(interactorSuggests);
+                                        }
+
+                                    }
+
+                                    return new SuggestResponse(
+                                            query,
+                                            interactorResponse.getCandidate(),
+                                            suggests
+                                    );
+                                }
+                        )
+                )
                         .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableObserver<SuggestResponse>() {
                             @Override
                             public void onComplete() {
@@ -72,6 +133,7 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
                             @Override
                             public void onError(Throwable e) {
+                                Log.e(TAG, "Error", e);
                                 showSuggests(null);
                             }
 
@@ -118,7 +180,6 @@ public class SuggestPresenter implements SuggestContract.Presenter {
     @UiThread
     private void showSuggests(@Nullable SuggestResponse suggestResponse) {
         if (mView != null) {
-            // TODO: 17.11.17 compare curUserQuery and decide: append or replace
             mSuggestResponse = suggestResponse;
 
             String candidate = null;

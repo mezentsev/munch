@@ -14,7 +14,6 @@ public interface SuggestInteractor {
      * @param query user query
      * @return list of suggests
      */
-    @NonNull
     Observable<SuggestResponse> getSuggests(@Nullable String query);
 
     interface Factory {

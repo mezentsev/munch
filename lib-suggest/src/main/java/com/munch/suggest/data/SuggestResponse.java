@@ -55,4 +55,8 @@ public final class SuggestResponse {
     public List<Suggest> getSuggests() {
         return mSuggests;
     }
+
+    public static SuggestResponse empty() {
+        return new SuggestResponse(null, null, null);
+    }
 }
