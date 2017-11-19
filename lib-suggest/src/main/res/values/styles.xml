@@ -9,7 +9,6 @@
         <item name="android:layout_height">@dimen/munch_suggest_height</item>
         <item name="android:padding">@dimen/munch_suggest_padding</item>
         <item name="android:clickable">true</item>
-        <item name="android:focusableInTouchMode">true</item>
         <item name="android:background">?android:attr/selectableItemBackground</item>
     </style>
 

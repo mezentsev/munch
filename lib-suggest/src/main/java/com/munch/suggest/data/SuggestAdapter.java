@@ -16,7 +16,8 @@ import com.munch.suggest.model.Suggest;
 
 import java.util.List;
 
-public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder> {
+public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder>
+        implements ItemClickListener {
     private final static String TAG = SuggestAdapter.class.getSimpleName();
 
     @NonNull
@@ -24,6 +25,8 @@ public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.Su
     @Nullable
     private List<Suggest> mSuggests;
     private Suggest.SuggestType[] mSuggestTypes = Suggest.SuggestType.values();
+    @Nullable
+    private SuggestClicklistener mSuggestClickListener;
 
     public SuggestAdapter(@NonNull Context context) {
         mContext = context;
@@ -44,18 +47,18 @@ public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.Su
                 view = LayoutInflater
                         .from(mContext)
                         .inflate(R.layout.munch_suggest_text_suggest, parent, false);
-                return new TextSuggestViewHolder(view);
+                return new TextSuggestViewHolder(view, this);
             case NAV:
                 view = LayoutInflater
                         .from(mContext)
                         .inflate(R.layout.munch_suggest_navigation_suggest, parent, false);
 
-                return new NavigationSuggestViewHolder(view);
+                return new NavigationSuggestViewHolder(view, this);
             case FACT:
                 view = LayoutInflater
                         .from(mContext)
                         .inflate(R.layout.munch_suggest_fact_suggest, parent, false);
-                return new FactSuggestViewHolder(view);
+                return new FactSuggestViewHolder(view, this);
             default:
                 throw new IllegalStateException("Unsupported type");
         }
@@ -96,21 +99,48 @@ public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.Su
         return 0;
     }
 
-    abstract static class SuggestViewHolder extends RecyclerView.ViewHolder {
+    @UiThread
+    public void setClickListener(@Nullable SuggestClicklistener clickListener) {
+        mSuggestClickListener = clickListener;
+    }
+
+    @Override
+    public void onItemClicked(int adapterPosition) {
+        if (mSuggestClickListener != null) {
+            mSuggestClickListener.onSuggestClicked(mSuggests.get(adapterPosition));
+        }
+    }
+
+    abstract static class SuggestViewHolder extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
 
         @NonNull
         protected final TextView mTitle;
+        @Nullable
+        private final ItemClickListener mItemClickListener;
 
-        SuggestViewHolder(@NonNull View itemView) {
+        SuggestViewHolder(@NonNull View itemView,
+                          @Nullable ItemClickListener itemClickListener) {
             super(itemView);
             mTitle = itemView.findViewById(R.id.munch_suggest_title);
+            mItemClickListener = itemClickListener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(@NonNull View view) {
+            if (mItemClickListener != null) {
+                mItemClickListener.onItemClicked(getAdapterPosition());
+            }
         }
     }
 
     static class TextSuggestViewHolder extends SuggestViewHolder {
 
-        public TextSuggestViewHolder(@NonNull View itemView) {
-            super(itemView);
+        public TextSuggestViewHolder(@NonNull View itemView,
+                                     @Nullable ItemClickListener itemClickListener) {
+            super(itemView, itemClickListener);
         }
 
         void bind(@NonNull String title) {
@@ -120,8 +150,9 @@ public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.Su
 
     static class NavigationSuggestViewHolder extends SuggestViewHolder {
 
-        public NavigationSuggestViewHolder(@NonNull View itemView) {
-            super(itemView);
+        public NavigationSuggestViewHolder(@NonNull View itemView,
+                                           @Nullable ItemClickListener itemClickListener) {
+            super(itemView, itemClickListener);
         }
 
         void bind(@NonNull Uri url) {
@@ -134,8 +165,9 @@ public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.Su
         @NonNull
         private final TextView mDescription;
 
-        public FactSuggestViewHolder(@NonNull View itemView) {
-            super(itemView);
+        public FactSuggestViewHolder(@NonNull View itemView,
+                                     @Nullable ItemClickListener itemClickListener) {
+            super(itemView, itemClickListener);
             mDescription = itemView.findViewById(R.id.munch_suggest_description);
         }
 

@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.munch.suggest.R;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestAdapter;
+import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
 import com.munch.suggest.presenter.SuggestPresenter;
@@ -67,7 +68,7 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
     @Override
     public void setSuggests(@Nullable String candidate,
                             @Nullable List<Suggest> suggests) {
-        Log.d(TAG, "Suggests: " + suggests);
+        Log.d(TAG, "Candidate is: " + candidate);
         mSuggestAdapter.setSuggests(suggests);
         mRecyclerView.scrollToPosition(0);
     }
@@ -100,6 +101,17 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
         } else {
             Log.e(TAG, "Presenter is not defined");
         }
+    }
+
+    /**
+     * Set or unset suggest click listener.
+     *
+     * @param suggestClickListener click listener
+     */
+    @UiThread
+    @Override
+    public void setSuggestClickListener(@Nullable SuggestClicklistener suggestClickListener) {
+        mSuggestAdapter.setClickListener(suggestClickListener);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
 import com.munch.mvp.MvpContract;
+import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
 
@@ -21,6 +22,9 @@ public interface SuggestContract extends MvpContract {
 
         @UiThread
         void setUserQuery(@Nullable String query);
+
+        @UiThread
+        void setSuggestClickListener(@Nullable SuggestClicklistener suggestClickListener);
     }
     interface Presenter extends MvpContract.Presenter<View> {
         @UiThread
