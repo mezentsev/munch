@@ -4,12 +4,16 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
+import com.munch.suggest.R;
 import com.munch.suggest.SuggestContract;
+import com.munch.suggest.data.SuggestAdapter;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
 import com.munch.suggest.presenter.SuggestPresenter;
@@ -19,10 +23,13 @@ import java.util.List;
 public class SuggestView extends LinearLayout implements SuggestContract.View {
     private static final String TAG = SuggestView.class.getSimpleName();
 
+    @NonNull
+    private final SuggestAdapter mSuggestAdapter;
+
     @Nullable
     private SuggestContract.Presenter mSuggestPresenter;
     @NonNull
-    private Toast mToast;
+    private RecyclerView mRecyclerView;
 
     public SuggestView(@NonNull Context context) {
         this(context, null);
@@ -37,12 +44,18 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
                        @Nullable AttributeSet attrs,
                        int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
+        mSuggestAdapter = new SuggestAdapter(context);
+
+        View view = inflate(context, R.layout.munch_suggest_view, this);
+        mRecyclerView = view.findViewById(R.id.munch_suggest_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
+        mRecyclerView.setAdapter(mSuggestAdapter);
+
         if (mSuggestPresenter == null) {
             mSuggestPresenter = new SuggestPresenter();
             mSuggestPresenter.onCreate();
         }
-
-        mToast = new Toast(getContext());
     }
 
     /**
@@ -55,10 +68,8 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
     public void setSuggests(@Nullable String candidate,
                             @Nullable List<Suggest> suggests) {
         Log.d(TAG, "Suggests: " + suggests);
-
-        mToast.cancel();
-        mToast = Toast.makeText(getContext(), candidate, Toast.LENGTH_SHORT);
-        mToast.show();
+        mSuggestAdapter.setSuggests(suggests);
+        mRecyclerView.scrollToPosition(0);
     }
 
     /**

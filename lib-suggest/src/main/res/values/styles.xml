@@ -1,0 +1,29 @@
+<resources>
+
+    <style name="Munch"/>
+
+    <style name="Munch.Suggest"/>
+
+    <style name="Munch.Suggest.Item">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:layout_height">@dimen/munch_suggest_height</item>
+        <item name="android:padding">@dimen/munch_suggest_padding</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+    </style>
+
+
+    <style name="Munch.Suggest.TextItem">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="Munch.Suggest.NavigationItem">
+        <item name="android:textColor">@android:color/holo_blue_dark</item>
+    </style>
+
+    <style name="Munch.Suggest.FactItem">
+        <item name="android:textColor">@android:color/holo_blue_light</item>
+        <item name="android:layout_gravity">center_vertical</item>
+    </style>
+</resources>

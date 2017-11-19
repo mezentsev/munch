@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.EditText;
 
 import com.munch.suggest.model.YaSuggestInteractor;
@@ -29,15 +28,12 @@ public class MunchActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int count) {
-                if (count != 0) {
-                    suggestView.setUserQuery(charSequence.toString());
-                }
+                suggestView.setUserQuery(charSequence.toString());
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
             }
         });
-
     }
 }
