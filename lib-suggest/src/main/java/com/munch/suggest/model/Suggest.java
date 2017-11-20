@@ -35,7 +35,7 @@ public interface Suggest {
      *
      * @return url
      */
-    @NonNull
+    @Nullable
     Uri getUrl();
 
     /**

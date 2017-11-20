@@ -1,5 +1,6 @@
 package com.munch.suggest.presenter;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
@@ -68,13 +69,14 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
         mCompositeDisposable.clear();
 
+        Observable<SuggestResponse> queryObservable = mQueryInteractor.getSuggests(query)
+                .onErrorReturnItem(SuggestResponse.empty());
+
         mCompositeDisposable.add(
                 Observable.concat(
-                        mQueryInteractor.getSuggests(query)
-                                .onErrorReturnItem(SuggestResponse.empty()),
+                        queryObservable,
                         Observable.zip(
-                                mQueryInteractor.getSuggests(query)
-                                        .onErrorReturnItem(SuggestResponse.empty()),
+                                queryObservable,
                                 mSuggestInteractorFactory.get().getSuggests(query)
                                         .onErrorReturnItem(SuggestResponse.empty()),
                                 (queryResponse, interactorResponse) -> {
@@ -98,14 +100,22 @@ public class SuggestPresenter implements SuggestContract.Presenter {
                                             // find exists suggests and skip them
                                             for (Suggest suggest : interactorSuggests) {
                                                 boolean exists = false;
+
                                                 for (Suggest querySuggest : querySuggests) {
-                                                    if (querySuggest.getUrl().equals(suggest.getUrl()) ||
-                                                            querySuggest.getTitle().equals(suggest.getTitle())) {
+                                                    Uri queryUrl = querySuggest.getUrl();
+                                                    String queryTitle = querySuggest.getTitle().toLowerCase();
+                                                    String suggestTitle = suggest.getTitle().toLowerCase();
+
+                                                    Uri suggestUrl = suggest.getUrl();
+
+                                                    if (queryTitle.equals(suggestTitle) ||
+                                                            (queryUrl != null && queryUrl.equals(suggestUrl))) {
                                                         exists = true;
                                                         break;
                                                     }
                                                 }
 
+                                                // skip if already same suggest exists
                                                 if (!exists) {
                                                     suggests.add(suggest);
                                                 }
@@ -119,6 +129,7 @@ public class SuggestPresenter implements SuggestContract.Presenter {
                                     return new SuggestResponse(
                                             query,
                                             interactorResponse.getCandidate(),
+                                            interactorResponse.getSearchBaseUrl(),
                                             suggests
                                     );
                                 }

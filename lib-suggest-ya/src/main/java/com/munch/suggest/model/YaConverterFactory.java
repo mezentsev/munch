@@ -71,12 +71,10 @@ public class YaConverterFactory extends Converter.Factory {
                             } else if (array.size() == 3) { // fact
                                 String title = array.get(1).getAsString();
                                 String description = array.get(2).getAsString();
-                                Uri url = Uri.parse(BASE_SEARCH_URL + title);
 
                                 suggests.add(
                                         SuggestFactory.createFactSuggest(
                                                 title,
-                                                url,
                                                 description
                                         ));
                             }
@@ -93,18 +91,16 @@ public class YaConverterFactory extends Converter.Factory {
                     for (int i = 0; i < suggestionsAsJsonArray.size(); ++i) {
                         JsonArray suggestJsonArray = suggestionsAsJsonArray.get(i).getAsJsonArray();
                         String title = suggestJsonArray.get(0).getAsString();
-                        Uri url = Uri.parse(BASE_SEARCH_URL + title);
                         double weight = suggestJsonArray.get(1).getAsDouble();
 
                         suggests.add(SuggestFactory.createTextSuggest(
                                 title,
-                                url,
                                 weight
                         ));
                     }
                 }
 
-                return new SuggestResponse(query, candidate, suggests);
+                return new SuggestResponse(query, candidate, BASE_SEARCH_URL, suggests);
             } catch (IndexOutOfBoundsException e) {
                 throw new IOException("Failed to parse JSON", e);
             }

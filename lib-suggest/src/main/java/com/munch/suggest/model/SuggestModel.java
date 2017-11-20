@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 final class SuggestModel implements Suggest {
     @NonNull
     private final String mTitle;
-    @NonNull
+    @Nullable
     private final Uri mUrl;
     @Nullable
     private final String mDescription;
@@ -16,7 +16,7 @@ final class SuggestModel implements Suggest {
     private final double mWeight;
 
     SuggestModel(@NonNull String title,
-                 @NonNull Uri url,
+                 @Nullable Uri url,
                  double weight,
                  @Nullable String description,
                  @Nullable SuggestType type) {
@@ -44,7 +44,7 @@ final class SuggestModel implements Suggest {
         return mType;
     }
 
-    @NonNull
+    @Nullable
     @Override
     public Uri getUrl() {
         return mUrl;

@@ -15,14 +15,18 @@ public final class SuggestResponse {
     @Nullable
     private final String mCandidate;
     @Nullable
+    private final String mSearchBaseUrl;
+    @Nullable
     private final List<Suggest> mSuggests;
 
     public SuggestResponse(@Nullable String query,
                            @Nullable String candidate,
+                           @Nullable String searchBaseUrl,
                            @Nullable List<Suggest> suggests) {
 
         mQuery = query;
         mCandidate = candidate;
+        mSearchBaseUrl = searchBaseUrl;
         mSuggests = suggests;
     }
 
@@ -47,6 +51,16 @@ public final class SuggestResponse {
     }
 
     /**
+     * Get base search url.
+     *
+     * @return search url
+     */
+    @Nullable
+    public String getSearchBaseUrl() {
+        return mSearchBaseUrl;
+    }
+
+    /**
      * Get list of suggests.
      *
      * @return list
@@ -57,6 +71,6 @@ public final class SuggestResponse {
     }
 
     public static SuggestResponse empty() {
-        return new SuggestResponse(null, null, null);
+        return new SuggestResponse(null, null, null, null);
     }
 }

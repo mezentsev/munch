@@ -12,14 +12,17 @@ import android.support.annotation.Nullable;
 public final class SuggestFactory {
     @NonNull
     public static Suggest createTextSuggest(@NonNull String title,
-                                            @NonNull Uri url,
-                                            double weight) {
+                                             double weight) {
         return new SuggestModel(
                 title,
-                url,
+                null,
                 weight,
                 null,
                 Suggest.SuggestType.TEXT);
+    }
+
+    public static Suggest createTextSuggest(@NonNull String title) {
+        return createTextSuggest(title, 1.);
     }
 
     @NonNull
@@ -35,11 +38,10 @@ public final class SuggestFactory {
 
     @NonNull
     public static Suggest createFactSuggest(@NonNull String title,
-                                            @NonNull Uri url,
                                             @Nullable String description) {
         return new SuggestModel(
                 title,
-                url,
+                null,
                 0.,
                 description,
                 Suggest.SuggestType.FACT);
