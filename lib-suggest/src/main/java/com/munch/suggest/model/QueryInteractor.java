@@ -2,6 +2,7 @@ package com.munch.suggest.model;
 
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Patterns;
 
@@ -25,8 +26,8 @@ public final class QueryInteractor implements SuggestInteractor {
      */
     @Override
     public Single<SuggestResponse> getSuggests(@Nullable String query) {
-        if (query != null ) {
-            String lowerQuery = query.toLowerCase();
+        if (query != null && TextUtils.getTrimmedLength(query) > 0) {
+            String lowerQuery = query.toLowerCase().trim();
             Suggest querySuggest;
 
             if (Patterns.WEB_URL.matcher(lowerQuery).matches()) {
