@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.munch.suggest.data.SuggestResponse;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 
 public interface SuggestInteractor {
     /**
@@ -14,7 +14,7 @@ public interface SuggestInteractor {
      * @param query user query
      * @return list of suggests
      */
-    Observable<SuggestResponse> getSuggests(@Nullable String query);
+    Single<SuggestResponse> getSuggests(@Nullable String query);
 
     interface Factory {
         /**

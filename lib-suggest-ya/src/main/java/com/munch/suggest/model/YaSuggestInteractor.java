@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import com.munch.suggest.data.SuggestResponse;
 import com.munch.suggest.data.YaSuggestApi;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -28,7 +28,7 @@ public final class YaSuggestInteractor implements SuggestInteractor {
 
     @NonNull
     @Override
-    public Observable<SuggestResponse> getSuggests(@Nullable String query) {
+    public Single<SuggestResponse> getSuggests(@Nullable String query) {
         return mYaSuggestApi.get(query);
     }
 

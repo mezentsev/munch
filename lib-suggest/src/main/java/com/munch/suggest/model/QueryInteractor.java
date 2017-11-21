@@ -9,7 +9,7 @@ import com.munch.suggest.data.SuggestResponse;
 
 import java.util.Collections;
 
-import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * Simple interactor that creates Navifation Suggest from query.
@@ -17,38 +17,36 @@ import io.reactivex.Observable;
 public final class QueryInteractor implements SuggestInteractor {
     private final static String TAG = QueryInteractor.class.getSimpleName();
 
+    /**
+     * Create one Navigation or Text Suggest in lower case based on Query.
+     *
+     * @param query user query
+     * @return observable suggest response
+     */
     @Override
-    public Observable<SuggestResponse> getSuggests(@Nullable String query) {
+    public Single<SuggestResponse> getSuggests(@Nullable String query) {
         if (query != null ) {
             String lowerQuery = query.toLowerCase();
+            Suggest querySuggest;
 
             if (Patterns.WEB_URL.matcher(lowerQuery).matches()) {
                 Log.d(TAG, "Created navigation suggest for: " + lowerQuery);
-                return Observable.just(
-                        new SuggestResponse(
-                                lowerQuery,
-                                lowerQuery,
-                                null,
-                                Collections.singletonList(
-                                        SuggestFactory.createNavigationSuggest(lowerQuery, Uri.parse(lowerQuery))
-                                )
-                        )
-                );
+                querySuggest = SuggestFactory.createNavigationSuggest(lowerQuery, Uri.parse(lowerQuery));
             } else {
                 Log.d(TAG, "Created text suggest for: " + lowerQuery);
-                return Observable.just(
-                        new SuggestResponse(
-                                lowerQuery,
-                                lowerQuery,
-                                null,
-                                Collections.singletonList(
-                                        SuggestFactory.createTextSuggest(lowerQuery)
-                                )
-                        )
-                );
+                querySuggest = SuggestFactory.createTextSuggest(lowerQuery);
             }
+
+            return Single.just(
+                    new SuggestResponse(
+                            lowerQuery,
+                            lowerQuery,
+                            null,
+                            Collections.singletonList(querySuggest)
+                    )
+            );
         }
 
-        return Observable.error(new IllegalStateException("Can't create query suggest"));
+        return Single.error(new IllegalStateException("Can't create query suggest"));
     }
 }

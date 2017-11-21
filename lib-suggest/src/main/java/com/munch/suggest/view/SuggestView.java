@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 
 import com.munch.suggest.R;
 import com.munch.suggest.SuggestContract;
-import com.munch.suggest.data.SuggestAdapter;
 import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;

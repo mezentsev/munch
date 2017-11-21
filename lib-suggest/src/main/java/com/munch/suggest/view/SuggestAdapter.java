@@ -1,4 +1,4 @@
-package com.munch.suggest.data;
+package com.munch.suggest.view;
 
 import android.content.Context;
 import android.net.Uri;
@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.munch.suggest.R;
+import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 
 import java.util.List;
@@ -131,7 +132,10 @@ public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.Su
         @Override
         public void onClick(@NonNull View view) {
             if (mItemClickListener != null) {
-                mItemClickListener.onItemClicked(getAdapterPosition());
+                int adapterPosition = getAdapterPosition();
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    mItemClickListener.onItemClicked(getAdapterPosition());
+                }
             }
         }
     }

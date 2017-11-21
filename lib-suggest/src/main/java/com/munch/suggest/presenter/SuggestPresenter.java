@@ -15,11 +15,18 @@ import com.munch.suggest.model.SuggestInteractor;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
 
 public class SuggestPresenter implements SuggestContract.Presenter {
     private static final String TAG = SuggestPresenter.class.getSimpleName();
@@ -69,90 +76,26 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
         mCompositeDisposable.clear();
 
-        Observable<SuggestResponse> queryObservable = mQueryInteractor.getSuggests(query)
+        Single<SuggestResponse> queryObservable = mQueryInteractor.getSuggests(query)
                 .onErrorReturnItem(SuggestResponse.empty());
 
         mCompositeDisposable.add(
-                Observable.concat(
+                Single.concat(
                         queryObservable,
-                        Observable.zip(
+                        Single.zip(
                                 queryObservable,
                                 mSuggestInteractorFactory.get().getSuggests(query)
                                         .onErrorReturnItem(SuggestResponse.empty()),
-                                (queryResponse, interactorResponse) -> {
-                                    List<Suggest> querySuggests = queryResponse.getSuggests();
-                                    List<Suggest> interactorSuggests = interactorResponse.getSuggests();
-
-                                    List<Suggest> suggests = null;
-
-                                    // need to concat suggests responses
-                                    if (querySuggests != null) {
-                                        suggests = new ArrayList<>(querySuggests.size());
-                                        suggests.addAll(querySuggests);
-                                    }
-
-                                    if (interactorSuggests != null) {
-                                        if (suggests == null) {
-                                            suggests = new ArrayList<>(interactorSuggests.size());
-                                        }
-
-                                        if (querySuggests != null) {
-                                            // find exists suggests and skip them
-                                            for (Suggest suggest : interactorSuggests) {
-                                                boolean exists = false;
-
-                                                for (Suggest querySuggest : querySuggests) {
-                                                    Uri queryUrl = querySuggest.getUrl();
-                                                    String queryTitle = querySuggest.getTitle().toLowerCase();
-                                                    String suggestTitle = suggest.getTitle().toLowerCase();
-
-                                                    Uri suggestUrl = suggest.getUrl();
-
-                                                    if (queryTitle.equals(suggestTitle) ||
-                                                            (queryUrl != null && queryUrl.equals(suggestUrl))) {
-                                                        exists = true;
-                                                        break;
-                                                    }
-                                                }
-
-                                                // skip if already same suggest exists
-                                                if (!exists) {
-                                                    suggests.add(suggest);
-                                                }
-                                            }
-                                        } else {
-                                            suggests.addAll(interactorSuggests);
-                                        }
-
-                                    }
-
-                                    return new SuggestResponse(
-                                            query,
-                                            interactorResponse.getCandidate(),
-                                            interactorResponse.getSearchBaseUrl(),
-                                            suggests
-                                    );
-                                }
+                                zipResponses(query)
                         )
                 )
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableObserver<SuggestResponse>() {
-                            @Override
-                            public void onComplete() {
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e(TAG, "Error", e);
-                                showSuggests(null);
-                            }
-
-                            @Override
-                            public void onNext(@NonNull SuggestResponse suggests) {
-                                showSuggests(suggests);
-                            }
-                        }));
+                        .subscribe(
+                                this::showSuggests,
+                                throwable -> Log.e(TAG, "Error", throwable),
+                                () -> Log.d(TAG, "Completed: " + query)
+                        ));
     }
 
     @Override
@@ -205,5 +148,62 @@ public class SuggestPresenter implements SuggestContract.Presenter {
                     suggests
             );
         }
+    }
+
+    private static BiFunction<SuggestResponse, SuggestResponse, SuggestResponse> zipResponses(@Nullable String query) {
+        return (queryResponse, interactorResponse) -> {
+            List<Suggest> querySuggests = queryResponse.getSuggests();
+            List<Suggest> interactorSuggests = interactorResponse.getSuggests();
+
+            List<Suggest> suggests = null;
+
+            // need to concat suggests responses
+            if (querySuggests != null) {
+                suggests = new ArrayList<>(querySuggests.size());
+                suggests.addAll(querySuggests);
+            }
+
+            if (interactorSuggests != null) {
+                if (suggests == null) {
+                    suggests = new ArrayList<>(interactorSuggests.size());
+                }
+
+                if (querySuggests != null) {
+                    // find exists suggests and skip them
+                    for (Suggest suggest : interactorSuggests) {
+                        boolean exists = false;
+
+                        for (Suggest querySuggest : querySuggests) {
+                            Uri queryUrl = querySuggest.getUrl();
+                            String queryTitle = querySuggest.getTitle().toLowerCase();
+                            String suggestTitle = suggest.getTitle().toLowerCase();
+
+                            Uri suggestUrl = suggest.getUrl();
+
+                            if (queryTitle.equals(suggestTitle) ||
+                                    (queryUrl != null && queryUrl.equals(suggestUrl))) {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        // skip if already same suggest exists
+                        if (!exists) {
+                            suggests.add(suggest);
+                        }
+                    }
+                } else {
+                    suggests.addAll(interactorSuggests);
+                }
+
+            }
+
+            return new SuggestResponse(
+                    query,
+                    interactorResponse.getCandidate(),
+                    interactorResponse.getSearchBaseUrl(),
+                    suggests
+            );
+        };
     }
 }

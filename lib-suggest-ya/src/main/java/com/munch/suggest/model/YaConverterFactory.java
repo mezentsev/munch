@@ -21,6 +21,19 @@ import retrofit2.Retrofit;
 
 public class YaConverterFactory extends Converter.Factory {
     private static final String BASE_SEARCH_URL = "https://yandex.ru/search/?text=";
+    private static final int PARSE_START_ID = 0;
+    private static final int PARSE_NAV_FACT_STOP_ID = 5;
+
+    private static final int PARSE_NAV_SIZE = 5;
+    private static final int PARSE_NAV_TITLE_ID = 1;
+    private static final int PARSE_NAV_URL_ID = 3;
+
+    private static final int PARSE_FACT_SIZE = 3;
+    private static final int PARSE_FACT_TITLE_ID = 1;
+    private static final int PARSE_FACT_DESCRIPTION_ID = 2;
+
+    private static final int PARSE_TEXT_TITLE_ID = 0;
+    private static final int PARSE_TEXT_WEIGHT_ID = 1;
 
     @Override
     public Converter<ResponseBody, SuggestResponse> responseBodyConverter(@NonNull Type type,
@@ -41,14 +54,13 @@ public class YaConverterFactory extends Converter.Factory {
             try {
                 JsonArray jsonArray = new Gson().fromJson(responseBody.string(), JsonArray.class);
                 List<Suggest> suggests = new ArrayList<>();
-                int suggestionId = 0;
+                int suggestionId = PARSE_START_ID;
 
                 String query = jsonArray.get(suggestionId++).getAsString();
                 String candidate = jsonArray.get(suggestionId++).getAsString();
-                //JsonArray wordSuggests = jsonArray.get(2).getAsJsonArray();
 
                 // check nav and fact suggestions
-                for (int i = suggestionId; i <= 5; ++i) {
+                for (int i = suggestionId; i <= PARSE_NAV_FACT_STOP_ID; ++i) {
                     if (jsonArray.size() > i) {
                         JsonElement jsonElement = jsonArray.get(i);
                         if (jsonElement.isJsonObject()) {
@@ -59,18 +71,18 @@ public class YaConverterFactory extends Converter.Factory {
                             ++suggestionId;
 
                             JsonArray array = jsonElement.getAsJsonArray();
-                            if (array.size() == 5) { // nav
-                                String title = array.get(1).getAsString();
-                                Uri url = Uri.parse(array.get(3).getAsString());
+                            if (array.size() == PARSE_NAV_SIZE) { // nav
+                                String title = array.get(PARSE_NAV_TITLE_ID).getAsString();
+                                Uri url = Uri.parse(array.get(PARSE_NAV_URL_ID).getAsString());
 
                                 suggests.add(
                                         SuggestFactory.createNavigationSuggest(
                                                 title,
                                                 url
                                         ));
-                            } else if (array.size() == 3) { // fact
-                                String title = array.get(1).getAsString();
-                                String description = array.get(2).getAsString();
+                            } else if (array.size() == PARSE_FACT_SIZE) { // fact
+                                String title = array.get(PARSE_FACT_TITLE_ID).getAsString();
+                                String description = array.get(PARSE_FACT_DESCRIPTION_ID).getAsString();
 
                                 suggests.add(
                                         SuggestFactory.createFactSuggest(
@@ -90,8 +102,8 @@ public class YaConverterFactory extends Converter.Factory {
 
                     for (int i = 0; i < suggestionsAsJsonArray.size(); ++i) {
                         JsonArray suggestJsonArray = suggestionsAsJsonArray.get(i).getAsJsonArray();
-                        String title = suggestJsonArray.get(0).getAsString();
-                        double weight = suggestJsonArray.get(1).getAsDouble();
+                        String title = suggestJsonArray.get(PARSE_TEXT_TITLE_ID).getAsString();
+                        double weight = suggestJsonArray.get(PARSE_TEXT_WEIGHT_ID).getAsDouble();
 
                         suggests.add(SuggestFactory.createTextSuggest(
                                 title,
