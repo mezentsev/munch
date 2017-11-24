@@ -1,5 +1,4 @@
-include ':browser'
+include ':browser', ':lib-network', ':lib-suggest-ya'
 include ':lib-omnibox'
 include ':lib-mvp'
 include ':lib-suggest'
-include ':lib-suggest-ya'

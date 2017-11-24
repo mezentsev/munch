@@ -1,6 +1,36 @@
 package com.munch.suggest;
 
-import com.munch.mvp.MvpContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.UiThread;
 
-public class SuggestContract implements MvpContract {
+import com.munch.mvp.MvpContract;
+import com.munch.suggest.data.SuggestClicklistener;
+import com.munch.suggest.model.Suggest;
+import com.munch.suggest.model.SuggestInteractor;
+
+import java.util.List;
+
+public interface SuggestContract extends MvpContract {
+    interface View extends MvpContract.View {
+        @UiThread
+        void setSuggests(@Nullable String candidate,
+                         @Nullable List<Suggest> suggests);
+
+        @UiThread
+        void setSuggestInteractor(@NonNull SuggestInteractor.Factory suggestInteractorFactory);
+
+        @UiThread
+        void setUserQuery(@Nullable String query);
+
+        @UiThread
+        void setSuggestClickListener(@Nullable SuggestClicklistener suggestClickListener);
+    }
+    interface Presenter extends MvpContract.Presenter<View> {
+        @UiThread
+        void setInteractorFactory(@Nullable SuggestInteractor.Factory suggestInteractorFactory);
+
+        @UiThread
+        void setQuery(@Nullable String query);
+    }
 }

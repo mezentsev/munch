@@ -5,7 +5,7 @@ public interface MvpContract {
 
     }
 
-    interface Presenter extends MvpPresenter<View> {
+    interface Presenter<V extends View> extends MvpPresenter<V> {
 
     }
 

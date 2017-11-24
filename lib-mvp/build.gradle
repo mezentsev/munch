@@ -7,7 +7,7 @@ android {
         targetSdkVersion 27
         versionCode 1
         versionName "1.0"
-        multiDexEnabled true
+        multiDexEnabled false
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -29,7 +29,7 @@ android {
 
         release {
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
 
