@@ -33,4 +33,5 @@ deploy:
   file: "$HOME/android/munch.apk"
   skip_cleanup: true
   on:
-    tags: true
+    tags: false
+    all_branches: true
