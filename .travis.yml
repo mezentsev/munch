@@ -23,9 +23,10 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_5317f9bb5020_key -iv $encrypted_5317f9bb5020_iv
   -in .keystore.enc -out .keystore -d
 before_deploy:
+- export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo $TRAVIS_PULL_REQUEST_BRANCH; fi)
 - git config --local user.name "v.mezentsev"
 - git config --local user.email "mezentsevvo@gmail.com"
-- git tag "$(date +'%d_%m_%Y_%H:%M')-$(git branch | grep ^\* | awk '{print $2}')"
+- git tag "$(date +'%d_%m_%Y_%H:%M')_$BRANCH"
 - cp $TRAVIS_BUILD_DIR/.keystore $HOME
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/release/browser-release-unsigned.apk munch -keystore $HOME/.keystore -storepass $storepass -keypass $keypass
 - "${ANDROID_HOME}/build-tools/26.0.2/zipalign 4 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/release/browser-release-unsigned.apk $HOME/munch-release.apk"
