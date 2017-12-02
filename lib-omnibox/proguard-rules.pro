@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep com.munch.** { public *; }
+-keep class com.munch.** { public *; }

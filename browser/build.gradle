@@ -6,8 +6,6 @@ android {
         applicationId "com.munch.browser"
         minSdkVersion 16
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
         multiDexEnabled false
 
         javaCompileOptions {
@@ -17,7 +15,6 @@ android {
         }
 
         dexOptions {
-            javaMaxHeapSize "4g"
             preDexLibraries = false
         }
     }

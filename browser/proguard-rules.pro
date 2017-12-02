@@ -24,4 +24,12 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep com.munch.** { public *; }
+-optimizationpasses 5
+#-allowaccessmodification
+-dontusemixedcaseclassnames
+-dontskipnonpubliclibraryclasses
+-dontskipnonpubliclibraryclassmembers
+-dontpreverify
+-verbose
+
+-keep class com.munch.** { public *; }
