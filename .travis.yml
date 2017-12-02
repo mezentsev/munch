@@ -9,7 +9,7 @@ android:
   components:
   - platform-tools
   - tools
-  - build-tools-27.0.1
+  - build-tools-26.0.2
   - android-27
 install:
 - chmod +x ./gradlew
@@ -25,7 +25,7 @@ before_install:
 before_deploy:
 - cp $TRAVIS_BUILD_DIR/.keystore $HOME
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 $HOME/android/release-unsigned.apk munch -keystore $HOME/.keystore -storepass $storepass -keypass $keypass
-- "${ANDROID_HOME}/build-tools/27.0.1/zipalign 4 $HOME/android/release-unsigned.apk $HOME/android/munch.apk"
+- "${ANDROID_HOME}/build-tools/26.0.2/zipalign 4 $HOME/android/release-unsigned.apk $HOME/android/munch.apk"
 deploy:
   provider: releases
   api_key: d8d7ad114dbecf96060badfdd14bb85df4a071fd
