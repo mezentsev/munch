@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 /**
- * Factory for Suggests.
+ * Factory for build suggest models.
  * <p>
  * {@link com.munch.suggest.model.Suggest.SuggestType}
  */

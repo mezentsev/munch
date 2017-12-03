@@ -8,7 +8,7 @@ import android.text.TextWatcher;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.munch.suggest.model.YaSuggestInteractor;
+import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.view.SuggestView;
 
 public class MunchActivity extends AppCompatActivity {
@@ -18,7 +18,7 @@ public class MunchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_munch);
 
         SuggestView suggestView = findViewById(R.id.munch_suggest_view);
-        suggestView.setSuggestInteractor(new YaSuggestInteractor.Factory());
+        suggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
         suggestView.setSuggestClickListener(suggest -> {
             Toast.makeText(this, "Selected: " + suggest.getTitle(), Toast.LENGTH_SHORT).show();
         });

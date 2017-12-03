@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+/**
+ * Suggest interface.
+ */
 public interface Suggest {
     /**
      * Get suggest title.

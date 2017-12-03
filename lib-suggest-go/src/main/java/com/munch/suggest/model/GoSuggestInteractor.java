@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.munch.suggest.data.SuggestResponse;
-import com.munch.suggest.data.YaSuggestApi;
+import com.munch.suggest.data.GoSuggestApi;
 
 import io.reactivex.Single;
 import okhttp3.OkHttpClient;
@@ -12,13 +12,13 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
-public final class YaSuggestInteractor implements SuggestInteractor {
-    private static final String BASE_URL = "http://yandex.ru/";
+public final class GoSuggestInteractor implements SuggestInteractor {
+    private static final String BASE_URL = "https://google.com/";
 
     @NonNull
-    private final YaSuggestApi mYaSuggestApi;
+    private final GoSuggestApi mGoSuggestApi;
 
-    YaSuggestInteractor() {
+    GoSuggestInteractor() {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
@@ -27,35 +27,35 @@ public final class YaSuggestInteractor implements SuggestInteractor {
                 .baseUrl(BASE_URL)
                 .client(client)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(new YaConverterFactory())
+                .addConverterFactory(new GoConverterFactory())
                 .build();
 
-        mYaSuggestApi = retrofit.create(YaSuggestApi.class);
+        mGoSuggestApi = retrofit.create(GoSuggestApi.class);
     }
 
     @Override
     public Single<SuggestResponse> getSuggests(@NonNull RequestSpecification specification) {
-        return mYaSuggestApi.get(specification.build());
+        return mGoSuggestApi.get(specification.build());
     }
 
     @NonNull
     @Override
     public RequestSpecification.Factory getSpecificationFactory() {
-        return new YaRequestSpecification.Factory();
+        return new GoRequestSpecification.Factory();
     }
 
     public static class Factory implements SuggestInteractor.Factory {
         @Nullable
-        private static YaSuggestInteractor mSuggestInteractor;
+        private static GoSuggestInteractor mSuggestInteractor;
 
         public Factory() {
         }
 
         @NonNull
         @Override
-        public YaSuggestInteractor get() {
+        public GoSuggestInteractor get() {
             if (mSuggestInteractor == null) {
-                mSuggestInteractor = new YaSuggestInteractor();
+                mSuggestInteractor = new GoSuggestInteractor();
             }
 
             return mSuggestInteractor;
