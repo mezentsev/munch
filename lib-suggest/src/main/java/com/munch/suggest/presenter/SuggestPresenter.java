@@ -9,30 +9,30 @@ import android.util.Log;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestResponse;
 import com.munch.suggest.model.QueryInteractor;
+import com.munch.suggest.model.RequestSpecification;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.Flowable;
-import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
-import io.reactivex.functions.Consumer;
-import io.reactivex.observers.DisposableObserver;
-import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subscribers.DisposableSubscriber;
 
 public class SuggestPresenter implements SuggestContract.Presenter {
-    private static final String TAG = SuggestPresenter.class.getSimpleName();
+    private static final String TAG = "[MNCH:SuggestPresenter]";
+
+    @NonNull
+    private final static String LANG = "en";
+    private final static int MAX = 5;
 
     @Nullable
     private SuggestInteractor.Factory mSuggestInteractorFactory;
+    @Nullable
+    private RequestSpecification.Factory mRequestSpecificationFactory;
     @NonNull
     private SuggestInteractor mQueryInteractor = new QueryInteractor();
 
@@ -40,24 +40,30 @@ public class SuggestPresenter implements SuggestContract.Presenter {
     private SuggestContract.View mView;
     @NonNull
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
-
     @Nullable
     private String mCurrentUserQuery;
     @Nullable
     private SuggestResponse mSuggestResponse;
-    private int mAttachedCount = 0;
+    private int mAttachedTimes = 0;
 
     public SuggestPresenter() {
     }
 
     /**
      * Set or unset interactor factory for Suggest Engine.
+     * Create {@link RequestSpecification.Factory} object.
      *
      * @param suggestInteractorFactory interactor factory
      */
     @Override
     public void setInteractorFactory(@Nullable SuggestInteractor.Factory suggestInteractorFactory) {
         mSuggestInteractorFactory = suggestInteractorFactory;
+
+        if (suggestInteractorFactory != null) {
+            mRequestSpecificationFactory = suggestInteractorFactory.get().getSpecificationFactory();
+        } else {
+            mRequestSpecificationFactory = null;
+        }
     }
 
     /**
@@ -67,7 +73,8 @@ public class SuggestPresenter implements SuggestContract.Presenter {
      */
     @UiThread
     public void setQuery(@Nullable String query) {
-        if (mSuggestInteractorFactory == null) {
+        if (mSuggestInteractorFactory == null ||
+                mRequestSpecificationFactory == null) {
             Log.d(TAG, "Suggest Interator not defined");
             return;
         }
@@ -76,7 +83,12 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
         mCompositeDisposable.clear();
 
-        Single<SuggestResponse> queryObservable = mQueryInteractor.getSuggests(query)
+        RequestSpecification specification = mRequestSpecificationFactory.get(
+                query,
+                MAX,
+                LANG);
+
+        Single<SuggestResponse> queryObservable = mQueryInteractor.getSuggests(specification)
                 .onErrorReturnItem(SuggestResponse.empty());
 
         mCompositeDisposable.add(
@@ -84,7 +96,7 @@ public class SuggestPresenter implements SuggestContract.Presenter {
                         queryObservable,
                         Single.zip(
                                 queryObservable,
-                                mSuggestInteractorFactory.get().getSuggests(query)
+                                mSuggestInteractorFactory.get().getSuggests(specification)
                                         .onErrorReturnItem(SuggestResponse.empty()),
                                 zipResponses(query)
                         )
@@ -110,11 +122,11 @@ public class SuggestPresenter implements SuggestContract.Presenter {
 
     @Override
     public void attachView(@NonNull SuggestContract.View view) {
-        if (mAttachedCount == 0) {
+        if (mAttachedTimes == 0) {
             onFirstAttachView();
         }
 
-        ++mAttachedCount;
+        ++mAttachedTimes;
         mView = view;
 
         showSuggests(mSuggestResponse);

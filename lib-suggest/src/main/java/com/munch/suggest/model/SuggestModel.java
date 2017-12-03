@@ -4,6 +4,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+/**
+ * Simple suggest model.
+ */
 final class SuggestModel implements Suggest {
     @NonNull
     private final String mTitle;

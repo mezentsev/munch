@@ -1,5 +1,6 @@
 package com.munch.suggest.data;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.munch.suggest.model.Suggest;
@@ -70,6 +71,7 @@ public final class SuggestResponse {
         return mSuggests;
     }
 
+    @NonNull
     public static SuggestResponse empty() {
         return new SuggestResponse(null, null, null, null);
     }

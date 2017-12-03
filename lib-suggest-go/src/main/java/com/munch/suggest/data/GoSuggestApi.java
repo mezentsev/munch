@@ -10,13 +10,13 @@ import io.reactivex.Single;
 import retrofit2.http.GET;
 import retrofit2.http.QueryMap;
 
-public interface YaSuggestApi {
+public interface GoSuggestApi {
     /**
      * {@link RequestSpecification}
      *
      * @param queryMap
      * @return
      */
-    @GET("suggest-endings")
+    @GET("http://suggestqueries.google.com/complete/search")
     Single<SuggestResponse> get(@QueryMap @NonNull Map<String, String> queryMap);
 }

@@ -1,7 +1,6 @@
 package com.munch.suggest.model;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.munch.suggest.data.SuggestResponse;
 
@@ -11,10 +10,19 @@ public interface SuggestInteractor {
     /**
      * Get list of suggests.
      *
-     * @param query user query
+     * @param specification suggest request specification
      * @return list of suggests
      */
-    Single<SuggestResponse> getSuggests(@Nullable String query);
+    @NonNull
+    Single<SuggestResponse> getSuggests(@NonNull RequestSpecification specification);
+
+    /**
+     * Get request specification factory.
+     *
+     * @return factory
+     */
+    @NonNull
+    RequestSpecification.Factory getSpecificationFactory();
 
     interface Factory {
         /**
