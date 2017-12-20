@@ -44,11 +44,11 @@ android {
 dependencies {
     implementation project(':lib-mvp')
     implementation project(':lib-suggest')
-    implementation project(':lib-suggest-ya')
+    implementation project(':lib-suggest-go')
     implementation project(':lib-omnibox')
+    implementation project(':lib-webview')
 
     implementation "com.android.support:support-annotations:${supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile project(path: ':lib-suggest-go')
 }
