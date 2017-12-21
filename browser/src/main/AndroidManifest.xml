@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.munch.browser">
 
-    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -11,6 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Munch">
+
+        <meta-data
+            android:name="android.webkit.WebView.EnableSafeBrowsing"
+            android:value="true"/>
+
         <activity android:name=".view.MunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

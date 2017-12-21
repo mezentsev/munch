@@ -1,6 +1,7 @@
 package com.munch.browser.view;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,12 +23,13 @@ public class SuggestFragment extends Fragment {
 
     private static String TAG = "[MNCH:SuggestFragment]";
 
+    // TODO: 21.12.17 read from preferences
+    private static String SEARCH_ENGINE_URI = "https://google.com/search?q=";
+
     @NonNull
     private EditText mOmniboxView;
     @NonNull
     private SuggestContract.View mSuggestView;
-    @NonNull
-    private Context mContext;
 
     @NonNull
     public static SuggestFragment newInstance() {
@@ -42,8 +44,6 @@ public class SuggestFragment extends Fragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
-        mContext = context;
     }
 
     @Override
@@ -66,12 +66,26 @@ public class SuggestFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        KeyboardHelper.showKeyboard(mContext, mOmniboxView);
+        KeyboardHelper.showKeyboard(getContext(), mOmniboxView);
 
         mSuggestView.setReversed(true);
         mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
         mSuggestView.setSuggestClickListener(suggest -> {
-            Toast.makeText(mContext, "Selected: " + suggest.getTitle(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Selected: " + suggest.getTitle(), Toast.LENGTH_SHORT).show();
+
+            // TODO: 21.12.17 remake getUrl
+            Uri url = suggest.getUrl();
+            if (url == null) {
+                url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
+            }
+
+            WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
+
+            getFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.munch_main_container, webViewFragment)
+                    .commit();
         });
 
         mOmniboxView.addTextChangedListener(new TextWatcher() {

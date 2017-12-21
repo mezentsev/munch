@@ -34,6 +34,10 @@ public final class QueryInteractor implements SuggestInteractor {
             Suggest querySuggest;
 
             if (Patterns.WEB_URL.matcher(lowerQuery).matches()) {
+                if (!lowerQuery.matches("^\\w+?://.*")) {
+                    lowerQuery = "http://" + lowerQuery;
+                }
+
                 Log.d(TAG, "Created navigation suggest for: " + lowerQuery);
                 querySuggest = SuggestFactory.createNavigationSuggest(
                         lowerQuery,

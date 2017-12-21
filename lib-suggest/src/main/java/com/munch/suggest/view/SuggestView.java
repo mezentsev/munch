@@ -21,7 +21,7 @@ import com.munch.suggest.presenter.SuggestPresenter;
 import java.util.List;
 
 public class SuggestView extends LinearLayout implements SuggestContract.View {
-    private static final String TAG = SuggestView.class.getSimpleName();
+    private static final String TAG = "[MNCH:SuggestView]";
 
     @NonNull
     private final SuggestAdapter mSuggestAdapter;

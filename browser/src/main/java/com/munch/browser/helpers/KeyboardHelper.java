@@ -1,7 +1,6 @@
 package com.munch.browser.helpers;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -9,8 +8,8 @@ import android.view.inputmethod.InputMethodManager;
 public class KeyboardHelper {
     private static String TAG = "[MNCH:KeyboardHelper]";
 
-    public static void hideKeyboard(@NonNull Context context,
-                                    @NonNull View view) {
+    public static void hideKeyboard(Context context,
+                                    View view) {
         view.requestFocus();
         InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
@@ -20,8 +19,8 @@ public class KeyboardHelper {
         }
     }
 
-    public static void showKeyboard(@NonNull Context context,
-                                    @NonNull View view) {
+    public static void showKeyboard(Context context,
+                                    View view) {
         view.setFocusableInTouchMode(true);
         view.requestFocus();
         final InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
