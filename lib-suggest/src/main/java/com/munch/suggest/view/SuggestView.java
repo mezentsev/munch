@@ -21,7 +21,7 @@ import com.munch.suggest.presenter.SuggestPresenter;
 import java.util.List;
 
 public class SuggestView extends LinearLayout implements SuggestContract.View {
-    private static final String TAG = SuggestView.class.getSimpleName();
+    private static final String TAG = "[MNCH:SuggestView]";
 
     @NonNull
     private final SuggestAdapter mSuggestAdapter;
@@ -70,6 +70,20 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
         Log.d(TAG, "Candidate is: " + candidate);
         mSuggestAdapter.setSuggests(suggests);
         mRecyclerView.scrollToPosition(0);
+    }
+
+    /**
+     * Set reversed suggests list display.
+     *
+     * @param isReversed display reversed or not
+     */
+    @UiThread
+    @Override
+    public void setReversed(boolean isReversed) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setReverseLayout(isReversed);
+        linearLayoutManager.setStackFromEnd(isReversed);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
     }
 
     /**

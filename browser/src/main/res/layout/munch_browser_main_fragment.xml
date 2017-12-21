@@ -1,21 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MunchActivity">
+    tools:context=".view.MunchActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <com.munch.omnibox.view.OmniboxView
-        android:id="@+id/munch_omnibox_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        />
-
-    <com.munch.suggest.view.SuggestView
-        android:id="@+id/munch_suggest_view"
+    <com.munch.omnibox.view.StaticOmniboxView
+        android:id="@+id/munch_static_omnibox_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-</LinearLayout>
+</RelativeLayout>

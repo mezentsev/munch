@@ -9,21 +9,21 @@ import android.widget.LinearLayout;
 import com.munch.mvp.MvpView;
 import com.munch.omnibox.R;
 
-public final class OmniboxView
+public final class StaticOmniboxView
         extends LinearLayout implements MvpView {
-    public OmniboxView(@NonNull Context context) {
+    public StaticOmniboxView(@NonNull Context context) {
         this(context, null, 0);
     }
 
-    public OmniboxView(@NonNull Context context,
-                       @Nullable AttributeSet attrs) {
+    public StaticOmniboxView(@NonNull Context context,
+                             @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public OmniboxView(@NonNull Context context,
-                       @Nullable AttributeSet attrs,
-                       int defStyleAttr) {
+    public StaticOmniboxView(@NonNull Context context,
+                             @Nullable AttributeSet attrs,
+                             int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        inflate(getContext(), R.layout.munch_omnibox_view, this);
+        inflate(getContext(), R.layout.munch_static_omnibox_view, this);
     }
 }
