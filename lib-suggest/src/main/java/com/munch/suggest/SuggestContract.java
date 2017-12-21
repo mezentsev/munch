@@ -18,6 +18,9 @@ public interface SuggestContract extends MvpContract {
                          @Nullable List<Suggest> suggests);
 
         @UiThread
+        void setReversed(boolean isReversed);
+
+        @UiThread
         void setSuggestInteractor(@NonNull SuggestInteractor.Factory suggestInteractorFactory);
 
         @UiThread

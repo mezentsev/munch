@@ -1,4 +1,4 @@
-package com.munch.browser;
+package com.munch.browser.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,6 +8,8 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
+import com.munch.browser.BuildConfig;
+import com.munch.browser.R;
 import com.munch.browser.callbacks.StaticOmniboxCallback;
 
 public class MunchActivity extends FragmentActivity implements StaticOmniboxCallback {

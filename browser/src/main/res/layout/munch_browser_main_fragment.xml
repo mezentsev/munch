@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MunchActivity"
+    tools:context=".view.MunchActivity"
     android:focusable="true"
     android:focusableInTouchMode="true">
 

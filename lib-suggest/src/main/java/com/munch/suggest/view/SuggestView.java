@@ -73,6 +73,20 @@ public class SuggestView extends LinearLayout implements SuggestContract.View {
     }
 
     /**
+     * Set reversed suggests list display.
+     *
+     * @param isReversed display reversed or not
+     */
+    @UiThread
+    @Override
+    public void setReversed(boolean isReversed) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setReverseLayout(isReversed);
+        linearLayoutManager.setStackFromEnd(isReversed);
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+    }
+
+    /**
      * Set factory for Suggest Engine.
      *
      * @param suggestInteractorFactory suggest interactor factory
