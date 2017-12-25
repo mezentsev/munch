@@ -10,7 +10,7 @@ android:
   - platform-tools
   - tools
   - build-tools-26.0.2
-  - android-27
+  - android-26
 install:
 - chmod +x ./gradlew
 script: ./gradlew clean assembleRelease
@@ -33,9 +33,7 @@ before_deploy:
 deploy:
   provider: releases
   api_key: d8d7ad114dbecf96060badfdd14bb85df4a071fd
-  # replace your-apk-name
   file: "$HOME/munch-release.apk"
   skip_cleanup: true
   on:
-    tags: false
-    all_branches: true
+    tags: true
