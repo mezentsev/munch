@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 26
     defaultConfig {
         applicationId "com.munch.browser"
         minSdkVersion 16
-        targetSdkVersion 27
+        targetSdkVersion 26
         multiDexEnabled false
 
         javaCompileOptions {

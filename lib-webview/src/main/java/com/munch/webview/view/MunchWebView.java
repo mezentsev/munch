@@ -5,12 +5,14 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
@@ -22,7 +24,8 @@ import android.widget.ProgressBar;
 final class MunchWebView extends WebView {
 
     private static final String TAG = "[MNCH:MunchWebView]";
-    private static final String NO_DATA = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>MUNCH GENERAL ERROR! >:O</p>";
+    private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
+    private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
 
     @Nullable
     private ProgressBar mProgressBar;
@@ -42,30 +45,43 @@ final class MunchWebView extends WebView {
         super(context, attrs, defStyleAttr);
     }
 
+    @Override
+    public void loadUrl(String url) {
+        super.loadUrl(prepareUrl(url));
+    }
+
+    /**
+     * Need to init firstly.
+     *
+     * @param progressBar progressBar view
+     */
     @SuppressLint("SetJavaScriptEnabled")
     public void init(@NonNull ProgressBar progressBar) {
+        setSaveEnabled(true);
+
         mProgressBar = progressBar;
 
         WebSettings webSettings = getSettings();
-        webSettings.setJavaScriptEnabled(true);
 
         // Other webview options
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setAppCacheEnabled(true);
-        webSettings.setBlockNetworkImage(true);
+        webSettings.setBlockNetworkImage(false);
         webSettings.setLoadsImagesAutomatically(true);
         webSettings.setGeolocationEnabled(false);
         webSettings.setNeedInitialFocus(false);
         webSettings.setSaveFormData(true);
-        //webSettings.setLoadWithOverviewMode(true);
-        //webSettings.setUseWideViewPort(true);
-        //webSettings.setBuiltInZoomControls(true);
-        //setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        //setScrollbarFadingEnabled(false);
+        webSettings.setAllowFileAccess(false);
+        webSettings.setBuiltInZoomControls(false);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setLoadWithOverviewMode(true);
+        webSettings.setAllowUniversalAccessFromFileURLs(true);
 
         setWebChromeClient(
                 new WebChromeClient() {
+                    @Override
                     public void onProgressChanged(WebView view,
                                                   int progress) {
                         mProgressBar.setProgress(progress);
@@ -91,6 +107,13 @@ final class MunchWebView extends WebView {
 
                 view.loadUrl(url);
                 return true;
+            }
+
+            @Override
+            public void onReceivedSslError(WebView view,
+                                           SslErrorHandler handler,
+                                           SslError error) {
+                handler.proceed(); // Ignore SSL certificate errors
             }
 
             @Override
@@ -127,9 +150,25 @@ final class MunchWebView extends WebView {
                                      String description,
                                      Uri uri) {
                 Log.e(TAG, "Error: " + errorCode + "; " + uri + "; " + description);
-                String text = "<html><body>" + "<p align=\"justify\">NO DATA</p>" + "</body></html>";
-                view.loadData(NO_DATA, "text/html", "utf-8");
+                view.loadData(String.format(ERROR_WITH_DESCRIPTION, description), "text/html", "utf-8");
             }
         });
+    }
+
+    /**
+     * Normalizing url with http and lowecasing.
+     *
+     * @param url
+     * @return normalized url
+     */
+    @NonNull
+    private String prepareUrl(@NonNull String url) {
+        String lowerUrl = url.toLowerCase();
+
+        if (!lowerUrl.matches("^\\w+?://.*")) {
+            lowerUrl = "http://" + lowerUrl;
+        }
+
+        return lowerUrl;
     }
 }
