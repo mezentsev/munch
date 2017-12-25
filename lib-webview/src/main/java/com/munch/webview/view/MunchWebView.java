@@ -68,7 +68,6 @@ final class MunchWebView extends WebView {
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
         webSettings.setAppCacheEnabled(true);
         webSettings.setBlockNetworkImage(false);
-        webSettings.setLoadsImagesAutomatically(true);
         webSettings.setGeolocationEnabled(false);
         webSettings.setNeedInitialFocus(false);
         webSettings.setSaveFormData(true);
@@ -95,6 +94,7 @@ final class MunchWebView extends WebView {
             public void onPageStarted(WebView view,
                                       String url,
                                       Bitmap favicon) {
+                webSettings.setLoadsImagesAutomatically(false);
                 super.onPageStarted(view, url, favicon);
                 mProgressBar.setVisibility(View.VISIBLE);
                 Log.d(TAG, "Loading started");
@@ -119,6 +119,7 @@ final class MunchWebView extends WebView {
             @Override
             public void onPageFinished(WebView view,
                                        String url) {
+                webSettings.setLoadsImagesAutomatically(true);
                 mProgressBar.setVisibility(View.GONE);
                 Log.d(TAG, "Loading finished");
             }
