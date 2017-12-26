@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -20,6 +19,10 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+
+import java.lang.reflect.Method;
+
+import static android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW;
 
 final class MunchWebView extends WebView {
 
@@ -74,6 +77,7 @@ final class MunchWebView extends WebView {
         webSettings.setAllowFileAccess(false);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
         webSettings.setDatabaseEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
@@ -90,12 +94,17 @@ final class MunchWebView extends WebView {
         );
 
         setWebViewClient(new WebViewClient() {
+            private int mOnLoadResourceCount = 0;
+
             @Override
             public void onPageStarted(WebView view,
                                       String url,
                                       Bitmap favicon) {
                 webSettings.setLoadsImagesAutomatically(false);
+                mOnLoadResourceCount = 0;
+
                 super.onPageStarted(view, url, favicon);
+
                 mProgressBar.setVisibility(View.VISIBLE);
                 Log.d(TAG, "Loading started");
             }
@@ -110,10 +119,26 @@ final class MunchWebView extends WebView {
             }
 
             @Override
-            public void onReceivedSslError(WebView view,
-                                           SslErrorHandler handler,
-                                           SslError error) {
-                handler.proceed(); // Ignore SSL certificate errors
+            public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
+                String message = "SSL Certificate error.";
+                switch (error.getPrimaryError()) {
+                    case SslError.SSL_UNTRUSTED:
+                        message = "The certificate authority is not trusted.";
+                        break;
+                    case SslError.SSL_EXPIRED:
+                        message = "The certificate has expired.";
+                        break;
+                    case SslError.SSL_IDMISMATCH:
+                        message = "The certificate Hostname mismatch.";
+                        break;
+                    case SslError.SSL_NOTYETVALID:
+                        message = "The certificate is not yet valid.";
+                        break;
+                }
+                message += "\"SSL Certificate Error\" Do you want to continue anyway?.. YES";
+
+                Log.e(TAG, message);
+                handler.proceed();
             }
 
             @Override
@@ -125,14 +150,19 @@ final class MunchWebView extends WebView {
             }
 
             @Override
+            public void onLoadResource(WebView view, String url) {
+                super.onLoadResource(view, url);
+                mOnLoadResourceCount++;
+            }
+
+            @Override
             @TargetApi(Build.VERSION_CODES.M)
             public void onReceivedError(WebView view,
                                         WebResourceRequest request,
                                         WebResourceError error) {
                 super.onReceivedError(view, request, error);
 
-                Uri uri = request.getUrl();
-                handleError(view, error.getErrorCode(), error.getDescription().toString(), uri);
+                handleError(view, error.getErrorCode(), error.getDescription().toString(), request.getUrl().toString());
             }
 
             @SuppressWarnings("deprecation")
@@ -142,16 +172,18 @@ final class MunchWebView extends WebView {
                                         String failingUrl) {
                 super.onReceivedError(view, errorCode, description, failingUrl);
 
-                Uri uri = Uri.parse(failingUrl);
-                handleError(view, errorCode, description, uri);
+                handleError(view, errorCode, description, failingUrl);
             }
 
             private void handleError(@NonNull WebView view,
                                      int errorCode,
                                      String description,
-                                     Uri uri) {
+                                     String uri) {
                 Log.e(TAG, "Error: " + errorCode + "; " + uri + "; " + description);
-                view.loadData(String.format(ERROR_WITH_DESCRIPTION, description), "text/html", "utf-8");
+                if (mOnLoadResourceCount <= 1) {
+                    Log.d(TAG, "Internet connection error");
+                    view.loadData(String.format(ERROR_WITH_DESCRIPTION, description), "text/html", "utf-8");
+                }
             }
         });
     }
