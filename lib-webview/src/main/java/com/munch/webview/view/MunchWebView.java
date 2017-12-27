@@ -20,32 +20,33 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import java.lang.reflect.Method;
-
-import static android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW;
+import java.io.File;
 
 final class MunchWebView extends WebView {
 
     private static final String TAG = "[MNCH:MunchWebView]";
     private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
+    @NonNull
+    private final Context mContext;
 
     @Nullable
     private ProgressBar mProgressBar;
 
-    public MunchWebView(Context context) {
+    public MunchWebView(@NonNull Context context) {
         this(context, null, 0);
     }
 
-    public MunchWebView(Context context,
-                        AttributeSet attrs) {
+    public MunchWebView(@NonNull Context context,
+                        @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MunchWebView(Context context,
-                        AttributeSet attrs,
+    public MunchWebView(@NonNull Context context,
+                        @Nullable AttributeSet attrs,
                         int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
     }
 
     @Override
@@ -66,10 +67,9 @@ final class MunchWebView extends WebView {
 
         WebSettings webSettings = getSettings();
 
-        // Other webview options
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        webSettings.setAppCacheEnabled(true);
+
         webSettings.setBlockNetworkImage(false);
         webSettings.setGeolocationEnabled(false);
         webSettings.setNeedInitialFocus(false);
@@ -77,10 +77,11 @@ final class MunchWebView extends WebView {
         webSettings.setAllowFileAccess(false);
         webSettings.setBuiltInZoomControls(false);
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setDomStorageEnabled(true);
         webSettings.setDatabaseEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+
+        //enableAppCache();
 
         setWebChromeClient(
                 new WebChromeClient() {
@@ -120,7 +121,7 @@ final class MunchWebView extends WebView {
 
             @Override
             public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
-                String message = "SSL Certificate error.";
+                String message = "SSL Certificate error." + error.getPrimaryError();
                 switch (error.getPrimaryError()) {
                     case SslError.SSL_UNTRUSTED:
                         message = "The certificate authority is not trusted.";
@@ -135,7 +136,7 @@ final class MunchWebView extends WebView {
                         message = "The certificate is not yet valid.";
                         break;
                 }
-                message += "\"SSL Certificate Error\" Do you want to continue anyway?.. YES";
+                message += " \"SSL Certificate Error\" Do you want to continue anyway?.. YES";
 
                 Log.e(TAG, message);
                 handler.proceed();
@@ -203,5 +204,29 @@ final class MunchWebView extends WebView {
         }
 
         return lowerUrl;
+    }
+
+    /**
+     * Enable caching.
+     * TODO: http://tutorials.jenkov.com/android/android-web-apps-using-android-webview.html#caching-web-resources-in-the-android-device
+     */
+    private void enableAppCache() {
+        WebSettings webSettings = getSettings();
+
+        webSettings.setDomStorageEnabled(true);
+
+        // Set cache size to 8 mb by default. should be more than enough
+        webSettings.setAppCacheMaxSize(1024*1024*8);
+
+        File dir = mContext.getCacheDir();
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        webSettings.setAppCachePath(dir.getPath());
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAppCacheEnabled(true);
+
+        webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
     }
 }
