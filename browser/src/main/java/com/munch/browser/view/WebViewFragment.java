@@ -59,7 +59,7 @@ public class WebViewFragment extends Fragment {
             mUrl = arguments.getString(URI_KEY);
         }
 
-        mMunchWebLayout.getWebView().loadUrl(mUrl);
+        mMunchWebLayout.getWebView().openUrl(mUrl);
     }
 
     @Override
