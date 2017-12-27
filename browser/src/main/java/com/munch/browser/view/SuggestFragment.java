@@ -8,16 +8,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
 import com.munch.suggest.SuggestContract;
+import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.GoSuggestInteractor;
+import com.munch.suggest.model.Suggest;
+import com.munch.suggest.model.SuggestFactory;
 
 public class SuggestFragment extends Fragment {
 
@@ -70,23 +76,7 @@ public class SuggestFragment extends Fragment {
 
         mSuggestView.setReversed(true);
         mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
-        mSuggestView.setSuggestClickListener(suggest -> {
-            Toast.makeText(getContext(), "Selected: " + suggest.getTitle(), Toast.LENGTH_SHORT).show();
-
-            // TODO: 21.12.17 remake getUrl
-            Uri url = suggest.getUrl();
-            if (url == null) {
-                url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
-            }
-
-            WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-
-            getFragmentManager()
-                    .beginTransaction()
-                    .addToBackStack(null)
-                    .replace(R.id.munch_main_container, webViewFragment)
-                    .commit();
-        });
+        mSuggestView.setSuggestClickListener(this::openUrl);
 
         mOmniboxView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -103,5 +93,31 @@ public class SuggestFragment extends Fragment {
             public void afterTextChanged(Editable editable) {
             }
         });
+
+        mOmniboxView.setOnEditorActionListener((v, actionId, event) -> {
+            Log.d(TAG, "" + actionId);
+            if (actionId != 0 || event.getAction() == KeyEvent.ACTION_DOWN) {
+                openUrl(SuggestFactory.createTextSuggest(mOmniboxView.getText().toString()));
+            }
+
+            return false;
+        });
+    }
+
+    private void openUrl(@NonNull Suggest suggest) {
+        Log.d(TAG, "Selected: " + suggest.getTitle());
+
+        Uri url = suggest.getUrl();
+        if (url == null) {
+            url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
+        }
+
+        WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
+
+        getFragmentManager()
+                .beginTransaction()
+                .addToBackStack(null)
+                .replace(R.id.munch_main_container, webViewFragment)
+                .commit();
     }
 }

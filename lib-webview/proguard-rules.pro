@@ -21,3 +21,6 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class com.munch.** { public *; }
+-keepclassmembers class fqcn.of.javascript.interface.for.webview {
+   public *;
+}

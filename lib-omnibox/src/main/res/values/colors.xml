@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="munch_omnibox_view_corner_color">#efefef</color>
+    <color name="munch_omnibox_border_color">#32000000</color>
 </resources>
