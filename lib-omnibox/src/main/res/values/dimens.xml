@@ -2,6 +2,7 @@
 <resources>
     <dimen name="munch_omnibox_view_corner_radius">10dp</dimen>
     <dimen name="munch_omnibox_height">100dp</dimen>
-    <dimen name="munch_omnibox_margin">10dp</dimen>
-    <dimen name="munch_omnibox_edit_padding">15dp</dimen>
+    <dimen name="munch_omnibox_static_margin">10dp</dimen>
+    <dimen name="munch_omnibox_margin">0dp</dimen>
+    <dimen name="munch_omnibox_padding">15dp</dimen>
 </resources>
