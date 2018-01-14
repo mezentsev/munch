@@ -1,4 +1,4 @@
-package com.munch.webview.presenter;
+package com.munch.webview;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -19,10 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.munch.webview.MunchWebContract;
-import com.munch.webview.view.MunchWebView;
-
-public final class MunchWebPresenter implements MunchWebContract.Presenter {
+final class MunchWebPresenter implements MunchWebContract.Presenter {
 
     private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
@@ -36,7 +33,7 @@ public final class MunchWebPresenter implements MunchWebContract.Presenter {
     @Nullable
     private MunchWebView mWebView;
 
-    public MunchWebPresenter(@NonNull Context context) {
+    MunchWebPresenter(@NonNull Context context) {
         mContext = context;
     }
 

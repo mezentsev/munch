@@ -1,4 +1,4 @@
-package com.munch.browser.view;
+package com.munch.browser;
 
 import android.content.Context;
 import android.net.Uri;
@@ -14,13 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
 import com.munch.suggest.SuggestContract;
-import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;

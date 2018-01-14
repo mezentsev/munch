@@ -1,4 +1,4 @@
-package com.munch.suggest.presenter;
+package com.munch.suggest;
 
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -22,7 +22,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.BiFunction;
 import io.reactivex.schedulers.Schedulers;
 
-public class SuggestPresenter implements SuggestContract.Presenter {
+class SuggestPresenter implements SuggestContract.Presenter {
     private static final String TAG = "[MNCH:SuggestPresenter]";
 
     @NonNull

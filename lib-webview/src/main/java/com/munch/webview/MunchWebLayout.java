@@ -1,4 +1,4 @@
-package com.munch.webview.view;
+package com.munch.webview;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

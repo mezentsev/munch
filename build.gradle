@@ -26,6 +26,10 @@ project.ext {
     rxJavaVersion = "2.1.5"
     retrofitVersion = "2.3.0"
     gsonVersion = "2.7"
+    roomVersion = "1.0.0"
+    daggerVersion = '2.13'
+    mockitoVersion = '1.10.19'
+    powerMockito = '1.6.2'
 }
 
 task clean(type: Delete) {

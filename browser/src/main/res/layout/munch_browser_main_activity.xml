@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".view.MunchActivity">
+    tools:context=".MunchActivity">
 
     <FrameLayout
         android:id="@+id/munch_main_container"

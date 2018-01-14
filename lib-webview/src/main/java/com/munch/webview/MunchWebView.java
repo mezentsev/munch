@@ -1,4 +1,4 @@
-package com.munch.webview.view;
+package com.munch.webview;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.munch.webview.MunchWebContract;
-import com.munch.webview.presenter.MunchWebPresenter;
+import com.munch.webview.MunchWebPresenter;
 
 import java.io.File;
 

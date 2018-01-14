@@ -26,7 +26,7 @@ android {
         }
 
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -51,4 +51,11 @@ dependencies {
     implementation "com.android.support:support-annotations:${supportLibVersion}"
     implementation "com.android.support:appcompat-v7:${supportLibVersion}"
     implementation "com.android.support:recyclerview-v7:${supportLibVersion}"
+
+    // Dagger dependencies
+    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${daggerVersion}"
+    annotationProcessor "com.google.dagger:dagger-android-processor:${daggerVersion}"
 }

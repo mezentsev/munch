@@ -1,4 +1,4 @@
-package com.munch.browser.view;
+package com.munch.browser;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.munch.browser.R;
 import com.munch.browser.callbacks.StaticOmniboxCallback;
 
 public class MainFragment extends Fragment {

@@ -1,4 +1,4 @@
-package com.munch.suggest.view;
+package com.munch.suggest;
 
 interface ItemClickListener {
     /**

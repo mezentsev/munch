@@ -19,7 +19,7 @@
             android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true"/>
 
-        <activity android:name=".view.MunchActivity">
+        <activity android:name=".MunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

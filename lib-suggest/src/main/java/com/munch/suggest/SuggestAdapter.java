@@ -1,4 +1,4 @@
-package com.munch.suggest.view;
+package com.munch.suggest;
 
 import android.content.Context;
 import android.net.Uri;
@@ -11,13 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.munch.suggest.R;
 import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 
 import java.util.List;
 
-public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder>
+final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder>
         implements ItemClickListener {
     private final static String TAG = SuggestAdapter.class.getSimpleName();
 
