@@ -1,15 +1,19 @@
-package com.munch.browser;
+package com.munch.browser.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
+import com.munch.browser.R;
 import com.munch.browser.callbacks.StaticOmniboxCallback;
 
-public class MunchActivity extends FragmentActivity implements StaticOmniboxCallback {
+import dagger.android.support.DaggerAppCompatActivity;
+
+public class MainActivity extends DaggerAppCompatActivity
+        implements StaticOmniboxCallback {
+
     @NonNull
     private FragmentManager mFragmentManager;
     @Nullable

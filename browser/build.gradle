@@ -54,8 +54,7 @@ dependencies {
 
     // Dagger dependencies
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-    implementation "com.google.dagger:dagger:${daggerVersion}"
-    implementation "com.google.dagger:dagger-android:${daggerVersion}"
-    implementation "com.google.dagger:dagger-android-support:${daggerVersion}"
+    compile "com.google.dagger:dagger:${daggerVersion}"
+    compile "com.google.dagger:dagger-android-support:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-android-processor:${daggerVersion}"
 }

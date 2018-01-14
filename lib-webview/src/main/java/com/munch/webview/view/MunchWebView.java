@@ -1,4 +1,4 @@
-package com.munch.webview;
+package com.munch.webview.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,9 +10,10 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.munch.webview.MunchWebContract;
-import com.munch.webview.MunchWebPresenter;
 
 import java.io.File;
+
+import javax.inject.Inject;
 
 public final class MunchWebView extends WebView implements MunchWebContract.View {
 
@@ -20,9 +21,10 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     @NonNull
     private final Context mContext;
     @Nullable
-    private MunchWebContract.Presenter mWebPresenter;
-    @Nullable
     private ProgressBar mProgressBar;
+
+    @Inject
+    MunchWebContract.Presenter mWebPresenter;
 
     public MunchWebView(@NonNull Context context) {
         this(context, null, 0);
@@ -39,20 +41,13 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
         super(context, attrs, defStyleAttr);
         setSaveEnabled(true);
         mContext = context;
-
-        if (mWebPresenter == null) {
-            mWebPresenter = new MunchWebPresenter(context);
-            mWebPresenter.onCreate();
-        }
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (mWebPresenter != null) {
-            mWebPresenter.setProgressBar(mProgressBar);
-            mWebPresenter.attachView(this);
-        }
+        mWebPresenter.setProgressBar(mProgressBar);
+        mWebPresenter.attachView(this);
 
         Log.d(TAG, "onAttachedToWindow");
     }
@@ -60,9 +55,7 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        if (mWebPresenter != null) {
-            mWebPresenter.detachView();
-        }
+        mWebPresenter.detachView();
 
         Log.d(TAG, "onDetachedFromWindow");
     }
@@ -70,31 +63,22 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     @Override
     public void setProgressBar(@Nullable ProgressBar progressBar) {
         mProgressBar = progressBar;
-
-        if (mWebPresenter != null) {
-            mWebPresenter.setProgressBar(mProgressBar);
-        }
+        mWebPresenter.setProgressBar(mProgressBar);
     }
 
     @Override
     public void openUrl(@NonNull String url) {
-        if (mWebPresenter != null) {
-            mWebPresenter.openUrl(url);
-        }
+        mWebPresenter.openUrl(url);
     }
 
     @Override
     public void prev() {
-        if (mWebPresenter != null) {
-            mWebPresenter.prev();
-        }
+        mWebPresenter.prev();
     }
 
     @Override
     public void next() {
-        if (mWebPresenter != null) {
-            mWebPresenter.next();
-        }
+        mWebPresenter.next();
     }
 
     /**

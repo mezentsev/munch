@@ -6,9 +6,9 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context=".MunchActivity">
+    tools:context=".main.MainActivity">
 
-    <com.munch.suggest.SuggestView
+    <com.munch.suggest.view.SuggestView
         android:id="@+id/munch_suggest_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

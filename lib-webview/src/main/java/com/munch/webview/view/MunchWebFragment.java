@@ -1,18 +1,19 @@
-package com.munch.browser;
+package com.munch.webview.view;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.munch.webview.MunchWebLayout;
+import com.munch.webview.R;
 
-public class WebViewFragment extends Fragment {
+import dagger.android.support.DaggerFragment;
+
+public class MunchWebFragment extends DaggerFragment {
 
     private static final String URI_KEY = "URI";
 
@@ -22,8 +23,8 @@ public class WebViewFragment extends Fragment {
     private String mUrl;
 
     @NonNull
-    public static WebViewFragment newInstance(@NonNull Uri url) {
-        WebViewFragment f = new WebViewFragment();
+    public static MunchWebFragment newInstance(@NonNull Uri url) {
+        MunchWebFragment f = new MunchWebFragment();
 
         Bundle args = new Bundle();
         args.putString(URI_KEY, url.toString());

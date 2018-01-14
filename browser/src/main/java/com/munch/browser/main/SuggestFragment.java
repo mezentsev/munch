@@ -1,11 +1,10 @@
-package com.munch.browser;
+package com.munch.browser.main;
 
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -15,13 +14,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;
+import com.munch.webview.view.MunchWebFragment;
 
-public class SuggestFragment extends Fragment {
+import dagger.android.support.DaggerFragment;
+
+public class SuggestFragment extends DaggerFragment {
 
     private static String TAG = "[MNCH:SuggestFragment]";
 
@@ -108,12 +111,12 @@ public class SuggestFragment extends Fragment {
             url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
         }
 
-        WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
+        MunchWebFragment munchWebFragment = MunchWebFragment.newInstance(url);
 
         getFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.munch_main_container, webViewFragment)
+                .replace(R.id.munch_main_container, munchWebFragment)
                 .commit();
     }
 }

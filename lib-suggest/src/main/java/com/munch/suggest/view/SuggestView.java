@@ -1,4 +1,4 @@
-package com.munch.suggest;
+package com.munch.suggest.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,9 +11,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.munch.suggest.R;
+import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
+import com.munch.suggest.presentation.SuggestPresenter;
 
 import java.util.List;
 

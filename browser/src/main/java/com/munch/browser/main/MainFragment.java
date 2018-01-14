@@ -1,17 +1,20 @@
-package com.munch.browser;
+package com.munch.browser.main;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.munch.browser.R;
 import com.munch.browser.callbacks.StaticOmniboxCallback;
+import com.munch.browser.di.ActivityScoped;
 
-public class MainFragment extends Fragment {
+import dagger.android.support.DaggerFragment;
+
+public class MainFragment extends DaggerFragment {
 
     @NonNull
     public static MainFragment newInstance() {
