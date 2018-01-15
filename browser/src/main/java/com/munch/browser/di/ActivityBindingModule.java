@@ -2,6 +2,9 @@ package com.munch.browser.di;
 
 import com.munch.browser.main.MainActivityModule;
 import com.munch.browser.main.MainActivity;
+import com.munch.browser.suggest.SuggestActivity;
+import com.munch.browser.suggest.SuggestActivityModule;
+import com.munch.mvp.ActivityScoped;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -22,4 +25,8 @@ public abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = MainActivityModule.class)
     abstract MainActivity munchActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = SuggestActivityModule.class)
+    abstract SuggestActivity suggestActivity();
 }

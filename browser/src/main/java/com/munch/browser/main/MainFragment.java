@@ -1,42 +1,36 @@
 package com.munch.browser.main;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.munch.browser.R;
-import com.munch.browser.callbacks.StaticOmniboxCallback;
-import com.munch.browser.di.ActivityScoped;
+import com.munch.browser.callbacks.StaticOmniboxListener;
+import com.munch.browser.suggest.SuggestActivity;
+
+import javax.annotation.Nonnull;
+import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
 public class MainFragment extends DaggerFragment {
+    private static final String TAG = "[MNCH:MainFragment]";
 
-    @NonNull
-    public static MainFragment newInstance() {
-        MainFragment f = new MainFragment();
+    @Nonnull
+    private StaticOmniboxListener mOnClickCallback = () -> {
+        Log.d(TAG, "onOmniboxClick");
+        Intent intent = new Intent(getContext(), SuggestActivity.class);
+        startActivity(intent);
+    };
 
-        Bundle args = new Bundle();
-        f.setArguments(args);
+    @Inject
+    public MainFragment() {
 
-        return f;
-    }
-
-    @Nullable
-    private StaticOmniboxCallback mOnClickCallback;
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            mOnClickCallback = (StaticOmniboxCallback) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement StaticOmniboxCallback");
-        }
     }
 
     @NonNull
@@ -47,17 +41,9 @@ public class MainFragment extends DaggerFragment {
         View view = inflater.inflate(R.layout.munch_browser_main_fragment, container, false);
         View staticView = view.findViewById(R.id.munch_static_omnibox_view);
         staticView.setOnClickListener(v -> {
-            if (mOnClickCallback != null) {
-                mOnClickCallback.onStaticOmniboxClick();
-            }
+            mOnClickCallback.onOmniboxClick();
         });
 
         return view;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mOnClickCallback = null;
     }
 }

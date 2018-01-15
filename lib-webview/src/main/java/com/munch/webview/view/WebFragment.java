@@ -13,18 +13,18 @@ import com.munch.webview.R;
 
 import dagger.android.support.DaggerFragment;
 
-public class MunchWebFragment extends DaggerFragment {
+public class WebFragment extends DaggerFragment {
 
     private static final String URI_KEY = "URI";
 
     @NonNull
-    private MunchWebLayout mMunchWebLayout;
+    private WebLayout mWebLayout;
     @Nullable
     private String mUrl;
 
     @NonNull
-    public static MunchWebFragment newInstance(@NonNull Uri url) {
-        MunchWebFragment f = new MunchWebFragment();
+    public static WebFragment newInstance(@NonNull Uri url) {
+        WebFragment f = new WebFragment();
 
         Bundle args = new Bundle();
         args.putString(URI_KEY, url.toString());
@@ -45,7 +45,7 @@ public class MunchWebFragment extends DaggerFragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.munch_browser_webview, container, false);
 
-        mMunchWebLayout = view.findViewById(R.id.munch_browser_webview);
+        mWebLayout = view.findViewById(R.id.munch_browser_webview);
 
         return view;
     }
@@ -59,7 +59,7 @@ public class MunchWebFragment extends DaggerFragment {
             mUrl = arguments.getString(URI_KEY);
         }
 
-        mMunchWebLayout.getWebView().openUrl(mUrl);
+        mWebLayout.getWebView().openUrl(mUrl);
     }
 
     @Override

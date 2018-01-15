@@ -7,30 +7,30 @@ import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.munch.webview.MunchWebContract;
+import com.munch.webview.WebContract;
 import com.munch.webview.R;
 
-public final class MunchWebLayout extends LinearLayout {
+public final class WebLayout extends LinearLayout {
 
     private static final String TAG = "[MNCH:MunchWebLayout]";
 
     @NonNull
-    private MunchWebContract.View mMunchWebView;
+    private WebContract.View mMunchWebView;
     @NonNull
     private ProgressBar mProgressBar;
 
-    public MunchWebLayout(@NonNull Context context) {
+    public WebLayout(@NonNull Context context) {
         this(context, null, 0);
     }
 
-    public MunchWebLayout(@NonNull Context context,
-                          @Nullable AttributeSet attrs) {
+    public WebLayout(@NonNull Context context,
+                     @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MunchWebLayout(@NonNull Context context,
-                          @Nullable AttributeSet attrs,
-                          int defStyleAttr) {
+    public WebLayout(@NonNull Context context,
+                     @Nullable AttributeSet attrs,
+                     int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setOrientation(VERTICAL);
 
@@ -45,7 +45,7 @@ public final class MunchWebLayout extends LinearLayout {
     }
 
     @NonNull
-    public MunchWebContract.View getWebView() {
+    public WebContract.View getWebView() {
         return mMunchWebView;
     }
 }

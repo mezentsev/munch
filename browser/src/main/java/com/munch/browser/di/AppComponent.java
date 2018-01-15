@@ -21,7 +21,8 @@ import dagger.android.support.AndroidSupportInjectionModule;
  * // and location of subcomponents.
  */
 @Singleton
-@Component(modules = {ApplicationModule.class,
+@Component(modules = {
+        ApplicationModule.class,
         ActivityBindingModule.class,
         AndroidSupportInjectionModule.class})
 public interface AppComponent extends AndroidInjector<MunchApplication> {

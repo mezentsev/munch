@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center">
 
-    <com.munch.webview.view.MunchWebLayout
+    <com.munch.webview.view.WebLayout
         android:id="@+id/munch_browser_webview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>

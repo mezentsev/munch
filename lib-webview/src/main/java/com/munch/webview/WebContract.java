@@ -6,7 +6,7 @@ import android.widget.ProgressBar;
 
 import com.munch.mvp.MvpContract;
 
-public interface MunchWebContract extends MvpContract {
+public interface WebContract extends MvpContract {
     interface View extends MvpContract.View {
         void setProgressBar(@Nullable ProgressBar progressBar);
 

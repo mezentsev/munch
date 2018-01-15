@@ -19,12 +19,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.munch.webview.MunchWebContract;
-import com.munch.webview.view.MunchWebView;
+import com.munch.webview.WebContract;
 
 import javax.inject.Inject;
 
-public final class MunchWebPresenter implements MunchWebContract.Presenter {
+public final class WebPresenter implements WebContract.Presenter {
 
     private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
@@ -36,10 +35,10 @@ public final class MunchWebPresenter implements MunchWebContract.Presenter {
     private ProgressBar mProgressBar;
 
     @Nullable
-    private MunchWebView mWebView;
+    private WebView mWebView;
 
     @Inject
-    MunchWebPresenter(@NonNull Context context) {
+    WebPresenter(@NonNull Context context) {
         mContext = context;
     }
 
@@ -79,8 +78,8 @@ public final class MunchWebPresenter implements MunchWebContract.Presenter {
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
-    public void attachView(@NonNull MunchWebContract.View view) {
-        mWebView = (MunchWebView) view;
+    public void attachView(@NonNull WebContract.View view) {
+        mWebView = (WebView) view;
 
         WebSettings webSettings = mWebView.getSettings();
 

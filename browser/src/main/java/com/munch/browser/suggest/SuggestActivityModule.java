@@ -1,4 +1,4 @@
-package com.munch.browser.main;
+package com.munch.browser.suggest;
 
 import com.munch.mvp.FragmentScoped;
 
@@ -6,8 +6,8 @@ import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
 
 @Module
-public abstract class MainActivityModule {
+public abstract class SuggestActivityModule {
     @FragmentScoped
     @ContributesAndroidInjector
-    abstract MainFragment mainFragment();
+    abstract SuggestFragment suggestFragment();
 }

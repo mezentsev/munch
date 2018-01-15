@@ -1,4 +1,4 @@
-package com.munch.browser.di;
+package com.munch.mvp;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

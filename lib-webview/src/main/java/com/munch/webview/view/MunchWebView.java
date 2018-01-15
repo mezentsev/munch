@@ -9,13 +9,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
 
-import com.munch.webview.MunchWebContract;
+import com.munch.webview.WebContract;
 
 import java.io.File;
 
 import javax.inject.Inject;
 
-public final class MunchWebView extends WebView implements MunchWebContract.View {
+public final class MunchWebView extends WebView implements WebContract.View {
 
     private static final String TAG = "[MNCH:MunchWebView]";
     @NonNull
@@ -24,7 +24,7 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     private ProgressBar mProgressBar;
 
     @Inject
-    MunchWebContract.Presenter mWebPresenter;
+    WebContract.Presenter mWebPresenter;
 
     public MunchWebView(@NonNull Context context) {
         this(context, null, 0);

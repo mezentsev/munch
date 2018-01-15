@@ -1,4 +1,4 @@
-package com.munch.browser.main;
+package com.munch.browser.suggest;
 
 import android.content.Context;
 import android.net.Uri;
@@ -20,7 +20,8 @@ import com.munch.suggest.SuggestContract;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;
-import com.munch.webview.view.MunchWebFragment;
+
+import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
@@ -36,14 +37,12 @@ public class SuggestFragment extends DaggerFragment {
     @NonNull
     private SuggestContract.View mSuggestView;
 
-    @NonNull
-    public static SuggestFragment newInstance() {
-        SuggestFragment f = new SuggestFragment();
+    @Inject
+    Context mContext;
 
-        Bundle args = new Bundle();
-        f.setArguments(args);
+    @Inject
+    public SuggestFragment() {
 
-        return f;
     }
 
     @Override
@@ -71,7 +70,7 @@ public class SuggestFragment extends DaggerFragment {
     @Override
     public void onStart() {
         super.onStart();
-        KeyboardHelper.showKeyboard(getContext(), mOmniboxView);
+        KeyboardHelper.showKeyboard(mContext, mOmniboxView);
 
         mSuggestView.setReversed(true);
         mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
@@ -111,12 +110,14 @@ public class SuggestFragment extends DaggerFragment {
             url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
         }
 
-        MunchWebFragment munchWebFragment = MunchWebFragment.newInstance(url);
+        // TODO: 15.01.18 start Activity
+        /*ebFragment munchWebFragment = WebFragment.newInstance(url);
 
         getFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
                 .replace(R.id.munch_main_container, munchWebFragment)
                 .commit();
+                */
     }
 }
