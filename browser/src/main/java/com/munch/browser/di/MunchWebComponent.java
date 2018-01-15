@@ -1,11 +1,14 @@
 package com.munch.browser.di;
 
+import com.munch.browser.web.WebActivityModule;
 import com.munch.mvp.ActivityScoped;
-import com.munch.webview.di.WebModule;
 
 import dagger.Component;
 
 @ActivityScoped
-@Component(dependencies = AppComponent.class, modules = WebModule.class)
+@Component(dependencies = AppComponent.class,
+        modules = {
+                WebActivityModule.class
+        })
 public interface MunchWebComponent {
 }

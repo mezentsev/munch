@@ -28,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".suggest.SuggestActivity"/>
+        <activity android:name=".web.WebActivity"/>
     </application>
 
 </manifest>

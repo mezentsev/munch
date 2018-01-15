@@ -6,11 +6,12 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.munch.webview.WebContract;
 import com.munch.webview.R;
 
-public final class WebLayout extends LinearLayout {
+public final class WebLayout extends RelativeLayout {
 
     private static final String TAG = "[MNCH:MunchWebLayout]";
 
@@ -32,7 +33,6 @@ public final class WebLayout extends LinearLayout {
                      @Nullable AttributeSet attrs,
                      int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setOrientation(VERTICAL);
 
         inflate(context, R.layout.munch_webview_layout, this);
 

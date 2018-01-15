@@ -1,6 +1,7 @@
 package com.munch.browser.suggest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.widget.EditText;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
+import com.munch.browser.web.WebActivity;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
@@ -27,8 +29,9 @@ import dagger.android.support.DaggerFragment;
 
 public class SuggestFragment extends DaggerFragment {
 
-    private static String TAG = "[MNCH:SuggestFragment]";
+    private static String TAG = "[MNCH:WebFragment]";
 
+    // TODO: 15.01.18 move to dagger
     // TODO: 21.12.17 read from preferences
     private static String SEARCH_ENGINE_URI = "https://google.com/search?q=";
 
@@ -42,12 +45,6 @@ public class SuggestFragment extends DaggerFragment {
 
     @Inject
     public SuggestFragment() {
-
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
     }
 
     @Override
@@ -102,6 +99,13 @@ public class SuggestFragment extends DaggerFragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        mSuggestView.setUserQuery(mOmniboxView.getText().toString());
+    }
+
+    // TODO: 15.01.18 move to presenter
     private void openUrl(@NonNull Suggest suggest) {
         Log.d(TAG, "Selected: " + suggest.getTitle());
 
@@ -109,6 +113,10 @@ public class SuggestFragment extends DaggerFragment {
         if (url == null) {
             url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
         }
+
+        Intent intent = new Intent(getContext(), WebActivity.class);
+        intent.putExtra(WebActivity.EXTRA_URI, url.toString());
+        startActivity(intent);
 
         // TODO: 15.01.18 start Activity
         /*ebFragment munchWebFragment = WebFragment.newInstance(url);

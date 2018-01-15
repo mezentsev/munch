@@ -23,11 +23,12 @@ import com.munch.webview.WebContract;
 
 import javax.inject.Inject;
 
-public final class WebPresenter implements WebContract.Presenter {
+public final class MunchWebPresenter implements WebContract.Presenter {
 
     private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
     private static final String TAG = "[MNCH:WebPresenter]";
+
     @NonNull
     private final Context mContext;
 
@@ -37,8 +38,7 @@ public final class WebPresenter implements WebContract.Presenter {
     @Nullable
     private WebView mWebView;
 
-    @Inject
-    WebPresenter(@NonNull Context context) {
+    public MunchWebPresenter(@NonNull Context context) {
         mContext = context;
     }
 

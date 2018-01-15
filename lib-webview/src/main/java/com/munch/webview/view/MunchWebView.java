@@ -10,10 +10,9 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 import com.munch.webview.WebContract;
+import com.munch.webview.presentation.MunchWebPresenter;
 
 import java.io.File;
-
-import javax.inject.Inject;
 
 public final class MunchWebView extends WebView implements WebContract.View {
 
@@ -23,8 +22,8 @@ public final class MunchWebView extends WebView implements WebContract.View {
     @Nullable
     private ProgressBar mProgressBar;
 
-    @Inject
-    WebContract.Presenter mWebPresenter;
+    @Nullable
+    private WebContract.Presenter mWebPresenter;
 
     public MunchWebView(@NonNull Context context) {
         this(context, null, 0);
@@ -41,21 +40,33 @@ public final class MunchWebView extends WebView implements WebContract.View {
         super(context, attrs, defStyleAttr);
         setSaveEnabled(true);
         mContext = context;
+
+        if (mWebPresenter == null) {
+            mWebPresenter = new MunchWebPresenter(mContext);
+            mWebPresenter.attachView(this);
+            mWebPresenter.onCreate();
+            Log.d(TAG, "Presenter created");
+        }
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        mWebPresenter.setProgressBar(mProgressBar);
-        mWebPresenter.attachView(this);
 
-        Log.d(TAG, "onAttachedToWindow");
+        if (mWebPresenter != null) {
+            mWebPresenter.setProgressBar(mProgressBar);
+        }
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        mWebPresenter.detachView();
+
+        if (mWebPresenter != null) {
+            mWebPresenter.setProgressBar(null);
+            mWebPresenter.detachView();
+
+        }
 
         Log.d(TAG, "onDetachedFromWindow");
     }
@@ -63,22 +74,36 @@ public final class MunchWebView extends WebView implements WebContract.View {
     @Override
     public void setProgressBar(@Nullable ProgressBar progressBar) {
         mProgressBar = progressBar;
-        mWebPresenter.setProgressBar(mProgressBar);
+
+        if (mWebPresenter != null) {
+            mWebPresenter.setProgressBar(mProgressBar);
+        }
+
+        Log.d(TAG, "inSetProgressBar");
     }
 
     @Override
     public void openUrl(@NonNull String url) {
-        mWebPresenter.openUrl(url);
+        if (mWebPresenter != null) {
+            mWebPresenter.openUrl(url);
+            Log.d(TAG, url);
+        }
+
+        Log.d(TAG, "Not defined");
     }
 
     @Override
     public void prev() {
-        mWebPresenter.prev();
+        if (mWebPresenter != null) {
+            mWebPresenter.prev();
+        }
     }
 
     @Override
     public void next() {
-        mWebPresenter.next();
+        if (mWebPresenter != null) {
+            mWebPresenter.next();
+        }
     }
 
     /**
@@ -91,7 +116,7 @@ public final class MunchWebView extends WebView implements WebContract.View {
         webSettings.setDomStorageEnabled(true);
 
         // Set cache size to 8 mb by default. should be more than enough
-        webSettings.setAppCacheMaxSize(1024*1024*8);
+        webSettings.setAppCacheMaxSize(1024 * 1024 * 8);
 
         File dir = mContext.getCacheDir();
         if (!dir.exists()) {
