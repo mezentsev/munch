@@ -1,18 +1,15 @@
 package com.munch.browser.web;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.munch.browser.R;
-import com.munch.webview.WebContract;
-import com.munch.webview.view.WebLayout;
+import com.munch.webview.MunchWebContract;
 
 import javax.inject.Inject;
 
@@ -27,9 +24,7 @@ public class WebFragment extends DaggerFragment {
     String mUri;
 
     @NonNull
-    private WebContract.View mMunchWebView;
-    @NonNull
-    private ProgressBar mProgressBar;
+    private MunchWebContract.View mMunchWebView;
 
     @Inject
     public WebFragment() {
@@ -43,20 +38,19 @@ public class WebFragment extends DaggerFragment {
         View view = inflater.inflate(R.layout.munch_webview_layout, container, false);
 
         mMunchWebView = view.findViewById(com.munch.webview.R.id.munch_webview_munchwebview);
-        mProgressBar = view.findViewById(com.munch.webview.R.id.munch_webview_progressbar);
+        ProgressBar mProgressBar = view.findViewById(com.munch.webview.R.id.munch_webview_progressbar);
 
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
         mMunchWebView.setProgressBar(mProgressBar);
 
-        Log.d(TAG, "onCreateView");
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(TAG, "onStart");
+
         mMunchWebView.openUrl(mUri);
     }
 }

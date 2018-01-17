@@ -31,7 +31,6 @@ public class SuggestFragment extends DaggerFragment {
 
     private static String TAG = "[MNCH:WebFragment]";
 
-    // TODO: 15.01.18 move to dagger
     // TODO: 21.12.17 read from preferences
     private static String SEARCH_ENGINE_URI = "https://google.com/search?q=";
 

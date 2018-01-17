@@ -5,12 +5,12 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.munch.webview.view.MunchWebView
+    <com.munch.webview.MunchWebView
         android:id="@+id/munch_webview_munchwebview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    </com.munch.webview.view.MunchWebView>
+    </com.munch.webview.MunchWebView>
 
     <ProgressBar
         android:id="@+id/munch_webview_progressbar"
