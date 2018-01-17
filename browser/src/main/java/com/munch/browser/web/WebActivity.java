@@ -1,15 +1,13 @@
 package com.munch.browser.web;
 
 import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.widget.Toast;
 
 import com.munch.browser.R;
-import com.munch.browser.callbacks.StaticOmniboxListener;
+import com.munch.browser.main.MainActivity;
 
 import javax.inject.Inject;
 
@@ -43,5 +41,13 @@ public class WebActivity extends DaggerAppCompatActivity {
                     .add(R.id.munch_main_container, webFragment)
                     .commit();
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(mContext, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

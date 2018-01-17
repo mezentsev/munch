@@ -1,5 +1,6 @@
 package com.munch.browser.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,10 +22,13 @@ import dagger.android.support.DaggerFragment;
 public class MainFragment extends DaggerFragment {
     private static final String TAG = "[MNCH:MainFragment]";
 
+    @Inject
+    Context mContext;
+
     @Nonnull
     private StaticOmniboxListener mOnClickCallback = () -> {
         Log.d(TAG, "onOmniboxClick");
-        Intent intent = new Intent(getContext(), SuggestActivity.class);
+        Intent intent = new Intent(mContext, SuggestActivity.class);
         startActivity(intent);
     };
 

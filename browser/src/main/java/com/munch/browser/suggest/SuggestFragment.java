@@ -46,11 +46,6 @@ public class SuggestFragment extends DaggerFragment {
     public SuggestFragment() {
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -66,6 +61,8 @@ public class SuggestFragment extends DaggerFragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        // TODO: 15.01.18 move to presenter
         KeyboardHelper.showKeyboard(mContext, mOmniboxView);
 
         mSuggestView.setReversed(true);
@@ -101,6 +98,7 @@ public class SuggestFragment extends DaggerFragment {
     @Override
     public void onResume() {
         super.onResume();
+        // TODO: 15.01.18 move to presenter
         mSuggestView.setUserQuery(mOmniboxView.getText().toString());
     }
 
@@ -113,18 +111,8 @@ public class SuggestFragment extends DaggerFragment {
             url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
         }
 
-        Intent intent = new Intent(getContext(), WebActivity.class);
+        Intent intent = new Intent(mContext, WebActivity.class);
         intent.putExtra(WebActivity.EXTRA_URI, url.toString());
         startActivity(intent);
-
-        // TODO: 15.01.18 start Activity
-        /*ebFragment munchWebFragment = WebFragment.newInstance(url);
-
-        getFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.munch_main_container, munchWebFragment)
-                .commit();
-                */
     }
 }
