@@ -19,13 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
--optimizationpasses 5
-#-allowaccessmodification
--dontusemixedcaseclassnames
--dontskipnonpubliclibraryclasses
--dontskipnonpubliclibraryclassmembers
--dontpreverify
--verbose
 
 #your package path where your gson models are stored
 -keep class com.jutt.example1.model.** { *; }

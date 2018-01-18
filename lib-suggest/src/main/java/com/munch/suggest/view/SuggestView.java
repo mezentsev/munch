@@ -16,7 +16,7 @@ import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestInteractor;
-import com.munch.suggest.presenter.SuggestPresenter;
+import com.munch.suggest.presentation.SuggestPresenter;
 
 import java.util.List;
 

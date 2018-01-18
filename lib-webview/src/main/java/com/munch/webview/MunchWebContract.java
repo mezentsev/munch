@@ -11,19 +11,5 @@ public interface MunchWebContract extends MvpContract {
         void setProgressBar(@Nullable ProgressBar progressBar);
 
         void openUrl(@NonNull String url);
-
-        void prev();
-
-        void next();
-    }
-
-    interface Presenter extends MvpContract.Presenter<View> {
-        void setProgressBar(@Nullable ProgressBar progressBar);
-
-        void openUrl(@NonNull String url);
-
-        void prev();
-
-        void next();
     }
 }

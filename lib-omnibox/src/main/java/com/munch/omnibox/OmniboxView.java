@@ -1,4 +1,4 @@
-package com.munch.omnibox.view;
+package com.munch.omnibox;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

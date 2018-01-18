@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".view.MunchActivity"
+    tools:context=".main.MainActivity"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <com.munch.omnibox.view.StaticOmniboxView
+    <com.munch.omnibox.StaticOmniboxView
         android:id="@+id/munch_static_omnibox_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

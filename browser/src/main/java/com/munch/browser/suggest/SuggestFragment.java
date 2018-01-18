@@ -1,11 +1,11 @@
-package com.munch.browser.view;
+package com.munch.browser.suggest;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,20 +14,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
+import com.munch.browser.web.WebActivity;
 import com.munch.suggest.SuggestContract;
-import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;
 
-public class SuggestFragment extends Fragment {
+import javax.inject.Inject;
 
-    private static String TAG = "[MNCH:SuggestFragment]";
+import dagger.android.support.DaggerFragment;
+
+public class SuggestFragment extends DaggerFragment {
+
+    private static String TAG = "[MNCH:WebFragment]";
 
     // TODO: 21.12.17 read from preferences
     private static String SEARCH_ENGINE_URI = "https://google.com/search?q=";
@@ -37,24 +39,11 @@ public class SuggestFragment extends Fragment {
     @NonNull
     private SuggestContract.View mSuggestView;
 
-    @NonNull
-    public static SuggestFragment newInstance() {
-        SuggestFragment f = new SuggestFragment();
+    @Inject
+    Context mContext;
 
-        Bundle args = new Bundle();
-        f.setArguments(args);
-
-        return f;
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    @Inject
+    public SuggestFragment() {
     }
 
     @NonNull
@@ -72,7 +61,9 @@ public class SuggestFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        KeyboardHelper.showKeyboard(getContext(), mOmniboxView);
+
+        // TODO: 15.01.18 move to presenter
+        KeyboardHelper.showKeyboard(mContext, mOmniboxView);
 
         mSuggestView.setReversed(true);
         mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
@@ -104,6 +95,14 @@ public class SuggestFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // TODO: 15.01.18 move to presenter
+        mSuggestView.setUserQuery(mOmniboxView.getText().toString());
+    }
+
+    // TODO: 15.01.18 move to presenter
     private void openUrl(@NonNull Suggest suggest) {
         Log.d(TAG, "Selected: " + suggest.getTitle());
 
@@ -112,12 +111,8 @@ public class SuggestFragment extends Fragment {
             url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
         }
 
-        WebViewFragment webViewFragment = WebViewFragment.newInstance(url);
-
-        getFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.munch_main_container, webViewFragment)
-                .commit();
+        Intent intent = new Intent(mContext, WebActivity.class);
+        intent.putExtra(WebActivity.EXTRA_URI, url.toString());
+        startActivity(intent);
     }
 }

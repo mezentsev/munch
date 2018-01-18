@@ -17,7 +17,7 @@ import com.munch.suggest.model.Suggest;
 
 import java.util.List;
 
-public final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder>
+final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder>
         implements ItemClickListener {
     private final static String TAG = SuggestAdapter.class.getSimpleName();
 

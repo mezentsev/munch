@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="bottom"
     android:orientation="vertical"
-    tools:context=".view.MunchActivity">
+    tools:context=".main.MainActivity">
 
     <com.munch.suggest.view.SuggestView
         android:id="@+id/munch_suggest_view"
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_above="@id/munch_omnibox_view"/>
 
-    <com.munch.omnibox.view.OmniboxView
+    <com.munch.omnibox.OmniboxView
         android:id="@+id/munch_omnibox_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

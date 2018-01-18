@@ -13,19 +13,22 @@
         android:label="@string/munch_app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Munch">
+        android:theme="@style/Munch"
+        android:name=".MunchApplication">
 
         <meta-data
             android:name="android.webkit.WebView.EnableSafeBrowsing"
             android:value="true"/>
 
-        <activity android:name=".view.MunchActivity">
+        <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".suggest.SuggestActivity"/>
+        <activity android:name=".web.WebActivity"/>
     </application>
 
 </manifest>
