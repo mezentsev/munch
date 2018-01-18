@@ -31,13 +31,13 @@ before_deploy:
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/release/browser-release-unsigned.apk munch -keystore $HOME/.keystore -storepass $storepass -keypass $keypass
 - "${ANDROID_HOME}/build-tools/26.0.2/zipalign 4 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/release/browser-release-unsigned.apk $HOME/munch-release.apk"
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/debug/browser-debug.apk munch -keystore $HOME/.keystore -storepass $storepass -keypass $keypass
-- "${ANDROID_HOME}/build-tools/26.0.2/zipalign 4 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/debug/browser-debug.apk $HOME/munch-debug.apk»
+- "${ANDROID_HOME}/build-tools/26.0.2/zipalign 4 $TRAVIS_BUILD_DIR/browser/build/outputs/apk/debug/browser-debug.apk $HOME/munch-debug.apk"
 deploy:
   provider: releases
   api_key: d8d7ad114dbecf96060badfdd14bb85df4a071fd
   file: 
   - "$HOME/munch-release.apk"
-  - "$HOME/munch-debug.apk»
+  - "$HOME/munch-debug.apk"
   skip_cleanup: true
   on:
     tags: true
