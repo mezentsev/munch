@@ -19,7 +19,9 @@ import java.util.List;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class SuggestPresenter implements SuggestContract.Presenter {
@@ -72,7 +74,7 @@ public class SuggestPresenter implements SuggestContract.Presenter {
      * @param query user query
      */
     @UiThread
-    public void setQuery(@Nullable String query) {
+    public void setQuery(@Nullable final String query) {
         if (mSuggestInteractorFactory == null ||
                 mRequestSpecificationFactory == null) {
             Log.d(TAG, "Suggest Interator not defined");
@@ -104,9 +106,24 @@ public class SuggestPresenter implements SuggestContract.Presenter {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(
-                                this::showSuggests,
-                                throwable -> Log.e(TAG, "Error", throwable),
-                                () -> Log.d(TAG, "Completed: " + query)
+                                new Consumer<SuggestResponse>() {
+                                    @Override
+                                    public void accept(SuggestResponse suggestResponse) throws Exception {
+                                        SuggestPresenter.this.showSuggests(suggestResponse);
+                                    }
+                                },
+                                new Consumer<Throwable>() {
+                                    @Override
+                                    public void accept(Throwable throwable) throws Exception {
+                                        Log.e(TAG, "Error", throwable);
+                                    }
+                                },
+                                new Action() {
+                                    @Override
+                                    public void run() throws Exception {
+                                        Log.d(TAG, "Completed: " + query);
+                                    }
+                                }
                         ));
     }
 
@@ -162,60 +179,63 @@ public class SuggestPresenter implements SuggestContract.Presenter {
         }
     }
 
-    private static BiFunction<SuggestResponse, SuggestResponse, SuggestResponse> zipResponses(@Nullable String query) {
-        return (queryResponse, interactorResponse) -> {
-            List<Suggest> querySuggests = queryResponse.getSuggests();
-            List<Suggest> interactorSuggests = interactorResponse.getSuggests();
+    private static BiFunction<SuggestResponse, SuggestResponse, SuggestResponse> zipResponses(@Nullable final String query) {
+        return new BiFunction<SuggestResponse, SuggestResponse, SuggestResponse>() {
+            @Override
+            public SuggestResponse apply(SuggestResponse queryResponse, SuggestResponse interactorResponse) throws Exception {
+                List<Suggest> querySuggests = queryResponse.getSuggests();
+                List<Suggest> interactorSuggests = interactorResponse.getSuggests();
 
-            List<Suggest> suggests = null;
+                List<Suggest> suggests = null;
 
-            // need to concat suggests responses
-            if (querySuggests != null) {
-                suggests = new ArrayList<>(querySuggests.size());
-                suggests.addAll(querySuggests);
-            }
-
-            if (interactorSuggests != null) {
-                if (suggests == null) {
-                    suggests = new ArrayList<>(interactorSuggests.size());
+                // need to concat suggests responses
+                if (querySuggests != null) {
+                    suggests = new ArrayList<>(querySuggests.size());
+                    suggests.addAll(querySuggests);
                 }
 
-                if (querySuggests != null) {
-                    // find exists suggests and skip them
-                    for (Suggest suggest : interactorSuggests) {
-                        boolean exists = false;
+                if (interactorSuggests != null) {
+                    if (suggests == null) {
+                        suggests = new ArrayList<>(interactorSuggests.size());
+                    }
 
-                        for (Suggest querySuggest : querySuggests) {
-                            Uri queryUrl = querySuggest.getUrl();
-                            String queryTitle = querySuggest.getTitle().toLowerCase();
-                            String suggestTitle = suggest.getTitle().toLowerCase();
+                    if (querySuggests != null) {
+                        // find exists suggests and skip them
+                        for (Suggest suggest : interactorSuggests) {
+                            boolean exists = false;
 
-                            Uri suggestUrl = suggest.getUrl();
+                            for (Suggest querySuggest : querySuggests) {
+                                Uri queryUrl = querySuggest.getUrl();
+                                String queryTitle = querySuggest.getTitle().toLowerCase();
+                                String suggestTitle = suggest.getTitle().toLowerCase();
 
-                            if (queryTitle.equals(suggestTitle) ||
-                                    (queryUrl != null && queryUrl.equals(suggestUrl))) {
-                                exists = true;
-                                break;
+                                Uri suggestUrl = suggest.getUrl();
+
+                                if (queryTitle.equals(suggestTitle) ||
+                                        (queryUrl != null && queryUrl.equals(suggestUrl))) {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+
+                            // skip if already same suggest exists
+                            if (!exists) {
+                                suggests.add(suggest);
                             }
                         }
-
-                        // skip if already same suggest exists
-                        if (!exists) {
-                            suggests.add(suggest);
-                        }
+                    } else {
+                        suggests.addAll(interactorSuggests);
                     }
-                } else {
-                    suggests.addAll(interactorSuggests);
+
                 }
 
+                return new SuggestResponse(
+                        query,
+                        interactorResponse.getCandidate(),
+                        interactorResponse.getSearchBaseUrl(),
+                        suggests
+                );
             }
-
-            return new SuggestResponse(
-                    query,
-                    interactorResponse.getCandidate(),
-                    interactorResponse.getSearchBaseUrl(),
-                    suggests
-            );
         };
     }
 }

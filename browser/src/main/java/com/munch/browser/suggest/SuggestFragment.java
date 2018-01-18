@@ -14,11 +14,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
 import com.munch.browser.web.WebActivity;
 import com.munch.suggest.SuggestContract;
+import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;
@@ -54,6 +56,7 @@ public class SuggestFragment extends DaggerFragment {
         View view = inflater.inflate(R.layout.munch_browser_suggest_fragment, container, false);
         mOmniboxView = view.findViewById(R.id.munch_omnibox_search);
         mSuggestView = view.findViewById(R.id.munch_suggest_view);
+        setRetainInstance(true);
 
         return view;
     }
@@ -67,7 +70,12 @@ public class SuggestFragment extends DaggerFragment {
 
         mSuggestView.setReversed(true);
         mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
-        mSuggestView.setSuggestClickListener(this::openUrl);
+        mSuggestView.setSuggestClickListener(new SuggestClicklistener() {
+            @Override
+            public void onSuggestClicked(@NonNull Suggest suggest) {
+                SuggestFragment.this.openUrl(suggest);
+            }
+        });
 
         mOmniboxView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -85,13 +93,16 @@ public class SuggestFragment extends DaggerFragment {
             }
         });
 
-        mOmniboxView.setOnEditorActionListener((v, actionId, event) -> {
-            Log.d(TAG, "" + actionId);
-            if (actionId != 0 || event.getAction() == KeyEvent.ACTION_DOWN) {
-                openUrl(SuggestFactory.createTextSuggest(mOmniboxView.getText().toString()));
-            }
+        mOmniboxView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                Log.d(TAG, "" + actionId);
+                if (actionId != 0 || event.getAction() == KeyEvent.ACTION_DOWN) {
+                    SuggestFragment.this.openUrl(SuggestFactory.createTextSuggest(mOmniboxView.getText().toString()));
+                }
 
-            return false;
+                return false;
+            }
         });
     }
 

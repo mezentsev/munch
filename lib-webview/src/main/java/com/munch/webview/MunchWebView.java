@@ -65,7 +65,7 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
     }
 
     private void init() {
-        WebSettings webSettings = getSettings();
+        final WebSettings webSettings = getSettings();
 
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         webSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);

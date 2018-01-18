@@ -23,7 +23,7 @@ public class SuggestActivity extends DaggerAppCompatActivity
     Context mContext;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.munch_browser_main_activity);
         FragmentManager mFragmentManager = getSupportFragmentManager();

@@ -1,5 +1,7 @@
 package com.munch.browser.di;
 
+import com.munch.browser.history.HistoryActivityModule;
+import com.munch.browser.history.view.HistoryActivity;
 import com.munch.browser.main.MainActivityModule;
 import com.munch.browser.main.MainActivity;
 import com.munch.browser.suggest.SuggestActivity;
@@ -35,4 +37,8 @@ public abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = WebActivityModule.class)
     abstract WebActivity webActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = HistoryActivityModule.class)
+    abstract HistoryActivity historyActivity();
 }

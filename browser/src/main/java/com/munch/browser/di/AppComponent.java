@@ -3,6 +3,7 @@ package com.munch.browser.di;
 import android.app.Application;
 
 import com.munch.browser.MunchApplication;
+import com.munch.browser.history.HistoryRepositoryModule;
 
 import javax.inject.Singleton;
 
@@ -22,6 +23,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
  */
 @Singleton
 @Component(modules = {
+        HistoryRepositoryModule.class,
         ApplicationModule.class,
         ActivityBindingModule.class,
         AndroidSupportInjectionModule.class})

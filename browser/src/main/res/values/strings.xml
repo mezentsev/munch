@@ -1,3 +1,4 @@
 <resources>
     <string name="munch_app_name">Munch browser</string>
+    <string name="munch_show_history_button">Show history</string>
 </resources>
