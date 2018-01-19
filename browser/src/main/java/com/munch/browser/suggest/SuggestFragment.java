@@ -69,11 +69,13 @@ public class SuggestFragment extends DaggerFragment {
         KeyboardHelper.showKeyboard(mContext, mOmniboxView);
 
         mSuggestView.setReversed(true);
+
+        // TODO: 19.01.18 Interactor to Dagger
         mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
         mSuggestView.setSuggestClickListener(new SuggestClicklistener() {
             @Override
             public void onSuggestClicked(@NonNull Suggest suggest) {
-                SuggestFragment.this.openUrl(suggest);
+                openUrl(suggest);
             }
         });
 
@@ -96,9 +98,8 @@ public class SuggestFragment extends DaggerFragment {
         mOmniboxView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Log.d(TAG, "" + actionId);
                 if (actionId != 0 || event.getAction() == KeyEvent.ACTION_DOWN) {
-                    SuggestFragment.this.openUrl(SuggestFactory.createTextSuggest(mOmniboxView.getText().toString()));
+                    openUrl(SuggestFactory.createSuggest(mOmniboxView.getText().toString()));
                 }
 
                 return false;
