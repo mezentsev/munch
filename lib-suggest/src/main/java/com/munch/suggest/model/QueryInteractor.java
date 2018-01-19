@@ -31,17 +31,7 @@ public final class QueryInteractor implements SuggestInteractor {
 
         if (query != null && TextUtils.getTrimmedLength(query) > 0) {
             String lowerQuery = query.toLowerCase().trim();
-            Suggest querySuggest;
-
-            if (Patterns.WEB_URL.matcher(lowerQuery).matches()) {
-                Log.d(TAG, "Created navigation suggest for: " + lowerQuery);
-                querySuggest = SuggestFactory.createNavigationSuggest(
-                        lowerQuery,
-                        Uri.parse(lowerQuery));
-            } else {
-                Log.d(TAG, "Created text suggest for: " + lowerQuery);
-                querySuggest = SuggestFactory.createTextSuggest(lowerQuery);
-            }
+            Suggest querySuggest = SuggestFactory.createSuggest(lowerQuery);
 
             return Single.just(
                     new SuggestResponse(

@@ -3,6 +3,8 @@ package com.munch.suggest.model;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.util.Patterns;
 
 /**
  * Factory for build suggest models.
@@ -12,7 +14,7 @@ import android.support.annotation.Nullable;
 public final class SuggestFactory {
     @NonNull
     public static Suggest createTextSuggest(@NonNull String title,
-                                             double weight) {
+                                            double weight) {
         return new SuggestModel(
                 title,
                 null,
@@ -45,5 +47,20 @@ public final class SuggestFactory {
                 0.,
                 description,
                 Suggest.SuggestType.FACT);
+    }
+
+    @NonNull
+    public static Suggest createSuggest(@NonNull String title) {
+        Suggest suggest;
+
+        if (Patterns.WEB_URL.matcher(title).matches()) {
+            suggest = SuggestFactory.createNavigationSuggest(
+                    title,
+                    Uri.parse(title));
+        } else {
+            suggest = SuggestFactory.createTextSuggest(title);
+        }
+
+        return suggest;
     }
 }
