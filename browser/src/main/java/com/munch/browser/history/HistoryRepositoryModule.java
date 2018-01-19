@@ -2,12 +2,17 @@ package com.munch.browser.history;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
+import android.support.annotation.NonNull;
 
+import com.munch.browser.utils.IOExecutor;
+import com.munch.browser.utils.MainThreadExecutor;
 import com.munch.history.data.local.HistoryDao;
 import com.munch.history.data.local.HistoryDatabase;
 import com.munch.history.data.local.LocalHistoryDataSource;
 import com.munch.history.model.HistoryDataSource;
 import com.munch.history.model.Local;
+
+import java.util.concurrent.Executor;
 
 import javax.inject.Singleton;
 
@@ -32,20 +37,28 @@ public abstract class HistoryRepositoryModule {
     }
 
     @Singleton
-    @Binds
+    @Provides
     @Local
-    abstract HistoryDataSource provideTasksLocalDataSource(LocalHistoryDataSource localHistoryDataSource);
+    static HistoryDataSource provideTasksLocalDataSource(HistoryDao historyDao,
+                                                         IOExecutor ioExecutor,
+                                                         MainThreadExecutor mainThreadExecutor) {
+        return new LocalHistoryDataSource(historyDao, ioExecutor, mainThreadExecutor);
+    }
 
     /*@Singleton
     @Binds
     @Remote
     abstract HistoryDataSource provideTasksRemoteDataSource(FakeTasksRemoteDataSource dataSource);*/
 
-    /*@Singleton
+    @Singleton
     @Provides
-    static AppExecutors provideAppExecutors() {
-        return new AppExecutors(new DiskIOThreadExecutor(),
-                Executors.newFixedThreadPool(THREAD_COUNT),
-                new AppExecutors.MainThreadExecutor());
-    }*/
+    static MainThreadExecutor provideMainExecutor() {
+        return new MainThreadExecutor();
+    }
+
+    @Singleton
+    @Provides
+    static IOExecutor provideIoExecutor() {
+        return new IOExecutor();
+    }
 }

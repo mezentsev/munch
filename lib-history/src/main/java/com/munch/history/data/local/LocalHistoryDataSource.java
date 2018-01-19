@@ -7,6 +7,8 @@ import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
@@ -18,10 +20,17 @@ public class LocalHistoryDataSource implements HistoryDataSource {
     private final String TAG = "[MNCH:LHDS]";
 
     @NonNull
+    private final Executor mIoExecutor;
+    @NonNull
+    private final Executor mMainExecutor;
+    @NonNull
     private final HistoryDao mHistoryDao;
 
-    @Inject
-    public LocalHistoryDataSource(@NonNull HistoryDao historyDao) {
+    public LocalHistoryDataSource(@NonNull HistoryDao historyDao,
+                                  @NonNull Executor ioExecutor,
+                                  @NonNull Executor mainExecutor) {
+        mIoExecutor = ioExecutor;
+        mMainExecutor = mainExecutor;
         mHistoryDao = historyDao;
         Log.d(TAG, "local history data source inited");
     }
@@ -35,19 +44,22 @@ public class LocalHistoryDataSource implements HistoryDataSource {
             @Override
             public void run() {
                 final History history = mHistoryDao.getHistoryById(taskId);
-                Log.d(TAG, "getHistory " + history.getUrl());
+                Log.d(TAG, "getHistory " + (history != null ? history.getUrl() : ""));
 
-            /*mAppExecutors.mainThread().execute(() -> {
-                if (history != null) {
-                    callback.onHistoryLoaded(history);
-                } else {
-                    callback.onDataNotAvailable();
-                }
-            });*/
+                mMainExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (history != null) {
+                            callback.onHistoryLoaded(history);
+                        } else {
+                            callback.onDataNotAvailable();
+                        }
+                    }
+                });
             }
         };
 
-        //mAppExecutors.diskIO().execute(runnable);
+        mIoExecutor.execute(runnable);
     }
 
     @Override
@@ -58,12 +70,14 @@ public class LocalHistoryDataSource implements HistoryDataSource {
                 mHistoryDao.insertHistory(history);
             }
         };
+
+        mIoExecutor.execute(saveRunnable);
+
         Log.d(TAG, "saveHistory " + history.getUrl());
-        //mAppExecutors.diskIO().execute(saveRunnable);
     }
 
     @Override
-    public void getHistoryList(@NonNull LoadHistoryCallback callback) {
+    public void getHistoryList(@NonNull final LoadHistoryCallback callback) {
         Log.d(TAG, "getHistoryList");
 
         Runnable runnable = new Runnable() {
@@ -71,19 +85,25 @@ public class LocalHistoryDataSource implements HistoryDataSource {
             public void run() {
                 final List<History> historyList = mHistoryDao.getHistory();
                 Log.d(TAG, "getHistoryList " + historyList.toString());
-            /*mAppExecutors.mainThread().execute((Runnable) () -> {
-                if (historyList.isEmpty()) {
-                    // This will be called if the table is new or just empty.
-                    callback.onDataNotAvailable();
-                } else {
-                    callback.onHistoryLoaded(historyList);
-                }
-            });*/
+
+                // TODO: 19.01.18 remove fake
+                historyList.add(new History("1", "http://yandex.ru/", "2132132", "Яндекс", null, null, null, null));
+
+                mMainExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (historyList.isEmpty()) {
+                            // This will be called if the table is new or just empty.
+                            callback.onDataNotAvailable();
+                        } else {
+                            callback.onHistoryLoaded(historyList);
+                        }
+                    }
+                });
             }
         };
 
-        // TODO: 18.01.18 implement
-        callback.onDataNotAvailable();
+        mIoExecutor.execute(runnable);
     }
 
     @Override

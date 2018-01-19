@@ -46,7 +46,7 @@ public final class HistoryRepository implements HistoryDataSource {
         }
 
         if (mCacheIsDirty) {
-            // maybe load from remote?
+            // TODO: 19.01.18 maybe load from remote?
         } else {
             // local storage
             mLocalDataSource.getHistoryList(new LoadHistoryCallback() {
