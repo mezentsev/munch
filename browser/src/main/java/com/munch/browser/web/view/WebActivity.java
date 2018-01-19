@@ -1,4 +1,4 @@
-package com.munch.browser.web;
+package com.munch.browser.web.view;
 
 import android.content.Context;
 import android.content.Intent;

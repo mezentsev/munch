@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/browser/browser.iml" filepath="$PROJECT_DIR$/browser/browser.iml" />
+      <module fileurl="file://$PROJECT_DIR$/lib-history/lib-history.iml" filepath="$PROJECT_DIR$/lib-history/lib-history.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib-mvp/lib-mvp.iml" filepath="$PROJECT_DIR$/lib-mvp/lib-mvp.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib-omnibox/lib-omnibox.iml" filepath="$PROJECT_DIR$/lib-omnibox/lib-omnibox.iml" />
       <module fileurl="file://$PROJECT_DIR$/lib-suggest/lib-suggest.iml" filepath="$PROJECT_DIR$/lib-suggest/lib-suggest.iml" />

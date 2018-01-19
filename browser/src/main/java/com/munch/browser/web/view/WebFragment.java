@@ -1,4 +1,4 @@
-package com.munch.browser.web;
+package com.munch.browser.web.view;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,19 +9,23 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.munch.browser.R;
+import com.munch.browser.web.WebActivityContract;
 import com.munch.webview.MunchWebContract;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class WebFragment extends DaggerFragment {
+public class WebFragment extends DaggerFragment implements WebActivityContract.View {
 
     @NonNull
     private static String TAG = "[MNCH:WebFragment]";
 
     @Inject
     String mUri;
+
+    @Inject
+    WebActivityContract.Presenter mPresenter;
 
     @NonNull
     private MunchWebContract.View mMunchWebView;
@@ -51,6 +55,17 @@ public class WebFragment extends DaggerFragment {
     public void onStart() {
         super.onStart();
 
-        mMunchWebView.openUrl(mUri);
+        mPresenter.attachView(this);
+        mPresenter.attachMunchWebView(mMunchWebView);
+
+        mPresenter.useUrl(mUri);
+    }
+
+    @Override
+    public void onDestroy() {
+        mPresenter.detachMunchWebView();
+        mPresenter.detachView();
+
+        super.onDestroy();
     }
 }

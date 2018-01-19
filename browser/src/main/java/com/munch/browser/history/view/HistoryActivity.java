@@ -1,8 +1,8 @@
-package com.munch.browser.main;
+package com.munch.browser.history.view;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
 import com.munch.browser.R;
 
@@ -10,31 +10,31 @@ import javax.inject.Inject;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
-public class MainActivity extends DaggerAppCompatActivity {
+public class HistoryActivity extends DaggerAppCompatActivity {
+
+    private static final String TAG = "[MNCH:HistoryActivity]";
 
     @Inject
-    MainFragment mMainFragment;
+    HistoryFragment mHistoryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+
         setContentView(R.layout.munch_browser_main_activity);
         FragmentManager mFragmentManager = getSupportFragmentManager();
 
-        MainFragment mainFragment = (MainFragment) mFragmentManager
+        HistoryFragment historyFragment = (HistoryFragment) mFragmentManager
                 .findFragmentById(R.id.munch_main_container);
 
-        if (mainFragment == null) {
-            mainFragment = mMainFragment;
+        if (historyFragment == null) {
+            historyFragment = mHistoryFragment;
 
             mFragmentManager
                     .beginTransaction()
-                    .add(R.id.munch_main_container, mainFragment)
+                    .add(R.id.munch_main_container, historyFragment)
                     .commit();
         }
-    }
-
-    @Override
-    public void onBackPressed() {
     }
 }

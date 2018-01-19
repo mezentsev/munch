@@ -29,8 +29,8 @@ public final class OmniboxView
                        int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         View view = inflate(getContext(), R.layout.munch_omnibox_view, this);
-        View crossView = view.findViewById(R.id.munch_omnibox_cross);
-        EditText searchView = view.findViewById(R.id.munch_omnibox_search);
+        final View crossView = view.findViewById(R.id.munch_omnibox_cross);
+        final EditText searchView = view.findViewById(R.id.munch_omnibox_search);
 
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -53,8 +53,11 @@ public final class OmniboxView
             }
         });
 
-        crossView.setOnClickListener((View v) -> {
-            searchView.setText("");
+        crossView.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.setText("");
+            }
         });
     }
 }
