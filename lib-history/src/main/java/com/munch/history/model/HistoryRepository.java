@@ -45,28 +45,24 @@ public final class HistoryRepository implements HistoryDataSource {
             callback.onHistoryLoaded(new ArrayList<>(mCachedHistory.values()));
         }
 
-        if (mCacheIsDirty) {
-            // TODO: 19.01.18 maybe load from remote?
-        } else {
-            // local storage
-            mLocalDataSource.getHistoryList(new LoadHistoryCallback() {
-                @Override
-                public void onHistoryLoaded(@NonNull List<History> historyList) {
-                    Log.d(TAG, "onHistoryLoaded");
+        // local storage
+        mLocalDataSource.getHistoryList(new LoadHistoryCallback() {
+            @Override
+            public void onHistoryLoaded(@NonNull List<History> historyList) {
+                Log.d(TAG, "onHistoryLoaded");
 
-                    refreshCache(historyList);
-                    callback.onHistoryLoaded(historyList);
-                }
+                refreshCache(historyList);
+                callback.onHistoryLoaded(historyList);
+            }
 
-                @Override
-                public void onDataNotAvailable() {
-                    Log.d(TAG, "onDataNotAvailable");
+            @Override
+            public void onDataNotAvailable() {
+                Log.d(TAG, "onDataNotAvailable");
 
-                    // TODO: 18.01.18 maybe load from remote?
-                    callback.onDataNotAvailable();
-                }
-            });
-        }
+                // TODO: 18.01.18 maybe load from remote?
+                callback.onDataNotAvailable();
+            }
+        });
     }
 
     @Override
@@ -77,7 +73,8 @@ public final class HistoryRepository implements HistoryDataSource {
 
     @Override
     public void saveHistory(@NonNull History history) {
-
+        mLocalDataSource.saveHistory(history);
+        mCacheIsDirty = true;
     }
 
     @Override

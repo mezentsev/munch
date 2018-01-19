@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".suggest.SuggestActivity"/>
-        <activity android:name=".web.WebActivity"/>
+        <activity android:name=".web.view.WebActivity"/>
         <activity android:name=".history.view.HistoryActivity" />
     </application>
 

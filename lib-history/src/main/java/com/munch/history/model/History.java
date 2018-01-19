@@ -7,6 +7,9 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.security.Timestamp;
+import java.util.UUID;
+
 @Entity(tableName = "history")
 public final class History {
 
@@ -81,6 +84,33 @@ public final class History {
     @Nullable
     public String getBackground() {
         return mBackground;
+    }
+
+    @Ignore
+    public History(@NonNull String url) {
+        this(
+                url,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Ignore
+    public History(@NonNull String url,
+                   @Nullable String title,
+                   @Nullable String description,
+                   @Nullable String html) {
+        this(
+                UUID.randomUUID().toString(),
+                url,
+                ((Long) (System.currentTimeMillis() / 1000)).toString(),
+                title,
+                description,
+                html,
+                null,
+                null
+        );
     }
 
     public History(@NonNull String id,

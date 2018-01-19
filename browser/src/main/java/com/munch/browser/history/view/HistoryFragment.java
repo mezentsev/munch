@@ -12,13 +12,19 @@ import android.view.ViewGroup;
 
 import com.munch.browser.R;
 import com.munch.browser.history.HistoryContract;
+import com.munch.history.model.History;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
 public class HistoryFragment extends DaggerFragment implements HistoryContract.View {
+    @NonNull
     private static final String TAG = "[MNCH:HistoryFragment]";
+    @NonNull
+    private static final String NO_HISTORY = "No history";
 
     @Inject
     Context mContext;
@@ -66,8 +72,14 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     }
 
     @Override
-    public void informHistoryLoad(int count) {
-        Log.d(TAG, "informHistoryLoad");
-        Snackbar.make(mHistoryView, "History count: " + count, Snackbar.LENGTH_SHORT).show();
+    public void informHistoryLoad(@Nullable List<History> historyList) {
+        if (historyList == null) {
+            Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
+        } else {
+            int historyCount = historyList.size();
+            String url = historyList.get(historyCount - 1).getUrl();
+            String informText = "History count: " + historyCount + ". Last added: " + url;
+            Snackbar.make(mHistoryView, informText, Snackbar.LENGTH_LONG).show();
+        }
     }
 }

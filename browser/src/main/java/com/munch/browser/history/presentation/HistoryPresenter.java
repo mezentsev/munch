@@ -59,7 +59,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
             @Override
             public void onHistoryLoaded(@NonNull List<History> historyList) {
                 if (mView != null) {
-                    mView.informHistoryLoad(historyList.size());
+                    mView.informHistoryLoad(historyList);
                 }
             }
 
@@ -68,7 +68,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
                 Log.d(TAG, "onDataNotAvailable");
 
                 if (mView != null) {
-                    mView.informHistoryLoad(0);
+                    mView.informHistoryLoad(null);
                 }
             }
         });

@@ -86,9 +86,6 @@ public class LocalHistoryDataSource implements HistoryDataSource {
                 final List<History> historyList = mHistoryDao.getHistory();
                 Log.d(TAG, "getHistoryList " + historyList.toString());
 
-                // TODO: 19.01.18 remove fake
-                historyList.add(new History("1", "http://yandex.ru/", "2132132", "Яндекс", null, null, null, null));
-
                 mMainExecutor.execute(new Runnable() {
                     @Override
                     public void run() {
@@ -136,8 +133,5 @@ public class LocalHistoryDataSource implements HistoryDataSource {
         };
 
         Log.d(TAG, "deleteHistoryById " + historyId);
-
-
-        //mAppExecutors.diskIO().execute(deleteRunnable);
     }
 }

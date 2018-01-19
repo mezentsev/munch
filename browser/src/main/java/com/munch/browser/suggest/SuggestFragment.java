@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
-import com.munch.browser.web.WebActivity;
+import com.munch.browser.web.view.WebActivity;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.GoSuggestInteractor;

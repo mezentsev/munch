@@ -6,7 +6,7 @@ import com.munch.browser.main.MainActivityModule;
 import com.munch.browser.main.MainActivity;
 import com.munch.browser.suggest.SuggestActivity;
 import com.munch.browser.suggest.SuggestActivityModule;
-import com.munch.browser.web.WebActivity;
+import com.munch.browser.web.view.WebActivity;
 import com.munch.browser.web.WebActivityModule;
 import com.munch.mvp.ActivityScoped;
 
