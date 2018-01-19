@@ -1,6 +1,5 @@
 package com.munch.webview;
 
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -24,9 +23,10 @@ import java.io.File;
 
 final class MunchWebView extends WebView implements MunchWebContract.View {
 
+    private static final String TAG = "[MNCH:MunchWebView]";
     private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
-    private static final String TAG = "[MNCH:MunchWebView]";
+    private static final String MOBILE_AGENT = "Android";
 
     @NonNull
     private final Context mContext;
@@ -75,11 +75,15 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
         webSettings.setNeedInitialFocus(false);
         webSettings.setSaveFormData(true);
         webSettings.setAllowFileAccess(false);
-        webSettings.setBuiltInZoomControls(false);
+        webSettings.setBuiltInZoomControls(true);
+        webSettings.setDisplayZoomControls(false);
+        webSettings.setSupportZoom(true);
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDatabaseEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
+        webSettings.setUseWideViewPort(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+        webSettings.setUserAgentString(MOBILE_AGENT);
 
         //enableAppCache();
 
