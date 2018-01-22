@@ -80,10 +80,28 @@ public class WebPresenter implements WebActivityContract.Presenter {
     }
 
     @Override
-    public void useUrl(@NonNull String url) {
+    public void useUrl(@NonNull final String url) {
         if (mMunchWebView != null) {
-            mMunchWebView.openUrl(url);
-            mHistoryDataSource.saveHistory(new History(url));
+            String preparedUrl = prepareUrl(url);
+            mMunchWebView.openUrl(preparedUrl);
+            mHistoryDataSource.saveHistory(new History(preparedUrl));
         }
+    }
+
+    /**
+     * Normalizing url with http and lowercase.
+     *
+     * @param url
+     * @return normalized url
+     */
+    @NonNull
+    private String prepareUrl(@NonNull String url) {
+        String lowerUrl = url.toLowerCase();
+
+        if (!lowerUrl.matches("^\\w+?://.*")) {
+            lowerUrl = "http://" + lowerUrl;
+        }
+
+        return lowerUrl;
     }
 }
