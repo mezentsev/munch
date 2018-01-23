@@ -33,7 +33,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     HistoryContract.Presenter mHistoryPresenter;
 
     @NonNull
-    private View mHistoryView;
+    private HistoryView mHistoryView;
 
     @Inject
     public HistoryFragment() {
@@ -72,7 +72,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     }
 
     @Override
-    public void informHistoryLoad(@Nullable List<History> historyList) {
+    public void informHistoryLoaded(@Nullable List<History> historyList) {
         if (historyList == null) {
             Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
         } else {
@@ -80,6 +80,8 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
             String url = historyList.get(historyCount - 1).getUrl();
             String informText = "History count: " + historyCount + ". Last added: " + url;
             Snackbar.make(mHistoryView, informText, Snackbar.LENGTH_LONG).show();
+
+            mHistoryView.setData(historyList);
         }
     }
 }

@@ -11,7 +11,7 @@ public interface HistoryContract extends MvpContract {
     interface View extends MvpContract.View {
         void showHistory();
 
-        void informHistoryLoad(@Nullable List<History> history);
+        void informHistoryLoaded(@Nullable List<History> history);
     }
 
     interface Presenter extends MvpContract.Presenter<View> {
