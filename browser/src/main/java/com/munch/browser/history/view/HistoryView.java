@@ -31,7 +31,9 @@ public class HistoryView extends RecyclerView {
         super(context, attrs, defStyle);
 
         mHistoryAdapter = new HistoryAdapter();
-        setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, true);
+        linearLayoutManager.setStackFromEnd(true);
+        setLayoutManager(linearLayoutManager);
         setAdapter(mHistoryAdapter);
     }
 

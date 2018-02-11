@@ -7,6 +7,9 @@ import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 @Entity(tableName = "history")
@@ -21,9 +24,8 @@ public final class History {
     @ColumnInfo(name = "url")
     private final String mUrl;
 
-    @NonNull
     @ColumnInfo(name = "timestamp")
-    private final String mTimestamp;
+    private final long mTimestamp;
 
     @Nullable
     @ColumnInfo(name = "title")
@@ -56,8 +58,30 @@ public final class History {
     }
 
     @NonNull
-    public String getTimestamp() {
+    public long getTimestamp() {
         return mTimestamp;
+    }
+
+    @NonNull
+    public String getDate() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd M", Locale.US);
+            Date netDate = (new Date(mTimestamp));
+            return sdf.format(netDate);
+        } catch (Exception ex) {
+            return "xx";
+        }
+    }
+
+    @NonNull
+    public String getTime() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
+            Date netDate = (new Date(mTimestamp));
+            return sdf.format(netDate);
+        } catch (Exception ex) {
+            return "xx";
+        }
     }
 
     @Nullable
@@ -103,7 +127,7 @@ public final class History {
         this(
                 UUID.randomUUID().toString(),
                 url,
-                ((Long) (System.currentTimeMillis() / 1000)).toString(),
+                System.currentTimeMillis(),
                 title,
                 description,
                 html,
@@ -114,7 +138,7 @@ public final class History {
 
     public History(@NonNull String id,
                    @NonNull String url,
-                   @NonNull String timestamp,
+                   long timestamp,
                    @Nullable String title,
                    @Nullable String description,
                    @Nullable String html,

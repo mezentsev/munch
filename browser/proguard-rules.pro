@@ -32,8 +32,6 @@
 -dontpreverify
 -verbose
 
--keep class com.munch.** { public *; }
-
 # Retrofit
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
