@@ -20,7 +20,11 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="@dimen/munch_history_holder_padding"
+        android:paddingStart="@dimen/munch_history_holder_padding"
+        android:paddingRight="@dimen/munch_history_holder_padding"
+        android:paddingEnd="@dimen/munch_history_holder_padding">
 
         <TextView
             android:id="@+id/munch_history_title"
@@ -41,7 +45,7 @@
 
     <TextView
         android:id="@+id/munch_history_timestamp"
-        android:layout_width="wrap_content"
+        android:layout_width="32dp"
         android:layout_height="match_parent"
         android:layout_weight="0.1"
         android:gravity="end|center_vertical" />
