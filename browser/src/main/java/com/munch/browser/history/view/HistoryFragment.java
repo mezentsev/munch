@@ -24,7 +24,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     @NonNull
     private static final String TAG = "[MNCH:HistoryFragment]";
     @NonNull
-    private static final String NO_HISTORY = "No history";
+    private static final String NO_HISTORY = "No History";
 
     @Inject
     Context mContext;
@@ -77,8 +77,8 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
             Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
         } else {
             int historyCount = historyList.size();
-            String url = historyList.get(historyCount - 1).getUrl();
-            String informText = "Shown history count: " + historyCount + ". Last added: " + url;
+            String url = historyList.get(0).getUrl();
+            String informText = "Shown History count: " + historyCount + ". Last added: " + url;
             Snackbar.make(mHistoryView, informText, Snackbar.LENGTH_LONG).show();
 
             mHistoryView.setData(historyList);

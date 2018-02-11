@@ -65,7 +65,7 @@ public final class History {
     @NonNull
     public String getDate() {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd M", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.US);
             Date netDate = (new Date(mTimestamp));
             return sdf.format(netDate);
         } catch (Exception ex) {
