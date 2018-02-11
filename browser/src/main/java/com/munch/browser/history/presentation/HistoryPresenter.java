@@ -58,9 +58,9 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
 
     @Override
     public void loadHistory() {
-        mHistoryRepository.getHistoryList(
-                //HISTORY_COUNT,
-                //HISTORY_OFFSET,
+        mHistoryRepository.getLastHistoryList(
+                HISTORY_COUNT,
+                HISTORY_OFFSET,
                 new HistoryDataSource.LoadHistoryCallback() {
                     @Override
                     public void onHistoryLoaded(@NonNull List<History> historyList) {

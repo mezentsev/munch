@@ -31,9 +31,12 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
     private final Context mContext;
     @Nullable
     private ProgressBar mProgressBar;
-
     @Nullable
-    private MunchWebContract.Presenter mWebPresenter;
+    private MunchWebContract.WebProgressListener mProgressListener;
+    @Nullable
+    private String mTitle;
+    @Nullable
+    private String mUrl;
 
     public MunchWebView(@NonNull Context context) {
         this(context, null, 0);
@@ -54,16 +57,30 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
     }
 
     @Override
+    public void openUrl(@NonNull String url) {
+        mUrl = prepareUrl(url);
+        loadUrl(mUrl);
+    }
+
+    @Override
+    public void loadHtml(@NonNull String html) {
+        throw new IllegalStateException("Not implemented yet");
+    }
+
+    @Override
     public void setProgressBar(@Nullable ProgressBar progressBar) {
         mProgressBar = progressBar;
     }
 
     @Override
-    public void openUrl(@NonNull String url) {
-        loadUrl(prepareUrl(url));
+    public void setProgressListener(@Nullable MunchWebContract.WebProgressListener progressListener) {
+        mProgressListener = progressListener;
     }
 
     private void init() {
+        mTitle = null;
+        mUrl = null;
+
         final WebSettings webSettings = getSettings();
 
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
@@ -95,6 +112,32 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                         }
 
                         Log.d(TAG, "Progress: " + progress);
+                    }
+
+                    @Override
+                    public void onReceivedTitle(WebView view,
+                                                String title) {
+                        super.onReceivedTitle(view, title);
+                        Log.d(TAG, "title received");
+
+                        mTitle = title;
+                    }
+
+                    @Override
+                    public void onReceivedIcon(WebView view,
+                                               Bitmap icon) {
+                        long timestamp = System.currentTimeMillis();
+
+                        super.onReceivedIcon(view, icon);
+                        Log.d(TAG, "icon received");
+
+                        if (mProgressListener != null) {
+                            mProgressListener.onFavicon(
+                                    timestamp,
+                                    mUrl,
+                                    icon
+                            );
+                        }
                     }
                 }
         );
@@ -151,15 +194,26 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
             }
 
             @Override
-            public void onPageFinished(WebView view,
-                                       String url) {
+            public void onPageFinished(@NonNull WebView view,
+                                       @NonNull String url) {
+                long timestamp = System.currentTimeMillis();
                 webSettings.setLoadsImagesAutomatically(true);
 
                 if (mProgressBar != null) {
                     mProgressBar.setVisibility(View.GONE);
                 }
 
-                Log.d(TAG, "Loading finished");
+                if (mProgressListener != null && mTitle != null) {
+                    mProgressListener.onFinish(
+                            timestamp,
+                            mUrl,
+                            mTitle);
+                }
+
+                Log.d(TAG, "Loading finished. Title: " +
+                        mTitle + ". Url: " +
+                        mUrl
+                );
             }
 
             @Override
@@ -191,11 +245,20 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
             private void handleError(@NonNull WebView view,
                                      int errorCode,
                                      String description,
-                                     String uri) {
-                Log.e(TAG, "Error: " + errorCode + "; " + uri + "; " + description);
+                                     String url) {
+                long timestamp = System.currentTimeMillis();
+                Log.e(TAG, "Error: " + errorCode + "; " + url + "; " + description);
+
                 if (mOnLoadResourceCount <= 1) {
                     Log.d(TAG, "Internet connection error");
                     view.loadData(String.format(ERROR_WITH_DESCRIPTION, description), "text/html", "utf-8");
+
+                    if (mProgressListener != null) {
+                        mProgressListener.onError(
+                                timestamp,
+                                mUrl,
+                                errorCode);
+                    }
                 }
             }
         });

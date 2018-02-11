@@ -122,6 +122,22 @@ public final class History {
     @Ignore
     public History(@NonNull String url,
                    @Nullable String title,
+                   long timestamp) {
+        this(
+                UUID.randomUUID().toString(),
+                url,
+                timestamp,
+                title,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Ignore
+    public History(@NonNull String url,
+                   @Nullable String title,
                    @Nullable String description,
                    @Nullable String html) {
         this(

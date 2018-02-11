@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/munch_history_favicon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="@dimen/munch_history_favicon_size"
+        android:layout_height="@dimen/munch_history_favicon_size"
         android:layout_weight="0.01"
         android:gravity="center_vertical" />
 
@@ -21,18 +21,19 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         android:orientation="vertical"
+        android:paddingEnd="@dimen/munch_history_holder_padding"
         android:paddingLeft="@dimen/munch_history_holder_padding"
-        android:paddingStart="@dimen/munch_history_holder_padding"
         android:paddingRight="@dimen/munch_history_holder_padding"
-        android:paddingEnd="@dimen/munch_history_holder_padding">
+        android:paddingStart="@dimen/munch_history_holder_padding">
 
         <TextView
             android:id="@+id/munch_history_title"
             android:layout_width="match_parent"
-            android:layout_height="32dp"
+            android:layout_height="@dimen/munch_history_title_height"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLines="2" />
+            android:maxLines="2"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/munch_history_url"
