@@ -78,7 +78,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
         } else {
             int historyCount = historyList.size();
             String url = historyList.get(historyCount - 1).getUrl();
-            String informText = "History count: " + historyCount + ". Last added: " + url;
+            String informText = "Shown history count: " + historyCount + ". Last added: " + url;
             Snackbar.make(mHistoryView, informText, Snackbar.LENGTH_LONG).show();
 
             mHistoryView.setData(historyList);
