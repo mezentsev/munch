@@ -4,8 +4,11 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,7 +44,7 @@ public final class History {
 
     @Nullable
     @ColumnInfo(name = "favicon")
-    private final String mFavicon;
+    private String mFavicon;
 
     @Nullable
     @ColumnInfo(name = "background")
@@ -60,28 +63,6 @@ public final class History {
     @NonNull
     public long getTimestamp() {
         return mTimestamp;
-    }
-
-    @NonNull
-    public String getDate() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.US);
-            Date netDate = (new Date(mTimestamp));
-            return sdf.format(netDate);
-        } catch (Exception ex) {
-            return "xx";
-        }
-    }
-
-    @NonNull
-    public String getTime() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
-            Date netDate = (new Date(mTimestamp));
-            return sdf.format(netDate);
-        } catch (Exception ex) {
-            return "xx";
-        }
     }
 
     @Nullable
@@ -174,5 +155,31 @@ public final class History {
     @NonNull
     public String toString() {
         return "History url " + mUrl;
+    }
+
+    @NonNull
+    public String getDate() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.US);
+            Date netDate = (new Date(mTimestamp));
+            return sdf.format(netDate);
+        } catch (Exception ex) {
+            return "xx";
+        }
+    }
+
+    @NonNull
+    public String getTime() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
+            Date netDate = (new Date(mTimestamp));
+            return sdf.format(netDate);
+        } catch (Exception ex) {
+            return "xx";
+        }
+    }
+
+    public void setFavicon(@NonNull String favicon) {
+        mFavicon = favicon;
     }
 }

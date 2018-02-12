@@ -24,7 +24,7 @@ import java.io.File;
 final class MunchWebView extends WebView implements MunchWebContract.View {
 
     private static final String TAG = "[MNCH:MunchWebView]";
-    private static final String ERROR_WITH_DESCRIPTION = "<p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p>";
+    private static final String ERROR_WITH_DESCRIPTION = "<html><title>Munch Error</title><body><p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p></body></html>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
 
     @NonNull
@@ -203,7 +203,7 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                     mProgressBar.setVisibility(View.GONE);
                 }
 
-                if (mProgressListener != null && mTitle != null) {
+                if (mProgressListener != null && mTitle != null && !mTitle.equals("Munch Error")) {
                     mProgressListener.onFinish(
                             timestamp,
                             mUrl,

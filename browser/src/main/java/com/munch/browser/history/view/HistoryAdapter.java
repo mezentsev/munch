@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.munch.browser.R;
+import com.munch.browser.helpers.ImageHelper;
 import com.munch.history.model.History;
 
 import java.util.ArrayList;
@@ -169,9 +170,14 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         void bind(@NonNull History history) {
             mUrlView.setText(history.getUrl());
 
-            // todo make real favicon
-            Drawable drawable = mContext.getResources().getDrawable(android.R.drawable.ic_menu_recent_history);
-            mFaviconView.setImageDrawable(drawable);
+            String favicon64 = history.getFavicon();
+            if (favicon64 == null) {
+                Drawable drawable = mContext.getResources().getDrawable(android.R.drawable.ic_menu_recent_history);
+                mFaviconView.setImageDrawable(drawable);
+            } else {
+                // todo need to do it not in UI thread
+                mFaviconView.setImageBitmap(ImageHelper.getBitmapFromBase64(favicon64));
+            }
 
             mTitleView.setText(history.getTitle());
             mTimestampView.setText(history.getTime());

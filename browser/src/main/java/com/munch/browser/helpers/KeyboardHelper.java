@@ -5,7 +5,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
-public class KeyboardHelper {
+public final class KeyboardHelper {
     private static String TAG = "[MNCH:KeyboardHelper]";
 
     public static void hideKeyboard(Context context,
