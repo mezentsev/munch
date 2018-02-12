@@ -22,8 +22,16 @@ public interface HistoryDao {
      *
      * @return all history.
      */
-    @Query("SELECT * FROM History")
+    @Query("SELECT * FROM History ORDER BY timestamp DESC")
     List<History> getHistory();
+
+    /**
+     * Select limited history count from the History table.
+     *
+     * @return all history.
+     */
+    @Query("SELECT * FROM History ORDER BY timestamp DESC LIMIT :selectCount OFFSET :offsetCount")
+    List<History> getLastHistory(int selectCount, int offsetCount);
 
     /**
      * Select a History by id.

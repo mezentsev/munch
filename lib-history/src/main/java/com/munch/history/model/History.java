@@ -4,9 +4,15 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Base64;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 @Entity(tableName = "history")
@@ -21,9 +27,8 @@ public final class History {
     @ColumnInfo(name = "url")
     private final String mUrl;
 
-    @NonNull
     @ColumnInfo(name = "timestamp")
-    private final String mTimestamp;
+    private final long mTimestamp;
 
     @Nullable
     @ColumnInfo(name = "title")
@@ -39,7 +44,7 @@ public final class History {
 
     @Nullable
     @ColumnInfo(name = "favicon")
-    private final String mFavicon;
+    private String mFavicon;
 
     @Nullable
     @ColumnInfo(name = "background")
@@ -56,7 +61,7 @@ public final class History {
     }
 
     @NonNull
-    public String getTimestamp() {
+    public long getTimestamp() {
         return mTimestamp;
     }
 
@@ -98,12 +103,28 @@ public final class History {
     @Ignore
     public History(@NonNull String url,
                    @Nullable String title,
+                   long timestamp) {
+        this(
+                UUID.randomUUID().toString(),
+                url,
+                timestamp,
+                title,
+                null,
+                null,
+                null,
+                null
+        );
+    }
+
+    @Ignore
+    public History(@NonNull String url,
+                   @Nullable String title,
                    @Nullable String description,
                    @Nullable String html) {
         this(
                 UUID.randomUUID().toString(),
                 url,
-                ((Long) (System.currentTimeMillis() / 1000)).toString(),
+                System.currentTimeMillis(),
                 title,
                 description,
                 html,
@@ -114,7 +135,7 @@ public final class History {
 
     public History(@NonNull String id,
                    @NonNull String url,
-                   @NonNull String timestamp,
+                   long timestamp,
                    @Nullable String title,
                    @Nullable String description,
                    @Nullable String html,
@@ -134,5 +155,31 @@ public final class History {
     @NonNull
     public String toString() {
         return "History url " + mUrl;
+    }
+
+    @NonNull
+    public String getDate() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.US);
+            Date netDate = (new Date(mTimestamp));
+            return sdf.format(netDate);
+        } catch (Exception ex) {
+            return "xx";
+        }
+    }
+
+    @NonNull
+    public String getTime() {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
+            Date netDate = (new Date(mTimestamp));
+            return sdf.format(netDate);
+        } catch (Exception ex) {
+            return "xx";
+        }
+    }
+
+    public void setFavicon(@NonNull String favicon) {
+        mFavicon = favicon;
     }
 }

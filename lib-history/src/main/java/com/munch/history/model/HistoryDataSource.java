@@ -20,6 +20,8 @@ public interface HistoryDataSource {
         void onDataNotAvailable();
     }
 
+    void getLastHistoryList(int count, int offset, @NonNull LoadHistoryCallback callback);
+
     void getHistoryList(@NonNull LoadHistoryCallback callback);
 
     void getHistory(@NonNull String historyId,

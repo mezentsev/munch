@@ -15,6 +15,9 @@ import javax.inject.Inject;
 
 public final class HistoryPresenter implements HistoryContract.Presenter {
 
+    private final static int HISTORY_COUNT = 10;
+    private final static int HISTORY_OFFSET = 0;
+
     @NonNull
     private final String TAG = "[MNCH:HPresenter]";
 
@@ -55,22 +58,25 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
 
     @Override
     public void loadHistory() {
-        mHistoryRepository.getHistoryList(new HistoryDataSource.LoadHistoryCallback() {
-            @Override
-            public void onHistoryLoaded(@NonNull List<History> historyList) {
-                if (mView != null) {
-                    mView.informHistoryLoad(historyList);
-                }
-            }
+        mHistoryRepository.getLastHistoryList(
+                HISTORY_COUNT,
+                HISTORY_OFFSET,
+                new HistoryDataSource.LoadHistoryCallback() {
+                    @Override
+                    public void onHistoryLoaded(@NonNull List<History> historyList) {
+                        if (mView != null) {
+                            mView.informHistoryLoaded(historyList);
+                        }
+                    }
 
-            @Override
-            public void onDataNotAvailable() {
-                Log.d(TAG, "onDataNotAvailable");
+                    @Override
+                    public void onDataNotAvailable() {
+                        Log.d(TAG, "onDataNotAvailable");
 
-                if (mView != null) {
-                    mView.informHistoryLoad(null);
-                }
-            }
-        });
+                        if (mView != null) {
+                            mView.informHistoryLoaded(null);
+                        }
+                    }
+                });
     }
 }

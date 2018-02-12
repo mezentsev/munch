@@ -77,6 +77,34 @@ public class LocalHistoryDataSource implements HistoryDataSource {
     }
 
     @Override
+    public void getLastHistoryList(final int count,
+                                   final int offset,
+                                   @NonNull final LoadHistoryCallback callback) {
+        Log.d(TAG, "getLastHistoryList");
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                final List<History> historyList = mHistoryDao.getLastHistory(count, offset);
+                Log.d(TAG, "getLastHistoryList " + historyList.toString());
+
+                mMainExecutor.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (historyList.isEmpty()) {
+                            // This will be called if the table is new or just empty.
+                            callback.onDataNotAvailable();
+                        } else {
+                            callback.onHistoryLoaded(historyList);
+                        }
+                    }
+                });
+            }
+        };
+
+        mIoExecutor.execute(runnable);
+    }
+
+    @Override
     public void getHistoryList(@NonNull final LoadHistoryCallback callback) {
         Log.d(TAG, "getHistoryList");
 

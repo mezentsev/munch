@@ -38,6 +38,37 @@ public final class HistoryRepository implements HistoryDataSource {
     }
 
     @Override
+    public void getLastHistoryList(final int count,
+                                   final int offset,
+                                   @NonNull final LoadHistoryCallback callback) {
+        Log.d(TAG, "getLastHistoryList");
+
+        if (mCachedHistory != null && !mCacheIsDirty) {
+            callback.onHistoryLoaded(new ArrayList<>(mCachedHistory.values()));
+        }
+
+        // local storage
+        mLocalDataSource.getLastHistoryList(
+                count,
+                offset,
+                new LoadHistoryCallback() {
+                    @Override
+                    public void onHistoryLoaded(@NonNull List<History> historyList) {
+                        Log.d(TAG, "onHistoryLoaded");
+
+                        refreshCache(historyList);
+                        callback.onHistoryLoaded(historyList);
+                    }
+
+                    @Override
+                    public void onDataNotAvailable() {
+                        Log.d(TAG, "onDataNotAvailable");
+                        callback.onDataNotAvailable();
+                    }
+                });
+    }
+
+    @Override
     public void getHistoryList(@NonNull final LoadHistoryCallback callback) {
         Log.d(TAG, "getHistoryList");
 
