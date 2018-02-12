@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.ImageHelper;
+import com.munch.browser.history.HistoryContract;
 import com.munch.history.model.History;
 
 import java.util.ArrayList;
@@ -19,10 +20,12 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements HistoryAdapterListener {
     private static final int DATE_HOLDER = 0;
     private static final int HISTORY_ITEM_HOLDER = 1;
 
+    @Nullable
+    private HistoryContract.HistoryListener mHistoryListener;
     @Nullable
     private List<History> mHistoryList;
     @Nullable
@@ -33,6 +36,15 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private int mHistorySize = 0;
 
     HistoryAdapter() {
+    }
+
+    /**
+     * Set listener to operate with history items.
+     *
+     * @param historyListener
+     */
+    public void setHistoryListener(@Nullable HistoryContract.HistoryListener historyListener) {
+        mHistoryListener = historyListener;
     }
 
     @Override
@@ -53,8 +65,9 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 return new HistoryItemHolder(
                         context,
                         layoutInflater
-                                .inflate(R.layout.munch_browser_history_holder, parent, false)
-                );
+                                .inflate(R.layout.munch_browser_history_holder, parent, false),
+                                this
+                        );
             default:
                 throw new IllegalStateException("Not supported");
         }
@@ -123,6 +136,18 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         notifyDataSetChanged();
     }
 
+    @Override
+    public void onClicked(int adapterPosition) {
+        if (mHistoryListener != null) {
+            Integer index = mIndexer.get(adapterPosition);
+            if (index >= mHistorySize) {
+                return;
+            } else {
+                mHistoryListener.onHistoryClicked(mHistoryList.get(index));
+            }
+        }
+    }
+
     static class HistoryDateHolder extends RecyclerView.ViewHolder {
 
         @NonNull
@@ -143,7 +168,7 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    static class HistoryItemHolder extends RecyclerView.ViewHolder {
+    static class HistoryItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @NonNull
         private final Context mContext;
@@ -153,11 +178,14 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         private final TextView mTitleView;
         @NonNull
         private final TextView mTimestampView;
+        @Nullable
+        private final HistoryAdapterListener mHistoryClickListener;
         @NonNull
         private final ImageView mFaviconView;
 
         HistoryItemHolder(@NonNull Context context,
-                          @NonNull View itemView) {
+                          @NonNull View itemView,
+                          @Nullable HistoryAdapterListener historyListener) {
             super(itemView);
             mContext = context;
 
@@ -165,6 +193,9 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             mFaviconView = itemView.findViewById(R.id.munch_history_favicon);
             mTitleView = itemView.findViewById(R.id.munch_history_title);
             mTimestampView = itemView.findViewById(R.id.munch_history_timestamp);
+            mHistoryClickListener = historyListener;
+
+            itemView.setOnClickListener(this);
         }
 
         void bind(@NonNull History history) {
@@ -181,6 +212,13 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             mTitleView.setText(history.getTitle());
             mTimestampView.setText(history.getTime());
+        }
+
+        @Override
+        public void onClick(@NonNull View v) {
+            if (mHistoryClickListener != null) {
+                mHistoryClickListener.onClicked(getAdapterPosition());
+            }
         }
     }
 }
