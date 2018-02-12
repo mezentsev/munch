@@ -9,22 +9,23 @@ import com.munch.browser.helpers.ImageHelper;
 import com.munch.browser.web.WebActivityContract;
 import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
-import com.munch.webview.MunchWebContract;
+import com.munch.webview.MunchWebView;
+import com.munch.webview.WebProgressListener;
 
 import javax.inject.Inject;
 
 public class WebPresenter implements WebActivityContract.Presenter {
+    private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
     private final HistoryDataSource mHistoryDataSource;
     @Nullable
-    private WebActivityContract.View mView;
-    @Nullable
-    private MunchWebContract.View mMunchWebView;
+    private MunchWebView mView;
 
     @Inject
     public WebPresenter(@NonNull HistoryDataSource historyDataSource) {
         mHistoryDataSource = historyDataSource;
+        Log.d(TAG, "inited");
     }
 
     @Override
@@ -38,19 +39,10 @@ public class WebPresenter implements WebActivityContract.Presenter {
     }
 
     @Override
-    public void attachView(@NonNull WebActivityContract.View view) {
+    public void attachView(@NonNull MunchWebView view) {
         mView = view;
-    }
-
-    @Override
-    public void attachMunchWebView(@NonNull MunchWebContract.View munchWebView) {
-        mMunchWebView = munchWebView;
-        munchWebView.setProgressListener(new ProgressListener(mHistoryDataSource));
-    }
-
-    @Override
-    public void detachMunchWebView() {
-        mMunchWebView = null;
+        mView.setProgressListener(new ProgressListener(mHistoryDataSource));
+        Log.d(TAG, "attach");
     }
 
     @Override
@@ -76,18 +68,19 @@ public class WebPresenter implements WebActivityContract.Presenter {
     @Override
     public void detachView() {
         mView = null;
+        Log.d(TAG, "detach");
     }
 
     @Override
     public void onDestroy() {
-
+        Log.d(TAG, "destroy");
     }
 
     @Override
     public void useUrl(@NonNull final String url) {
-        if (mMunchWebView != null) {
+        if (mView != null) {
             String preparedUrl = prepareUrl(url);
-            mMunchWebView.openUrl(preparedUrl);
+            mView.loadUrl(preparedUrl);
         }
     }
 
@@ -108,7 +101,7 @@ public class WebPresenter implements WebActivityContract.Presenter {
         return lowerUrl;
     }
 
-    private static class ProgressListener implements MunchWebContract.WebProgressListener {
+    private static class ProgressListener implements WebProgressListener {
         private static final String TAG = "[MNCH:PL]";
 
         @NonNull

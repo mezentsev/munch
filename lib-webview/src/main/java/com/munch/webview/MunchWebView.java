@@ -19,9 +19,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
+import com.munch.mvp.MvpContract;
+
 import java.io.File;
 
-final class MunchWebView extends WebView implements MunchWebContract.View {
+public final class MunchWebView extends WebView implements MvpContract.View {
 
     private static final String TAG = "[MNCH:MunchWebView]";
     private static final String ERROR_WITH_DESCRIPTION = "<html><title>Munch Error</title><body><p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p></body></html>";
@@ -32,7 +34,7 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
     @Nullable
     private ProgressBar mProgressBar;
     @Nullable
-    private MunchWebContract.WebProgressListener mProgressListener;
+    private WebProgressListener mProgressListener;
     @Nullable
     private String mTitle;
     @Nullable
@@ -56,24 +58,41 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
         init();
     }
 
+    /**
+     * Load site by url from internet or cache.
+     *
+     * @param url
+     */
     @Override
-    public void openUrl(@NonNull String url) {
+    public void loadUrl(@NonNull String url) {
         mUrl = prepareUrl(url);
-        loadUrl(mUrl);
+        super.loadUrl(mUrl);
     }
 
-    @Override
+    /**
+     * Load html to webView.
+     *
+     * @param html
+     */
     public void loadHtml(@NonNull String html) {
         throw new IllegalStateException("Not implemented yet");
     }
 
-    @Override
+    /**
+     * Set progressbar view.
+     *
+     * @param progressBar
+     */
     public void setProgressBar(@Nullable ProgressBar progressBar) {
         mProgressBar = progressBar;
     }
 
-    @Override
-    public void setProgressListener(@Nullable MunchWebContract.WebProgressListener progressListener) {
+    /**
+     * Set progress listener.
+     *
+     * @param progressListener
+     */
+    public void setProgressListener(@Nullable WebProgressListener progressListener) {
         mProgressListener = progressListener;
     }
 

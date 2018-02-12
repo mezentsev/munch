@@ -10,13 +10,13 @@ import android.widget.ProgressBar;
 
 import com.munch.browser.R;
 import com.munch.browser.web.WebActivityContract;
-import com.munch.webview.MunchWebContract;
+import com.munch.webview.MunchWebView;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class WebFragment extends DaggerFragment implements WebActivityContract.View {
+public class WebFragment extends DaggerFragment {
 
     @NonNull
     private static String TAG = "[MNCH:WebFragment]";
@@ -28,7 +28,7 @@ public class WebFragment extends DaggerFragment implements WebActivityContract.V
     WebActivityContract.Presenter mPresenter;
 
     @NonNull
-    private MunchWebContract.View mMunchWebView;
+    private MunchWebView mMunchWebView;
 
     @Inject
     public WebFragment() {
@@ -55,15 +55,12 @@ public class WebFragment extends DaggerFragment implements WebActivityContract.V
     public void onStart() {
         super.onStart();
 
-        mPresenter.attachView(this);
-        mPresenter.attachMunchWebView(mMunchWebView);
-
+        mPresenter.attachView(mMunchWebView);
         mPresenter.useUrl(mUri);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.detachMunchWebView();
         mPresenter.detachView();
 
         super.onDestroy();

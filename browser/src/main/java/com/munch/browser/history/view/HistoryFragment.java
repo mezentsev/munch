@@ -54,7 +54,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
         mHistoryView = view.findViewById(R.id.munch_history_view);
 
         mHistoryAdapter = new HistoryAdapter();
-        mHistoryAdapter.setHistoryListener(new HistoryListener(mContext));
+        mHistoryAdapter.setHistoryListener(new HistoryListener(getActivity()));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(false);

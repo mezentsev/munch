@@ -16,14 +16,10 @@ import dagger.android.ContributesAndroidInjector;
 import static com.munch.browser.web.view.WebActivity.EXTRA_URI;
 
 @Module
-public abstract class WebActivityModule {
-    @FragmentScoped
-    @ContributesAndroidInjector
-    abstract WebFragment webFragment();
-
-    @ActivityScoped
+public abstract class WebModule {
+    @Singleton
     @Provides
-    static String provideUri(WebActivity activity) {
-        return activity.getIntent().getStringExtra(EXTRA_URI);
+    static WebActivityContract.Presenter provideWebPresenter(HistoryRepository historyRepository) {
+        return new WebPresenter(historyRepository);
     }
 }

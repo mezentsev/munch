@@ -3,18 +3,11 @@ package com.munch.browser.web;
 import android.support.annotation.NonNull;
 
 import com.munch.mvp.MvpContract;
-import com.munch.webview.MunchWebContract;
+import com.munch.webview.MunchWebView;
 
 public interface WebActivityContract extends MvpContract {
-    interface View extends MvpContract.View {
-    }
-
-    interface Presenter extends MvpContract.Presenter<View> {
+    interface Presenter extends MvpContract.Presenter<MunchWebView> {
         void useUrl(@NonNull String url);
-
-        void attachMunchWebView(@NonNull MunchWebContract.View munchWebView);
-
-        void detachMunchWebView();
 
         void goBack();
 
