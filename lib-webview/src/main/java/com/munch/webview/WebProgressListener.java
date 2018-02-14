@@ -18,4 +18,6 @@ public interface WebProgressListener {
     void onError(long timestamp,
                  @NonNull String url,
                  int errorCode);
+
+    void onProgressChanged(int progress);
 }

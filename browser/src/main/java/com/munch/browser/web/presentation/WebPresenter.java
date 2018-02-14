@@ -4,23 +4,27 @@ import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.View;
+import android.webkit.WebView;
+import android.widget.ProgressBar;
 
 import com.munch.browser.helpers.ImageHelper;
-import com.munch.browser.web.WebActivityContract;
+import com.munch.browser.web.WebContract;
 import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
-import com.munch.webview.MunchWebView;
+import com.munch.webview.MunchWebContract;
 import com.munch.webview.WebProgressListener;
 
 import javax.inject.Inject;
 
-public class WebPresenter implements WebActivityContract.Presenter {
+public class WebPresenter implements WebContract.Presenter {
     private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
     private final HistoryDataSource mHistoryDataSource;
     @Nullable
-    private MunchWebView mView;
+    private MunchWebContract.View mWebView;
+    private WebContract.View mView;
 
     @Inject
     public WebPresenter(@NonNull HistoryDataSource historyDataSource) {
@@ -39,9 +43,14 @@ public class WebPresenter implements WebActivityContract.Presenter {
     }
 
     @Override
-    public void attachView(@NonNull MunchWebView view) {
+    public void attachView(@NonNull WebContract.View view) {
         mView = view;
-        mView.setProgressListener(new ProgressListener(mHistoryDataSource));
+    }
+
+    @Override
+    public void attachWebView(@NonNull MunchWebContract.View webView) {
+        mWebView = webView;
+        mWebView.setProgressListener(new ProgressListener(mHistoryDataSource, mView));
         Log.d(TAG, "attach");
     }
 
@@ -67,6 +76,7 @@ public class WebPresenter implements WebActivityContract.Presenter {
 
     @Override
     public void detachView() {
+        mWebView = null;
         mView = null;
         Log.d(TAG, "detach");
     }
@@ -78,9 +88,9 @@ public class WebPresenter implements WebActivityContract.Presenter {
 
     @Override
     public void useUrl(@NonNull final String url) {
-        if (mView != null) {
+        if (mWebView != null) {
             String preparedUrl = prepareUrl(url);
-            mView.loadUrl(preparedUrl);
+            mWebView.loadUrl(preparedUrl);
         }
     }
 
@@ -106,25 +116,27 @@ public class WebPresenter implements WebActivityContract.Presenter {
 
         @NonNull
         private final HistoryDataSource mHistoryDataSource;
+        @NonNull
+        private final WebContract.View mView;
+
         @Nullable
         private History mHistory;
 
-        ProgressListener(@NonNull HistoryDataSource historyDataSource) {
+        ProgressListener(@NonNull HistoryDataSource historyDataSource,
+                         @NonNull WebContract.View view) {
             mHistoryDataSource = historyDataSource;
+            mView = view;
         }
 
         @Override
         public void onStart(long timestamp,
                             @NonNull String url) {
-            Log.d(TAG, "onStart " + url);
         }
 
         @Override
         public void onFavicon(long timestamp,
                               @NonNull String url,
                               @NonNull Bitmap favicon) {
-            Log.d(TAG, "onFavicon " + url);
-
             if (mHistory != null) {
                 String base64FromBitmap = ImageHelper.getBase64FromBitmap(favicon);
                 if (base64FromBitmap != null) {
@@ -138,7 +150,6 @@ public class WebPresenter implements WebActivityContract.Presenter {
         public void onFinish(long timestamp,
                              @NonNull String url,
                              @NonNull String title) {
-            Log.d(TAG, "onFinish " + url);
 
             mHistory = new History(url, title, timestamp);
             mHistoryDataSource.saveHistory(mHistory);
@@ -148,7 +159,11 @@ public class WebPresenter implements WebActivityContract.Presenter {
         public void onError(long timestamp,
                             @NonNull String url,
                             int errorCode) {
-            Log.d(TAG, "onError " + url);
+        }
+
+        @Override
+        public void onProgressChanged(int progress) {
+            mView.showProgress(progress);
         }
     }
 }

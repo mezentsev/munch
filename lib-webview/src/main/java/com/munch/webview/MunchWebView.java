@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -17,13 +18,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
-
-import com.munch.mvp.MvpContract;
 
 import java.io.File;
 
-public final class MunchWebView extends WebView implements MvpContract.View {
+public final class MunchWebView extends WebView implements MunchWebContract.View {
 
     private static final String TAG = "[MNCH:MunchWebView]";
     private static final String ERROR_WITH_DESCRIPTION = "<html><title>Munch Error</title><body><p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p></body></html>";
@@ -31,8 +29,6 @@ public final class MunchWebView extends WebView implements MvpContract.View {
 
     @NonNull
     private final Context mContext;
-    @Nullable
-    private ProgressBar mProgressBar;
     @Nullable
     private WebProgressListener mProgressListener;
     @Nullable
@@ -58,40 +54,18 @@ public final class MunchWebView extends WebView implements MvpContract.View {
         init();
     }
 
-    /**
-     * Load site by url from internet or cache.
-     *
-     * @param url
-     */
     @Override
     public void loadUrl(@NonNull String url) {
         mUrl = prepareUrl(url);
         super.loadUrl(mUrl);
     }
 
-    /**
-     * Load html to webView.
-     *
-     * @param html
-     */
+    @Override
     public void loadHtml(@NonNull String html) {
         throw new IllegalStateException("Not implemented yet");
     }
 
-    /**
-     * Set progressbar view.
-     *
-     * @param progressBar
-     */
-    public void setProgressBar(@Nullable ProgressBar progressBar) {
-        mProgressBar = progressBar;
-    }
-
-    /**
-     * Set progress listener.
-     *
-     * @param progressListener
-     */
+    @Override
     public void setProgressListener(@Nullable WebProgressListener progressListener) {
         mProgressListener = progressListener;
     }
@@ -126,8 +100,8 @@ public final class MunchWebView extends WebView implements MvpContract.View {
                     @Override
                     public void onProgressChanged(WebView view,
                                                   int progress) {
-                        if (mProgressBar != null) {
-                            mProgressBar.setProgress(progress);
+                        if (mProgressListener != null) {
+                            mProgressListener.onProgressChanged(progress);
                         }
 
                         Log.d(TAG, "Progress: " + progress);
@@ -173,10 +147,6 @@ public final class MunchWebView extends WebView implements MvpContract.View {
 
                 super.onPageStarted(view, url, favicon);
 
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                }
-
                 Log.d(TAG, "Loading started");
             }
 
@@ -217,10 +187,6 @@ public final class MunchWebView extends WebView implements MvpContract.View {
                                        @NonNull String url) {
                 long timestamp = System.currentTimeMillis();
                 webSettings.setLoadsImagesAutomatically(true);
-
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(View.GONE);
-                }
 
                 if (mProgressListener != null && mTitle != null && !mTitle.equals("Munch Error")) {
                     mProgressListener.onFinish(

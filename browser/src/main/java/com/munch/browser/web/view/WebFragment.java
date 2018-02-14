@@ -9,14 +9,14 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.munch.browser.R;
-import com.munch.browser.web.WebActivityContract;
+import com.munch.browser.web.WebContract;
 import com.munch.webview.MunchWebView;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class WebFragment extends DaggerFragment {
+public class WebFragment extends DaggerFragment implements WebContract.View {
 
     @NonNull
     private static String TAG = "[MNCH:WebFragment]";
@@ -25,10 +25,12 @@ public class WebFragment extends DaggerFragment {
     String mUri;
 
     @Inject
-    WebActivityContract.Presenter mPresenter;
+    WebContract.Presenter mPresenter;
 
     @NonNull
     private MunchWebView mMunchWebView;
+    @NonNull
+    private ProgressBar mProgressBar;
 
     @Inject
     public WebFragment() {
@@ -42,11 +44,10 @@ public class WebFragment extends DaggerFragment {
         View view = inflater.inflate(R.layout.munch_webview_layout, container, false);
 
         mMunchWebView = view.findViewById(com.munch.webview.R.id.munch_webview_munchwebview);
-        ProgressBar mProgressBar = view.findViewById(com.munch.webview.R.id.munch_webview_progressbar);
+        mProgressBar = view.findViewById(com.munch.webview.R.id.munch_webview_progressbar);
 
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
-        mMunchWebView.setProgressBar(mProgressBar);
 
         return view;
     }
@@ -55,7 +56,9 @@ public class WebFragment extends DaggerFragment {
     public void onStart() {
         super.onStart();
 
-        mPresenter.attachView(mMunchWebView);
+        mPresenter.attachView(this);
+        mPresenter.attachWebView(mMunchWebView);
+
         mPresenter.useUrl(mUri);
     }
 
@@ -64,5 +67,16 @@ public class WebFragment extends DaggerFragment {
         mPresenter.detachView();
 
         super.onDestroy();
+    }
+
+    @Override
+    public void showProgress(int progress) {
+        if (progress == 0 || progress == 100) {
+            mProgressBar.setVisibility(View.GONE);
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        mProgressBar.setProgress(progress);
     }
 }
