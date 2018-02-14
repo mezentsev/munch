@@ -3,14 +3,13 @@ package com.munch.webview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -20,6 +19,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 public final class MunchWebView extends WebView implements MunchWebContract.View {
 
@@ -56,7 +58,12 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
 
     @Override
     public void loadUrl(@NonNull String url) {
-        mUrl = prepareUrl(url);
+        try {
+            mUrl = prepareUrl(url);
+        } catch (URISyntaxException e) {
+            return;
+        }
+
         super.loadUrl(mUrl);
     }
 
@@ -256,14 +263,17 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
      * @return normalized url
      */
     @NonNull
-    private String prepareUrl(@NonNull String url) {
+    private String prepareUrl(@NonNull String url) throws URISyntaxException {
         String lowerUrl = url.toLowerCase();
 
         if (!lowerUrl.matches("^\\w+?://.*")) {
             lowerUrl = "http://" + lowerUrl;
         }
 
-        return lowerUrl;
+        int pos = lowerUrl.lastIndexOf('/') + 1;
+
+        URI uri = new URI(lowerUrl.substring(0, pos) + Uri.encode(lowerUrl.substring(pos)));
+        return url;
     }
 
     /**

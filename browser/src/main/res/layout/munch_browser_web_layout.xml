@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.munch.webview.MunchWebView
+        android:id="@+id/munch_webview_munchwebview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+    </com.munch.webview.MunchWebView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/munch_webview_action_button_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:layout_margin="@dimen/munch_suggest_padding"
+        app:layout_behavior="com.munch.browser.utils.FloatingActionButtonBehavior"
+        android:src="@android:drawable/ic_media_rew" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/munch_webview_action_button_forward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/munch_suggest_padding"
+        app:layout_behavior="com.munch.browser.utils.FloatingActionButtonBehavior"
+        android:src="@android:drawable/ic_media_ff" />
+
+    <ProgressBar
+        android:id="@+id/munch_webview_progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="12dp"
+        android:layout_alignParentTop="true" />
+</android.support.design.widget.CoordinatorLayout>

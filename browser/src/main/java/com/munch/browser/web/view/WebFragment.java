@@ -41,10 +41,10 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.munch_webview_layout, container, false);
+        View view = inflater.inflate(R.layout.munch_browser_web_layout, container, false);
 
-        mMunchWebView = view.findViewById(com.munch.webview.R.id.munch_webview_munchwebview);
-        mProgressBar = view.findViewById(com.munch.webview.R.id.munch_webview_progressbar);
+        mMunchWebView = view.findViewById(R.id.munch_webview_munchwebview);
+        mProgressBar = view.findViewById(R.id.munch_webview_progressbar);
 
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
