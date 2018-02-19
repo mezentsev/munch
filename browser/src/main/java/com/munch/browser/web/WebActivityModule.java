@@ -7,6 +7,8 @@ import com.munch.history.model.HistoryRepository;
 import com.munch.mvp.ActivityScoped;
 import com.munch.mvp.FragmentScoped;
 
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
@@ -23,11 +25,5 @@ public abstract class WebActivityModule {
     @Provides
     static String provideUri(WebActivity activity) {
         return activity.getIntent().getStringExtra(EXTRA_URI);
-    }
-
-    @ActivityScoped
-    @Provides
-    static WebActivityContract.Presenter proviewWebActivityPresenter(HistoryRepository historyRepository) {
-        return new WebPresenter(historyRepository);
     }
 }

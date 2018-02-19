@@ -3,20 +3,26 @@ package com.munch.browser.web.view;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
+import android.support.v4.widget.NestedScrollView;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.munch.browser.R;
-import com.munch.browser.web.WebActivityContract;
+import com.munch.browser.web.WebContract;
 import com.munch.webview.MunchWebContract;
+import com.munch.webview.MunchWebView;
 
 import javax.inject.Inject;
 
 import dagger.android.support.DaggerFragment;
 
-public class WebFragment extends DaggerFragment implements WebActivityContract.View {
+public class WebFragment extends DaggerFragment implements WebContract.View {
 
     @NonNull
     private static String TAG = "[MNCH:WebFragment]";
@@ -25,10 +31,18 @@ public class WebFragment extends DaggerFragment implements WebActivityContract.V
     String mUri;
 
     @Inject
-    WebActivityContract.Presenter mPresenter;
+    WebContract.Presenter mPresenter;
 
     @NonNull
     private MunchWebContract.View mMunchWebView;
+    @NonNull
+    private ProgressBar mProgressBar;
+    @NonNull
+    private FloatingActionButton mForwardButton;
+    @NonNull
+    private FloatingActionButton mBackButton;
+    @NonNull
+    private SwipeRefreshLayout mRefreshLayout;
 
     @Inject
     public WebFragment() {
@@ -39,14 +53,39 @@ public class WebFragment extends DaggerFragment implements WebActivityContract.V
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.munch_webview_layout, container, false);
+        View view = inflater.inflate(R.layout.munch_browser_web_layout, container, false);
 
-        mMunchWebView = view.findViewById(com.munch.webview.R.id.munch_webview_munchwebview);
-        ProgressBar mProgressBar = view.findViewById(com.munch.webview.R.id.munch_webview_progressbar);
+        mRefreshLayout = view.findViewById(R.id.munch_webview_refresh);
+        mMunchWebView = view.findViewById(R.id.munch_webview_munchwebview);
+        mProgressBar = view.findViewById(R.id.munch_webview_progressbar);
+        mBackButton = view.findViewById(R.id.munch_webview_action_button_back);
+        mForwardButton = view.findViewById(R.id.munch_webview_action_button_forward);
 
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
-        mMunchWebView.setProgressBar(mProgressBar);
+
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mMunchWebView.reload();
+            }
+        });
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(getView(), "Back!", Snackbar.LENGTH_SHORT);
+                mPresenter.goBack();
+            }
+        });
+
+        mForwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(getView(), "Forward!", Snackbar.LENGTH_SHORT);
+                mPresenter.goForward();
+            }
+        });
 
         return view;
     }
@@ -56,16 +95,48 @@ public class WebFragment extends DaggerFragment implements WebActivityContract.V
         super.onStart();
 
         mPresenter.attachView(this);
-        mPresenter.attachMunchWebView(mMunchWebView);
+        mPresenter.attachWebView(mMunchWebView);
 
         mPresenter.useUrl(mUri);
     }
 
     @Override
     public void onDestroy() {
-        mPresenter.detachMunchWebView();
         mPresenter.detachView();
 
         super.onDestroy();
+    }
+
+    @Override
+    public void showProgress(int progress) {
+        if (progress == 0 || progress == 100) {
+            mProgressBar.setVisibility(View.GONE);
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        mProgressBar.setProgress(progress);
+    }
+
+    @Override
+    public void showBackButton(final boolean isShow) {
+        mBackButton.setVisibility(isShow ? View.VISIBLE : View.GONE);
+        mBackButton.setClickable(isShow);
+    }
+
+    @Override
+    public void showForwardButton(boolean isShow) {
+        mForwardButton.setVisibility(isShow ? View.VISIBLE : View.GONE);
+        mForwardButton.setEnabled(isShow);
+    }
+
+    @Override
+    public void stopRefreshBySwipe() {
+        mRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void enableRefreshBySwipe(boolean enable) {
+        mRefreshLayout.setEnabled(enable);
     }
 }

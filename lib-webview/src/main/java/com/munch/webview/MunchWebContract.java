@@ -1,37 +1,81 @@
 package com.munch.webview;
 
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.widget.ProgressBar;
+import android.view.View.OnScrollChangeListener;
 
 import com.munch.mvp.MvpContract;
 
 public interface MunchWebContract extends MvpContract {
     interface View extends MvpContract.View {
-        void setProgressBar(@Nullable ProgressBar progressBar);
+        /**
+         * Load site by url from internet or cache.
+         *
+         * @param url
+         */
+        void loadUrl(@NonNull String url);
 
-        void openUrl(@NonNull String url);
-
-        void loadHtml(@NonNull String html);
-
+        /**
+         * Set progress listener.
+         *
+         * @param progressListener
+         */
         void setProgressListener(@Nullable WebProgressListener progressListener);
+
+        /**
+         * Save web view to file.
+         *
+         * @param webArchiveListener save listener
+         */
+        void setWebArchiveListener(@NonNull WebArchiveListener webArchiveListener);
+
+        /**
+         * Set scroll change listener.
+         *
+         * @param scrollListener
+         */
+        void setScrollListener(@NonNull ScrollListener scrollListener);
+
+        /**
+         * @return can go back on history state.
+         */
+        boolean canGoBack();
+
+        /**
+         * @return can go forward on history state.
+         */
+        boolean canGoForward();
+
+        /**
+         * Go back on history state.
+         */
+        void goBack();
+
+        /**
+         * Go forward on history state.
+         */
+        void goForward();
+
+        /**
+         * Reload web page.
+         */
+        void reload();
     }
 
-    interface WebProgressListener {
-        void onStart(long timestamp,
-                     @NonNull String url);
+    interface WebArchiveListener {
+        /**
+         * @param name saved file name
+         */
+        void onWebArchiveSaved(@NonNull String name);
+    }
 
-        void onFavicon(long timestamp,
-                       @NonNull String url,
-                       @NonNull Bitmap favicon);
-
-        void onFinish(long timestamp,
-                      @NonNull String url,
-                      @NonNull String title);
-
-        void onError(long timestamp,
-                     @NonNull String url,
-                     int errorCode);
+    interface ScrollListener {
+        /**
+         * @param l - Current horizontal scroll origin.
+         * @param t - Current vertical scroll origin.
+         * @param oldl - Previous horizontal scroll origin.
+         * @param oldt - Previous vertical scroll origin.
+         */
+        void onScrollChanged(int l, int t, int oldl, int oldt);
     }
 }

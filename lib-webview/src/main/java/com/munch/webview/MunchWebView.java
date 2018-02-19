@@ -3,13 +3,13 @@ package com.munch.webview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.View;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
@@ -17,11 +17,12 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 
 import java.io.File;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-final class MunchWebView extends WebView implements MunchWebContract.View {
+public final class MunchWebView extends WebView implements MunchWebContract.View {
 
     private static final String TAG = "[MNCH:MunchWebView]";
     private static final String ERROR_WITH_DESCRIPTION = "<html><title>Munch Error</title><body><p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p></body></html>";
@@ -30,13 +31,13 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
     @NonNull
     private final Context mContext;
     @Nullable
-    private ProgressBar mProgressBar;
-    @Nullable
-    private MunchWebContract.WebProgressListener mProgressListener;
+    private WebProgressListener mProgressListener;
     @Nullable
     private String mTitle;
     @Nullable
-    private String mUrl;
+    private MunchWebContract.WebArchiveListener mWebArchiveListener;
+    @Nullable
+    private MunchWebContract.ScrollListener mScrollListener;
 
     public MunchWebView(@NonNull Context context) {
         this(context, null, 0);
@@ -57,29 +58,41 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
     }
 
     @Override
-    public void openUrl(@NonNull String url) {
-        mUrl = prepareUrl(url);
-        loadUrl(mUrl);
+    public void setScrollListener(@NonNull MunchWebContract.ScrollListener onScrollListener) {
+        mScrollListener = onScrollListener;
     }
 
     @Override
-    public void loadHtml(@NonNull String html) {
-        throw new IllegalStateException("Not implemented yet");
+    public void loadUrl(@NonNull String url) {
+        try {
+            url = prepareUrl(url);
+        } catch (URISyntaxException e) {
+            return;
+        }
+
+        super.loadUrl(url);
     }
 
     @Override
-    public void setProgressBar(@Nullable ProgressBar progressBar) {
-        mProgressBar = progressBar;
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (mScrollListener != null) {
+            mScrollListener.onScrollChanged(l, t, oldl, oldt);
+        }
     }
 
     @Override
-    public void setProgressListener(@Nullable MunchWebContract.WebProgressListener progressListener) {
+    public void setProgressListener(@Nullable WebProgressListener progressListener) {
         mProgressListener = progressListener;
+    }
+
+    @Override
+    public void setWebArchiveListener(@NonNull MunchWebContract.WebArchiveListener webArchiveListener) {
+        mWebArchiveListener = webArchiveListener;
     }
 
     private void init() {
         mTitle = null;
-        mUrl = null;
 
         final WebSettings webSettings = getSettings();
 
@@ -100,6 +113,8 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
         webSettings.setUseWideViewPort(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
 
+        setVerticalScrollBarEnabled(true);
+
         //enableAppCache();
 
         setWebChromeClient(
@@ -107,8 +122,8 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                     @Override
                     public void onProgressChanged(WebView view,
                                                   int progress) {
-                        if (mProgressBar != null) {
-                            mProgressBar.setProgress(progress);
+                        if (mProgressListener != null) {
+                            mProgressListener.onProgressChanged(progress);
                         }
 
                         Log.d(TAG, "Progress: " + progress);
@@ -129,12 +144,12 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                         long timestamp = System.currentTimeMillis();
 
                         super.onReceivedIcon(view, icon);
-                        Log.d(TAG, "icon received");
+                        Log.d(TAG, "icon received for url: " + view.getUrl());
 
                         if (mProgressListener != null) {
                             mProgressListener.onFavicon(
                                     timestamp,
-                                    mUrl,
+                                    view.getUrl(),
                                     icon
                             );
                         }
@@ -153,10 +168,6 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                 mOnLoadResourceCount = 0;
 
                 super.onPageStarted(view, url, favicon);
-
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(View.VISIBLE);
-                }
 
                 Log.d(TAG, "Loading started");
             }
@@ -199,20 +210,16 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                 long timestamp = System.currentTimeMillis();
                 webSettings.setLoadsImagesAutomatically(true);
 
-                if (mProgressBar != null) {
-                    mProgressBar.setVisibility(View.GONE);
-                }
-
                 if (mProgressListener != null && mTitle != null && !mTitle.equals("Munch Error")) {
                     mProgressListener.onFinish(
                             timestamp,
-                            mUrl,
+                            url,
                             mTitle);
                 }
 
                 Log.d(TAG, "Loading finished. Title: " +
                         mTitle + ". Url: " +
-                        mUrl
+                        url
                 );
             }
 
@@ -256,7 +263,7 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
                     if (mProgressListener != null) {
                         mProgressListener.onError(
                                 timestamp,
-                                mUrl,
+                                url,
                                 errorCode);
                     }
                 }
@@ -271,14 +278,17 @@ final class MunchWebView extends WebView implements MunchWebContract.View {
      * @return normalized url
      */
     @NonNull
-    private String prepareUrl(@NonNull String url) {
+    private String prepareUrl(@NonNull String url) throws URISyntaxException {
         String lowerUrl = url.toLowerCase();
 
         if (!lowerUrl.matches("^\\w+?://.*")) {
             lowerUrl = "http://" + lowerUrl;
         }
 
-        return lowerUrl;
+        int pos = lowerUrl.lastIndexOf('/') + 1;
+
+        URI uri = new URI(lowerUrl.substring(0, pos) + Uri.encode(lowerUrl.substring(pos)));
+        return url;
     }
 
     /**

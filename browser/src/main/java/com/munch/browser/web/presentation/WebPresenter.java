@@ -6,25 +6,27 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.munch.browser.helpers.ImageHelper;
-import com.munch.browser.web.WebActivityContract;
+import com.munch.browser.web.WebContract;
 import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
 import com.munch.webview.MunchWebContract;
+import com.munch.webview.WebProgressListener;
 
 import javax.inject.Inject;
 
-public class WebPresenter implements WebActivityContract.Presenter {
+public class WebPresenter implements WebContract.Presenter {
+    private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
     private final HistoryDataSource mHistoryDataSource;
     @Nullable
-    private WebActivityContract.View mView;
-    @Nullable
-    private MunchWebContract.View mMunchWebView;
+    private MunchWebContract.View mWebView;
+    private WebContract.View mView;
 
     @Inject
     public WebPresenter(@NonNull HistoryDataSource historyDataSource) {
         mHistoryDataSource = historyDataSource;
+        Log.d(TAG, "inited");
     }
 
     @Override
@@ -38,56 +40,89 @@ public class WebPresenter implements WebActivityContract.Presenter {
     }
 
     @Override
-    public void attachView(@NonNull WebActivityContract.View view) {
+    public void attachView(@NonNull WebContract.View view) {
         mView = view;
     }
 
     @Override
-    public void attachMunchWebView(@NonNull MunchWebContract.View munchWebView) {
-        mMunchWebView = munchWebView;
-        munchWebView.setProgressListener(new ProgressListener(mHistoryDataSource));
-    }
+    public void attachWebView(@NonNull MunchWebContract.View webView) {
+        mWebView = webView;
+        mWebView.setProgressListener(new ProgressListener(this, mHistoryDataSource));
+        mWebView.setScrollListener(new MunchWebContract.ScrollListener() {
+            @Override
+            public void onScrollChanged(int l, int t, int oldl, int oldt) {
+                if (mView != null) {
+                    mView.enableRefreshBySwipe(l == 0);
+                }
+            }
+        });
 
-    @Override
-    public void detachMunchWebView() {
-        mMunchWebView = null;
+        Log.d(TAG, "attach");
     }
 
     @Override
     public void goBack() {
-        throw new IllegalStateException("Not implemented yet");
+        if (mWebView != null && mWebView.canGoBack()) {
+            mWebView.goBack();
+        }
     }
 
     @Override
     public void goForward() {
-        throw new IllegalStateException("Not implemented yet");
-    }
-
-    @Override
-    public boolean canBack() {
-        return false;
-    }
-
-    @Override
-    public boolean canForward() {
-        return false;
+        if (mWebView != null && mWebView.canGoForward()) {
+            mWebView.goForward();
+        }
     }
 
     @Override
     public void detachView() {
+        mWebView = null;
         mView = null;
+        Log.d(TAG, "detach");
     }
 
     @Override
     public void onDestroy() {
-
+        Log.d(TAG, "destroy");
     }
 
     @Override
     public void useUrl(@NonNull final String url) {
-        if (mMunchWebView != null) {
+        if (mWebView != null) {
             String preparedUrl = prepareUrl(url);
-            mMunchWebView.openUrl(preparedUrl);
+            mWebView.loadUrl(preparedUrl);
+        }
+    }
+
+    private void changeProgress(int progress) {
+        if (mView != null) {
+            mView.showProgress(progress);
+        }
+    }
+
+    private boolean canGoBack() {
+        return mWebView != null && mWebView.canGoBack();
+    }
+
+    private boolean canGoForward() {
+        return mWebView != null && mWebView.canGoForward();
+    }
+
+    private void tryShowBackButton() {
+        if (mView != null) {
+            mView.showBackButton(canGoBack());
+        }
+    }
+
+    private void tryShowForwardButton() {
+        if (mView != null) {
+            mView.showForwardButton(canGoForward());
+        }
+    }
+
+    private void stopRefreshBySwipe() {
+        if (mView != null) {
+            mView.stopRefreshBySwipe();
         }
     }
 
@@ -108,30 +143,32 @@ public class WebPresenter implements WebActivityContract.Presenter {
         return lowerUrl;
     }
 
-    private static class ProgressListener implements MunchWebContract.WebProgressListener {
+    private static class ProgressListener implements WebProgressListener {
         private static final String TAG = "[MNCH:PL]";
 
         @NonNull
+        private final WebPresenter mPresenter;
+        @NonNull
         private final HistoryDataSource mHistoryDataSource;
+
         @Nullable
         private History mHistory;
 
-        ProgressListener(@NonNull HistoryDataSource historyDataSource) {
+        ProgressListener(@NonNull final WebPresenter presenter,
+                         @NonNull final HistoryDataSource historyDataSource) {
+            mPresenter = presenter;
             mHistoryDataSource = historyDataSource;
         }
 
         @Override
         public void onStart(long timestamp,
                             @NonNull String url) {
-            Log.d(TAG, "onStart " + url);
         }
 
         @Override
         public void onFavicon(long timestamp,
                               @NonNull String url,
                               @NonNull Bitmap favicon) {
-            Log.d(TAG, "onFavicon " + url);
-
             if (mHistory != null) {
                 String base64FromBitmap = ImageHelper.getBase64FromBitmap(favicon);
                 if (base64FromBitmap != null) {
@@ -145,17 +182,33 @@ public class WebPresenter implements WebActivityContract.Presenter {
         public void onFinish(long timestamp,
                              @NonNull String url,
                              @NonNull String title) {
-            Log.d(TAG, "onFinish " + url);
 
             mHistory = new History(url, title, timestamp);
             mHistoryDataSource.saveHistory(mHistory);
+
+            onEnd();
         }
 
         @Override
         public void onError(long timestamp,
                             @NonNull String url,
                             int errorCode) {
-            Log.d(TAG, "onError " + url);
+            Log.e(TAG, timestamp + ": " + url + ", " + errorCode);
+
+            onEnd();
+        }
+
+        @Override
+        public void onProgressChanged(int progress) {
+            mPresenter.changeProgress(progress);
+            mPresenter.tryShowBackButton();
+            mPresenter.tryShowForwardButton();
+        }
+
+        private void onEnd() {
+            mPresenter.stopRefreshBySwipe();
+            mPresenter.tryShowBackButton();
+            mPresenter.tryShowForwardButton();
         }
     }
 }
