@@ -24,6 +24,7 @@ import com.munch.suggest.data.SuggestClicklistener;
 import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;
+import com.munch.suggest.model.SuggestInteractor;
 
 import javax.inject.Inject;
 
@@ -43,6 +44,9 @@ public class SuggestFragment extends DaggerFragment {
 
     @Inject
     Context mContext;
+
+    @Inject
+    SuggestInteractor.Factory mSuggestInteractorFactory;
 
     @Inject
     public SuggestFragment() {
@@ -70,8 +74,7 @@ public class SuggestFragment extends DaggerFragment {
 
         mSuggestView.setReversed(true);
 
-        // TODO: 19.01.18 Interactor to Dagger
-        mSuggestView.setSuggestInteractor(new GoSuggestInteractor.Factory());
+        mSuggestView.setSuggestInteractor(mSuggestInteractorFactory);
         mSuggestView.setSuggestClickListener(new SuggestClicklistener() {
             @Override
             public void onSuggestClicked(@NonNull Suggest suggest) {

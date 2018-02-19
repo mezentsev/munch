@@ -21,7 +21,6 @@ import android.webkit.WebViewClient;
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 
 public final class MunchWebView extends WebView implements MunchWebContract.View {
 
@@ -36,7 +35,9 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     @Nullable
     private String mTitle;
     @Nullable
-    private String mUrl;
+    private MunchWebContract.WebArchiveListener mWebArchiveListener;
+    @Nullable
+    private MunchWebContract.ScrollListener mScrollListener;
 
     public MunchWebView(@NonNull Context context) {
         this(context, null, 0);
@@ -57,19 +58,27 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     }
 
     @Override
+    public void setScrollListener(@NonNull MunchWebContract.ScrollListener onScrollListener) {
+        mScrollListener = onScrollListener;
+    }
+
+    @Override
     public void loadUrl(@NonNull String url) {
         try {
-            mUrl = prepareUrl(url);
+            url = prepareUrl(url);
         } catch (URISyntaxException e) {
             return;
         }
 
-        super.loadUrl(mUrl);
+        super.loadUrl(url);
     }
 
     @Override
-    public void loadHtml(@NonNull String html) {
-        throw new IllegalStateException("Not implemented yet");
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        if (mScrollListener != null) {
+            mScrollListener.onScrollChanged(l, t, oldl, oldt);
+        }
     }
 
     @Override
@@ -77,9 +86,13 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
         mProgressListener = progressListener;
     }
 
+    @Override
+    public void setWebArchiveListener(@NonNull MunchWebContract.WebArchiveListener webArchiveListener) {
+        mWebArchiveListener = webArchiveListener;
+    }
+
     private void init() {
         mTitle = null;
-        mUrl = null;
 
         final WebSettings webSettings = getSettings();
 
@@ -99,6 +112,8 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
         webSettings.setLoadWithOverviewMode(true);
         webSettings.setUseWideViewPort(true);
         webSettings.setAllowUniversalAccessFromFileURLs(true);
+
+        setVerticalScrollBarEnabled(true);
 
         //enableAppCache();
 
@@ -129,12 +144,12 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
                         long timestamp = System.currentTimeMillis();
 
                         super.onReceivedIcon(view, icon);
-                        Log.d(TAG, "icon received");
+                        Log.d(TAG, "icon received for url: " + view.getUrl());
 
                         if (mProgressListener != null) {
                             mProgressListener.onFavicon(
                                     timestamp,
-                                    mUrl,
+                                    view.getUrl(),
                                     icon
                             );
                         }
@@ -198,13 +213,13 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
                 if (mProgressListener != null && mTitle != null && !mTitle.equals("Munch Error")) {
                     mProgressListener.onFinish(
                             timestamp,
-                            mUrl,
+                            url,
                             mTitle);
                 }
 
                 Log.d(TAG, "Loading finished. Title: " +
                         mTitle + ". Url: " +
-                        mUrl
+                        url
                 );
             }
 
@@ -248,7 +263,7 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
                     if (mProgressListener != null) {
                         mProgressListener.onError(
                                 timestamp,
-                                mUrl,
+                                url,
                                 errorCode);
                     }
                 }

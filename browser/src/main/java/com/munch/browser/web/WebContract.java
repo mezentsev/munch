@@ -8,6 +8,14 @@ import com.munch.webview.MunchWebContract;
 public interface WebContract extends MvpContract {
     interface View extends MvpContract.View {
         void showProgress(int progress);
+
+        void showBackButton(boolean isShow);
+
+        void showForwardButton(boolean isShow);
+
+        void stopRefreshBySwipe();
+
+        void enableRefreshBySwipe(boolean enable);
     }
 
     interface Presenter extends MvpContract.Presenter<View> {
@@ -18,9 +26,5 @@ public interface WebContract extends MvpContract {
         void goBack();
 
         void goForward();
-
-        boolean canBack();
-
-        boolean canForward();
     }
 }
