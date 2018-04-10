@@ -5,9 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +14,6 @@ import android.widget.ProgressBar;
 import com.munch.browser.R;
 import com.munch.browser.web.WebContract;
 import com.munch.webview.MunchWebContract;
-import com.munch.webview.MunchWebView;
 
 import javax.inject.Inject;
 
@@ -61,6 +58,7 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
         mBackButton = view.findViewById(R.id.munch_webview_action_button_back);
         mForwardButton = view.findViewById(R.id.munch_webview_action_button_forward);
 
+        // TODO: 10.04.18 not here
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
 
@@ -74,7 +72,7 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(getView(), "Back!", Snackbar.LENGTH_SHORT);
+                showToast("back!");
                 mPresenter.goBack();
             }
         });
@@ -82,7 +80,7 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
         mForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(getView(), "Forward!", Snackbar.LENGTH_SHORT);
+                showToast("forward!");
                 mPresenter.goForward();
             }
         });
@@ -138,5 +136,9 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
     @Override
     public void enableRefreshBySwipe(boolean enable) {
         mRefreshLayout.setEnabled(enable);
+    }
+
+    private void showToast(@NonNull String toast) {
+        Snackbar.make(getView(), toast, Snackbar.LENGTH_SHORT);
     }
 }

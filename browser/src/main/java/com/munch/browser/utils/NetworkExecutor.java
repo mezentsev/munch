@@ -5,10 +5,15 @@ import android.support.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public final class NetworkExecutor implements Executor {
     @NonNull
     private final Executor mNetwork;
 
+    @Inject
     public NetworkExecutor() {
         mNetwork = Executors.newCachedThreadPool();
     }

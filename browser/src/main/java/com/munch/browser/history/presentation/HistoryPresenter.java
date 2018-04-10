@@ -5,14 +5,22 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.munch.browser.history.HistoryContract;
+import com.munch.history.HistoryRepository;
 import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
-import com.munch.history.model.HistoryRepository;
+import com.munch.mvp.ActivityScoped;
+import com.munch.mvp.FragmentScoped;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
+import io.reactivex.FlowableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subscribers.DisposableSubscriber;
+
+@FragmentScoped
 public final class HistoryPresenter implements HistoryContract.Presenter {
 
     private final static int HISTORY_COUNT = 10;
@@ -21,14 +29,19 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     @NonNull
     private final String TAG = "[MNCH:HPresenter]";
 
-    @Inject
-    HistoryRepository mHistoryRepository;
+    @NonNull
+    private final HistoryRepository mHistoryRepository;
+    @NonNull
+    private final Executor mMainThreadExecutor;
 
     @Nullable
     private HistoryContract.View mView;
 
     @Inject
-    public HistoryPresenter() {
+    public HistoryPresenter(@NonNull HistoryRepository historyRepository,
+                            @NonNull Executor mainThreadExecutor) {
+        mHistoryRepository = historyRepository;
+        mMainThreadExecutor = mainThreadExecutor;
     }
 
     @Override
@@ -58,24 +71,24 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
 
     @Override
     public void loadHistory() {
-        mHistoryRepository.getLastHistoryList(
-                HISTORY_COUNT,
-                HISTORY_OFFSET,
-                new HistoryDataSource.LoadHistoryCallback() {
+        mHistoryRepository.getHistory()
+                .observeOn(Schedulers.from(mMainThreadExecutor))
+                .subscribe(new DisposableSubscriber<List<History>>() {
                     @Override
-                    public void onHistoryLoaded(@NonNull List<History> historyList) {
+                    public void onNext(List<History> historyList) {
                         if (mView != null) {
                             mView.informHistoryLoaded(historyList);
                         }
                     }
 
                     @Override
-                    public void onDataNotAvailable() {
-                        Log.d(TAG, "onDataNotAvailable");
+                    public void onError(Throwable t) {
+                        Log.e(TAG, "Error loading history list", t);
+                    }
 
-                        if (mView != null) {
-                            mView.informHistoryLoaded(null);
-                        }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "Done");
                     }
                 });
     }

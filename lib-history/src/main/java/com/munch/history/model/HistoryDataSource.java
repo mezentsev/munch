@@ -3,35 +3,29 @@ package com.munch.history.model;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.munch.history.model.History;
+
 import java.util.List;
 
+import io.reactivex.Flowable;
+import io.reactivex.Single;
+
 public interface HistoryDataSource {
-    interface LoadHistoryCallback {
+    /**
+     * @param count
+     * @param offset
+     * @return history list by count and offset.
+     */
+    Flowable<List<History>> getLastHistory(int count, int offset);
 
-        void onHistoryLoaded(@NonNull List<History> historyList);
+    /**
+     * @return all history list
+     */
+    Flowable<List<History>> getHistoryList();
 
-        void onDataNotAvailable();
-    }
-
-    interface GetHistoryCallback {
-
-        void onHistoryLoaded(@Nullable History history);
-
-        void onDataNotAvailable();
-    }
-
-    void getLastHistoryList(int count, int offset, @NonNull LoadHistoryCallback callback);
-
-    void getHistoryList(@NonNull LoadHistoryCallback callback);
-
-    void getHistory(@NonNull String historyId,
-                    @NonNull GetHistoryCallback callback);
-
+    /**
+     * Add new history to db.
+     * @param history
+     */
     void saveHistory(@NonNull History history);
-
-    void refreshHistory();
-
-    void deleteHistory();
-
-    void deleteHistoryById(@NonNull String historyId);
 }

@@ -1,7 +1,7 @@
 package com.munch.browser.web;
 
 import com.munch.browser.web.presentation.WebPresenter;
-import com.munch.history.model.HistoryRepository;
+import com.munch.history.HistoryRepository;
 
 import javax.inject.Singleton;
 

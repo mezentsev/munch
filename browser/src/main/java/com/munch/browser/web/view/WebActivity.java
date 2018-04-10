@@ -19,26 +19,18 @@ public class WebActivity extends DaggerAppCompatActivity {
     public static final String EXTRA_URI = "URI";
 
     @Inject
-    WebFragment mWebFragment;
-
-    @Inject
     Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.munch_browser_main_activity);
-        FragmentManager mFragmentManager = getSupportFragmentManager();
 
-        WebFragment webFragment = (WebFragment) mFragmentManager
-                .findFragmentById(R.id.munch_main_container);
-
-        if (webFragment == null) {
-            webFragment = mWebFragment;
-
+        if (savedInstanceState == null) {
+            FragmentManager mFragmentManager = getSupportFragmentManager();
             mFragmentManager
                     .beginTransaction()
-                    .add(R.id.munch_main_container, webFragment)
+                    .add(R.id.munch_main_container, new WebFragment())
                     .commit();
         }
     }

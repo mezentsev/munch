@@ -87,8 +87,8 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     }
 
     @Override
-    public void informHistoryLoaded(@Nullable List<History> historyList) {
-        if (historyList == null) {
+    public void informHistoryLoaded(@NonNull List<History> historyList) {
+        if (historyList.size() == 0) {
             Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
         } else {
             int historyCount = historyList.size();

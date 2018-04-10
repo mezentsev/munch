@@ -1,4 +1,4 @@
-package com.munch.history.model;
+package com.munch.history;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;

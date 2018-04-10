@@ -52,12 +52,13 @@ android {
 
 dependencies {
     implementation "com.android.support:support-annotations:${supportLibVersion}"
-    api "android.arch.persistence.room:runtime:${roomVersion}"
+    implementation "android.arch.persistence.room:runtime:${roomVersion}"
+    implementation "android.arch.persistence.room:rxjava2:${roomVersion}"
     annotationProcessor "android.arch.persistence.room:compiler:${roomVersion}"
 
     // Dagger dependencies
     annotationProcessor "com.google.dagger:dagger-android-processor:${daggerVersion}"
     annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-    api "com.google.dagger:dagger:${daggerVersion}"
-    api "com.google.dagger:dagger-android-support:${daggerVersion}"
+    implementation "com.google.dagger:dagger:${daggerVersion}"
+    implementation "com.google.dagger:dagger-android-support:${daggerVersion}"
 }

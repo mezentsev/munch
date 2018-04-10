@@ -6,6 +6,8 @@ import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Base64;
@@ -16,31 +18,27 @@ import java.util.Locale;
 import java.util.UUID;
 
 @Entity(tableName = "history")
-public final class History {
+public final class History implements Parcelable {
 
     @PrimaryKey
-    @NonNull
-    @ColumnInfo(name = "id")
-    private final String mId;
+    @ColumnInfo(name = "timestamp")
+    private long mTimestamp;
 
     @NonNull
     @ColumnInfo(name = "url")
-    private final String mUrl;
-
-    @ColumnInfo(name = "timestamp")
-    private final long mTimestamp;
+    private String mUrl;
 
     @Nullable
     @ColumnInfo(name = "title")
-    private final String mTitle;
+    private String mTitle;
 
     @Nullable
     @ColumnInfo(name = "description")
-    private final String mDescription;
+    private String mDescription;
 
     @Nullable
     @ColumnInfo(name = "html")
-    private final String mHtml;
+    private String mHtml;
 
     @Nullable
     @ColumnInfo(name = "favicon")
@@ -48,12 +46,7 @@ public final class History {
 
     @Nullable
     @ColumnInfo(name = "background")
-    private final String mBackground;
-
-    @NonNull
-    public String getId() {
-        return mId;
-    }
+    private String mBackground;
 
     @NonNull
     public String getUrl() {
@@ -101,11 +94,10 @@ public final class History {
     }
 
     @Ignore
-    public History(@NonNull String url,
-                   @Nullable String title,
-                   long timestamp) {
+    public History(long timestamp,
+                   @NonNull String url,
+                   @Nullable String title) {
         this(
-                UUID.randomUUID().toString(),
                 url,
                 timestamp,
                 title,
@@ -122,7 +114,6 @@ public final class History {
                    @Nullable String description,
                    @Nullable String html) {
         this(
-                UUID.randomUUID().toString(),
                 url,
                 System.currentTimeMillis(),
                 title,
@@ -133,15 +124,13 @@ public final class History {
         );
     }
 
-    public History(@NonNull String id,
-                   @NonNull String url,
+    public History(@NonNull String url,
                    long timestamp,
                    @Nullable String title,
                    @Nullable String description,
                    @Nullable String html,
                    @Nullable String favicon,
                    @Nullable String background) {
-        mId = id;
         mUrl = url;
         mTimestamp = timestamp;
         mTitle = title;
@@ -181,5 +170,46 @@ public final class History {
 
     public void setFavicon(@NonNull String favicon) {
         mFavicon = favicon;
+    }
+
+    public void setUrl(@NonNull String url) {
+        mUrl = url;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(mUrl);
+        dest.writeLong(mTimestamp);
+        dest.writeString(mTitle);
+        dest.writeString(mDescription);
+        dest.writeString(mHtml);
+        dest.writeString(mFavicon);
+        dest.writeString(mBackground);
+    }
+
+    public static final Parcelable.Creator<History> CREATOR = new Parcelable.Creator<History>() {
+        // распаковываем объект из Parcel
+        public History createFromParcel(Parcel in) {
+            return new History(in);
+        }
+
+        public History[] newArray(int size) {
+            return new History[size];
+        }
+    };
+
+    private History(Parcel parcel) {
+        mUrl = parcel.readString();
+        mTimestamp = parcel.readLong();
+        mTitle = parcel.readString();
+        mDescription = parcel.readString();
+        mHtml = parcel.readString();
+        mFavicon = parcel.readString();
+        mBackground = parcel.readString();
     }
 }

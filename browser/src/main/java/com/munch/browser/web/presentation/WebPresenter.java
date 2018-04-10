@@ -1,42 +1,40 @@
 package com.munch.browser.web.presentation;
 
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.munch.browser.helpers.ImageHelper;
 import com.munch.browser.web.WebContract;
+import com.munch.history.HistoryRepository;
 import com.munch.history.model.History;
-import com.munch.history.model.HistoryDataSource;
 import com.munch.webview.MunchWebContract;
 import com.munch.webview.WebProgressListener;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
-public class WebPresenter implements WebContract.Presenter {
+@Singleton
+public class WebPresenter implements WebContract.Presenter, WebProgressListener {
     private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
-    private final HistoryDataSource mHistoryDataSource;
+    private final HistoryRepository mHistoryRepository;
     @Nullable
     private MunchWebContract.View mWebView;
+    @Nullable
     private WebContract.View mView;
 
     @Inject
-    public WebPresenter(@NonNull HistoryDataSource historyDataSource) {
-        mHistoryDataSource = historyDataSource;
-        Log.d(TAG, "inited");
+    public WebPresenter(@NonNull HistoryRepository historyRepository) {
+        mHistoryRepository = historyRepository;
     }
 
     @Override
     public void onCreate() {
-
     }
 
     @Override
     public void onFirstAttachView() {
-
     }
 
     @Override
@@ -47,7 +45,8 @@ public class WebPresenter implements WebContract.Presenter {
     @Override
     public void attachWebView(@NonNull MunchWebContract.View webView) {
         mWebView = webView;
-        mWebView.setProgressListener(new ProgressListener(this, mHistoryDataSource));
+        mWebView.setHistoryRepository(mHistoryRepository);
+        mWebView.setProgressListener(this);
         mWebView.setScrollListener(new MunchWebContract.ScrollListener() {
             @Override
             public void onScrollChanged(int l, int t, int oldl, int oldt) {
@@ -143,72 +142,33 @@ public class WebPresenter implements WebContract.Presenter {
         return lowerUrl;
     }
 
-    private static class ProgressListener implements WebProgressListener {
-        private static final String TAG = "[MNCH:PL]";
+    @Override
+    public void onStart(long timestamp, @NonNull String url) {
+        Log.d(TAG, "Started loading " + url);
+    }
 
-        @NonNull
-        private final WebPresenter mPresenter;
-        @NonNull
-        private final HistoryDataSource mHistoryDataSource;
+    @Override
+    public void onFinish(long timestamp, @NonNull String url, @NonNull String title) {
+        onEndLoading();
+    }
 
-        @Nullable
-        private History mHistory;
+    @Override
+    public void onError(long timestamp, @NonNull String url, int errorCode) {
+        onEndLoading();
+    }
 
-        ProgressListener(@NonNull final WebPresenter presenter,
-                         @NonNull final HistoryDataSource historyDataSource) {
-            mPresenter = presenter;
-            mHistoryDataSource = historyDataSource;
-        }
+    @Override
+    public void onProgressChanged(int progress) {
+        changeProgress(progress);
 
-        @Override
-        public void onStart(long timestamp,
-                            @NonNull String url) {
-        }
+        tryShowBackButton();
+        tryShowForwardButton();
+    }
 
-        @Override
-        public void onFavicon(long timestamp,
-                              @NonNull String url,
-                              @NonNull Bitmap favicon) {
-            if (mHistory != null) {
-                String base64FromBitmap = ImageHelper.getBase64FromBitmap(favicon);
-                if (base64FromBitmap != null) {
-                    mHistory.setFavicon(base64FromBitmap);
-                    mHistoryDataSource.saveHistory(mHistory);
-                }
-            }
-        }
+    private void onEndLoading() {
+        stopRefreshBySwipe();
 
-        @Override
-        public void onFinish(long timestamp,
-                             @NonNull String url,
-                             @NonNull String title) {
-
-            mHistory = new History(url, title, timestamp);
-            mHistoryDataSource.saveHistory(mHistory);
-
-            onEnd();
-        }
-
-        @Override
-        public void onError(long timestamp,
-                            @NonNull String url,
-                            int errorCode) {
-            Log.e(TAG, timestamp + ": " + url + ", " + errorCode);
-
-            onEnd();
-        }
-
-        @Override
-        public void onProgressChanged(int progress) {
-            mPresenter.changeProgress(progress);
-            mPresenter.tryShowBackButton();
-            mPresenter.tryShowForwardButton();
-        }
-
-        private void onEnd() {
-            mPresenter.stopRefreshBySwipe();
-            mPresenter.tryShowBackButton();
-            mPresenter.tryShowForwardButton();
-        }
+        tryShowBackButton();
+        tryShowForwardButton();
     }
 }
