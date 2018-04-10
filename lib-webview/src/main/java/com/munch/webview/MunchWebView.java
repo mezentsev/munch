@@ -182,8 +182,6 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
                     @Override
                     public void onReceivedIcon(WebView view,
                                                Bitmap icon) {
-                        long timestamp = System.currentTimeMillis();
-
                         super.onReceivedIcon(view, icon);
                         Log.d(TAG, "icon received for url: " + view.getUrl());
 

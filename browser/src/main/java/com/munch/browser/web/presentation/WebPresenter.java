@@ -23,6 +23,8 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
     private MunchWebContract.View mWebView;
     @Nullable
     private WebContract.View mView;
+    @Nullable
+    private String mUrl;
 
     @Inject
     public WebPresenter(@NonNull HistoryRepository historyRepository) {
@@ -88,8 +90,8 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
     @Override
     public void useUrl(@NonNull final String url) {
         if (mWebView != null) {
-            String preparedUrl = prepareUrl(url);
-            mWebView.loadUrl(preparedUrl);
+            mUrl = prepareUrl(url);
+            mWebView.loadUrl(mUrl);
         }
     }
 
@@ -145,11 +147,13 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
     @Override
     public void onStart(long timestamp, @NonNull String url) {
         Log.d(TAG, "Started loading " + url);
+        mUrl = url;
     }
 
     @Override
     public void onFinish(long timestamp, @NonNull String url, @NonNull String title) {
         onEndLoading();
+        mUrl = url;
     }
 
     @Override

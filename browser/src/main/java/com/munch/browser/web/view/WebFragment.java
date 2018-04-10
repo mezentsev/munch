@@ -85,17 +85,17 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
             }
         });
 
+        mPresenter.attachView(this);
+        mPresenter.attachWebView(mMunchWebView);
+
+        mPresenter.useUrl(mUri);
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        mPresenter.attachView(this);
-        mPresenter.attachWebView(mMunchWebView);
-
-        mPresenter.useUrl(mUri);
     }
 
     @Override
