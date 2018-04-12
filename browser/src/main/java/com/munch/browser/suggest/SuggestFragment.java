@@ -18,10 +18,9 @@ import android.widget.TextView;
 
 import com.munch.browser.R;
 import com.munch.browser.helpers.KeyboardHelper;
-import com.munch.browser.web.view.WebActivity;
+import com.munch.browser.web.view.MunchWebActivity;
 import com.munch.suggest.SuggestContract;
 import com.munch.suggest.data.SuggestClicklistener;
-import com.munch.suggest.model.GoSuggestInteractor;
 import com.munch.suggest.model.Suggest;
 import com.munch.suggest.model.SuggestFactory;
 import com.munch.suggest.model.SuggestInteractor;
@@ -32,7 +31,7 @@ import dagger.android.support.DaggerFragment;
 
 public class SuggestFragment extends DaggerFragment {
 
-    private static String TAG = "[MNCH:WebFragment]";
+    private static String TAG = "[MNCH:SuggestFragment]";
 
     // TODO: 21.12.17 read from preferences
     private static String SEARCH_ENGINE_URI = "https://google.com/search?q=";
@@ -126,8 +125,8 @@ public class SuggestFragment extends DaggerFragment {
             url = Uri.parse(SEARCH_ENGINE_URI + suggest.getTitle());
         }
 
-        Intent intent = new Intent(mContext, WebActivity.class);
-        intent.putExtra(WebActivity.EXTRA_URI, url.toString());
+        Intent intent = new Intent(mContext, MunchWebActivity.class);
+        intent.putExtra(MunchWebActivity.EXTRA_URI, url.toString());
         startActivity(intent);
     }
 }

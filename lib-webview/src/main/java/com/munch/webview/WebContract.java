@@ -3,12 +3,19 @@ package com.munch.webview;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View.OnScrollChangeListener;
+import android.webkit.WebView;
 
 import com.munch.history.HistoryRepository;
 import com.munch.mvp.MvpContract;
 
-public interface MunchWebContract extends MvpContract {
+public interface WebContract extends MvpContract {
     interface View extends MvpContract.View {
+        /**
+         * Get webview.
+         */
+        @NonNull
+        WebView obtainWebView();
+
         /**
          * Load site by url from internet or cache.
          *
@@ -30,14 +37,12 @@ public interface MunchWebContract extends MvpContract {
          */
         void setWebArchiveListener(@NonNull WebArchiveListener webArchiveListener);
 
-        void setHistoryRepository(@NonNull HistoryRepository historyRepository);
-
         /**
          * Set scroll change listener.
          *
          * @param scrollListener
          */
-        void setScrollListener(@NonNull ScrollListener scrollListener);
+        void setScrollListener(@Nullable ScrollListener scrollListener);
 
         /**
          * @return can go back on history state.

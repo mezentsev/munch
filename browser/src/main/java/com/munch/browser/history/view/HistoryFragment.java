@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 
 import com.munch.browser.R;
 import com.munch.browser.history.HistoryContract;
-import com.munch.browser.web.view.WebActivity;
+import com.munch.browser.web.view.MunchWebActivity;
 import com.munch.history.model.History;
 
 import java.util.List;
@@ -115,8 +115,8 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
 
         @Override
         public void onHistoryClicked(@NonNull History history) {
-            Intent intent = new Intent(mContext, WebActivity.class);
-            intent.putExtra(WebActivity.EXTRA_URI, history.getUrl());
+            Intent intent = new Intent(mContext, MunchWebActivity.class);
+            intent.putExtra(MunchWebActivity.EXTRA_URI, history.getUrl());
             mContext.startActivity(intent);
         }
     }

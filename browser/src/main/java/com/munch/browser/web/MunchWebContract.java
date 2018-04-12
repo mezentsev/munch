@@ -1,11 +1,11 @@
 package com.munch.browser.web;
 
 import android.support.annotation.NonNull;
+import android.widget.FrameLayout;
 
 import com.munch.mvp.MvpContract;
-import com.munch.webview.MunchWebContract;
 
-public interface WebContract extends MvpContract {
+public interface MunchWebContract extends MvpContract {
     interface View extends MvpContract.View {
         /**
          * Show downloading progress.
@@ -35,11 +35,6 @@ public interface WebContract extends MvpContract {
     }
 
     interface Presenter extends MvpContract.Presenter<View> {
-        /**
-         * Attach WebView.
-         */
-        void attachWebView(@NonNull MunchWebContract.View webView);
-
         /**
          * Load website by url.
          */

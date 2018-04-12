@@ -4,21 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/munch_webview_refresh"
+    <com.munch.browser.web.view.MunchWebLayout
+        android:id="@+id/munch_webview_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <com.munch.webview.MunchWebView
-            android:id="@+id/munch_webview_munchwebview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:scrollbarAlwaysDrawVerticalTrack="true"
-            android:scrollbars="vertical">
-        </com.munch.webview.MunchWebView>
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:scrollbars="vertical" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/munch_webview_action_button_back"
@@ -44,7 +37,7 @@
         android:tint="@android:color/background_dark"
         android:visibility="gone"
         app:backgroundTint="@android:color/background_light"
-        app:borderWidth="1dp"/>
+        app:borderWidth="1dp" />
 
     <ProgressBar
         android:id="@+id/munch_webview_progressbar"

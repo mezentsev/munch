@@ -1,37 +1,35 @@
 package com.munch.browser.web.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.munch.browser.R;
-import com.munch.browser.web.WebContract;
-import com.munch.webview.MunchWebContract;
+import com.munch.browser.main.MainActivity;
+import com.munch.browser.web.MunchWebContract;
+import com.munch.webview.WebContract;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
+import dagger.android.support.DaggerAppCompatActivity;
 
-public class WebFragment extends DaggerFragment implements WebContract.View {
-
-    @NonNull
-    private static String TAG = "[MNCH:WebFragment]";
-
-    @Inject
-    String mUri;
-
-    @Inject
-    WebContract.Presenter mPresenter;
+public class MunchWebActivity extends DaggerAppCompatActivity implements MunchWebContract.View {
 
     @NonNull
-    private MunchWebContract.View mMunchWebView;
+    public static final String EXTRA_URI = "URI";
+
+    @Inject
+    protected WebContract.View mWebView;
+
+    @Inject
+    protected MunchWebContract.Presenter mWebPresenter;
+
     @NonNull
     private ProgressBar mProgressBar;
     @NonNull
@@ -39,70 +37,71 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
     @NonNull
     private FloatingActionButton mBackButton;
     @NonNull
-    private SwipeRefreshLayout mRefreshLayout;
+    private MunchWebLayout mWebViewLayout;
 
-    @Inject
-    public WebFragment() {
-    }
+    @Nullable
+    private String mUrl;
 
-    @NonNull
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.munch_browser_web_layout, container, false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.munch_browser_web_layout);
 
-        mRefreshLayout = view.findViewById(R.id.munch_webview_refresh);
-        mMunchWebView = view.findViewById(R.id.munch_webview_munchwebview);
-        mProgressBar = view.findViewById(R.id.munch_webview_progressbar);
-        mBackButton = view.findViewById(R.id.munch_webview_action_button_back);
-        mForwardButton = view.findViewById(R.id.munch_webview_action_button_forward);
+        mProgressBar = findViewById(R.id.munch_webview_progressbar);
+        mWebViewLayout = findViewById(R.id.munch_webview_layout);
+        mBackButton = findViewById(R.id.munch_webview_action_button_back);
+        mForwardButton = findViewById(R.id.munch_webview_action_button_forward);
 
+        mWebViewLayout.attachWebView(mWebView.obtainWebView());
         // TODO: 10.04.18 not here
         mProgressBar.setMax(100);
         mProgressBar.setProgress(0);
 
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mWebViewLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mMunchWebView.reload();
+                mWebView.reload();
             }
         });
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("back!");
-                mPresenter.goBack();
+                mWebPresenter.goBack();
             }
         });
 
         mForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("forward!");
-                mPresenter.goForward();
+                mWebPresenter.goForward();
             }
         });
 
-        mPresenter.attachView(this);
-        mPresenter.attachWebView(mMunchWebView);
+        mWebPresenter.attachView(this);
 
-        mPresenter.useUrl(mUri);
+        if (savedInstanceState == null) {
+            mUrl = getIntent().getStringExtra(EXTRA_URI);
+        } else {
+            mUrl = "about:blank";
+        }
 
-        return view;
+        mWebView.loadUrl("https://yandex.ru");
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    public void onDestroy() {
-        mPresenter.detachView();
-
+    protected void onDestroy() {
         super.onDestroy();
+        mWebViewLayout.detachWebView();
+        mWebPresenter.detachView();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
@@ -130,15 +129,15 @@ public class WebFragment extends DaggerFragment implements WebContract.View {
 
     @Override
     public void stopRefreshBySwipe() {
-        mRefreshLayout.setRefreshing(false);
+        mWebViewLayout.setRefreshing(false);
     }
 
     @Override
     public void enableRefreshBySwipe(boolean enable) {
-        mRefreshLayout.setEnabled(enable);
+        mWebViewLayout.setEnabled(enable);
     }
 
     private void showToast(@NonNull String toast) {
-        Snackbar.make(getView(), toast, Snackbar.LENGTH_SHORT);
+        Snackbar.make(mWebViewLayout, toast, Snackbar.LENGTH_SHORT);
     }
 }

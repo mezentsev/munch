@@ -3,7 +3,6 @@ package com.munch.webview;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
@@ -11,7 +10,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -32,7 +30,8 @@ import java.net.URISyntaxException;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-public final class MunchWebView extends WebView implements MunchWebContract.View {
+@Singleton
+public final class MunchWebView extends WebView implements WebContract.View {
 
     private static final String TAG = "[MNCH:MunchWebView]";
     private static final String ERROR_WITH_DESCRIPTION = "<html><title>Munch Error</title><body><p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p></body></html>";
@@ -46,34 +45,27 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
     @Nullable
     private String mTitle;
     @Nullable
-    private MunchWebContract.WebArchiveListener mWebArchiveListener;
+    private WebContract.WebArchiveListener mWebArchiveListener;
     @Nullable
-    private MunchWebContract.ScrollListener mScrollListener;
-    @Nullable
-    private History mHistory;
-    @Nullable
-    private HistoryRepository mHistoryRepository;
+    private WebContract.ScrollListener mScrollListener;
 
+    @Inject
     public MunchWebView(@NonNull Context context) {
-        this(context, null, 0);
-    }
-
-    public MunchWebView(@NonNull Context context,
-                        @Nullable AttributeSet attrs) {
-        this(context, attrs, 0);
-    }
-
-    public MunchWebView(@NonNull Context context,
-                        @Nullable AttributeSet attrs,
-                        int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        setSaveEnabled(true);
+        super(context);
         mContext = context;
+
+        setSaveEnabled(true);
         init();
     }
 
+    @NonNull
     @Override
-    public void setScrollListener(@NonNull MunchWebContract.ScrollListener onScrollListener) {
+    public WebView obtainWebView() {
+        return this;
+    }
+
+    @Override
+    public void setScrollListener(@Nullable WebContract.ScrollListener onScrollListener) {
         mScrollListener = onScrollListener;
     }
 
@@ -97,41 +89,17 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
         }
     }
 
-    @Nullable
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable("history", mHistory);
-        bundle.putParcelable("super", super.onSaveInstanceState());
-        // TODO: 10.04.18  
-        //saveState(bundle);
-        return bundle;
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        Bundle bundle = (Bundle) state;
-        mHistory = bundle.getParcelable("history");
-        // TODO: 10.04.18 load url on restore
-        //restoreState(bundle);
-        super.onRestoreInstanceState(bundle.getParcelable("super"));
-    }
-
     @Override
     public void setProgressListener(@Nullable WebProgressListener progressListener) {
         mProgressListener = progressListener;
     }
 
     @Override
-    public void setWebArchiveListener(@NonNull MunchWebContract.WebArchiveListener webArchiveListener) {
+    public void setWebArchiveListener(@NonNull WebContract.WebArchiveListener webArchiveListener) {
         mWebArchiveListener = webArchiveListener;
     }
 
-    @Override
-    public void setHistoryRepository(@NonNull HistoryRepository historyRepository) {
-        mHistoryRepository = historyRepository;
-    }
-
+    // TODO: 12.04.18 move to presenter
     private void init() {
         mTitle = null;
 
@@ -185,14 +153,18 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
                         super.onReceivedIcon(view, icon);
                         Log.d(TAG, "icon received for url: " + view.getUrl());
 
-                        // TODO: 10.04.18
+                        if (mProgressListener != null) {
+                            mProgressListener.onFavicon(System.currentTimeMillis(), view.getUrl(), icon);
+                        }
+
+                        /*// TODO: 10.04.18
                         if (mHistory != null && mHistoryRepository != null) {
                             String base64FromBitmap = ImageHelper.getBase64FromBitmap(icon);
                             if (base64FromBitmap != null) {
                                 mHistory.setFavicon(base64FromBitmap);
                                 mHistoryRepository.saveHistory(mHistory);
                             }
-                        }
+                        }*/
                     }
                 }
         );
@@ -239,10 +211,14 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
                 webSettings.setLoadsImagesAutomatically(false);
                 mOnLoadResourceCount = 0;
 
-                if (mHistory != null && mHistoryRepository != null) {
+                if (mProgressListener != null) {
+                    mProgressListener.onStart(System.currentTimeMillis(), url);
+                }
+
+                /*if (mHistory != null && mHistoryRepository != null) {
                     mHistory.setUrl(url);
                     mHistoryRepository.saveHistory(mHistory);
-                }
+                }*/
 
                 super.onPageStarted(view, url, favicon);
 
@@ -256,22 +232,20 @@ public final class MunchWebView extends WebView implements MunchWebContract.View
 
                 // TODO: 10.04.18
                 if (mTitle != null && !mTitle.equals("Munch Error")) {
-                    long timestamp = System.currentTimeMillis();
-
-                    if (mHistory == null) {
+                    /*if (mHistory == null) {
                         mHistory = new History(timestamp, url, mTitle);
                     }
 
                     if (mHistoryRepository != null) {
                         mHistoryRepository.saveHistory(mHistory);
-                    }
+                    }*/
+                }
 
-                    if (mProgressListener != null) {
-                        mProgressListener.onFinish(
-                                timestamp,
-                                url,
-                                mTitle);
-                    }
+                if (mProgressListener != null) {
+                    mProgressListener.onFinish(
+                            System.currentTimeMillis(),
+                            url,
+                            mTitle);
                 }
 
                 Log.d(TAG, "Loading finished. Title: " +

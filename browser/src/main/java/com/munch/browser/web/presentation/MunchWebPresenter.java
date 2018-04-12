@@ -1,34 +1,39 @@
 package com.munch.browser.web.presentation;
 
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.munch.browser.web.WebContract;
+import com.munch.browser.web.MunchWebContract;
 import com.munch.history.HistoryRepository;
-import com.munch.history.model.History;
-import com.munch.webview.MunchWebContract;
+import com.munch.mvp.ActivityScoped;
+import com.munch.webview.WebContract;
 import com.munch.webview.WebProgressListener;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
-public class WebPresenter implements WebContract.Presenter, WebProgressListener {
+@ActivityScoped
+public class MunchWebPresenter implements MunchWebContract.Presenter, WebProgressListener {
     private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
     private final HistoryRepository mHistoryRepository;
+    @NonNull
+    private final WebContract.View mWebView;
+
     @Nullable
-    private MunchWebContract.View mWebView;
-    @Nullable
-    private WebContract.View mView;
+    private MunchWebContract.View mView;
     @Nullable
     private String mUrl;
 
     @Inject
-    public WebPresenter(@NonNull HistoryRepository historyRepository) {
+    public MunchWebPresenter(WebContract.View webView,
+                             HistoryRepository historyRepository) {
+        mWebView = webView;
         mHistoryRepository = historyRepository;
+
+        mWebView.setProgressListener(this);
     }
 
     @Override
@@ -40,16 +45,9 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
     }
 
     @Override
-    public void attachView(@NonNull WebContract.View view) {
+    public void attachView(@NonNull MunchWebContract.View view) {
         mView = view;
-    }
-
-    @Override
-    public void attachWebView(@NonNull MunchWebContract.View webView) {
-        mWebView = webView;
-        mWebView.setHistoryRepository(mHistoryRepository);
-        mWebView.setProgressListener(this);
-        mWebView.setScrollListener(new MunchWebContract.ScrollListener() {
+        mWebView.setScrollListener(new WebContract.ScrollListener() {
             @Override
             public void onScrollChanged(int l, int t, int oldl, int oldt) {
                 if (mView != null) {
@@ -57,27 +55,25 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
                 }
             }
         });
-
-        Log.d(TAG, "attach");
     }
 
     @Override
     public void goBack() {
-        if (mWebView != null && mWebView.canGoBack()) {
+        if (mWebView.canGoBack()) {
             mWebView.goBack();
         }
     }
 
     @Override
     public void goForward() {
-        if (mWebView != null && mWebView.canGoForward()) {
+        if (mWebView.canGoForward()) {
             mWebView.goForward();
         }
     }
 
     @Override
     public void detachView() {
-        mWebView = null;
+        mWebView.setScrollListener(null);
         mView = null;
         Log.d(TAG, "detach");
     }
@@ -89,10 +85,8 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
 
     @Override
     public void useUrl(@NonNull final String url) {
-        if (mWebView != null) {
-            mUrl = prepareUrl(url);
-            mWebView.loadUrl(mUrl);
-        }
+        mUrl = prepareUrl(url);
+        mWebView.loadUrl(mUrl);
     }
 
     private void changeProgress(int progress) {
@@ -102,11 +96,11 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
     }
 
     private boolean canGoBack() {
-        return mWebView != null && mWebView.canGoBack();
+        return mWebView.canGoBack();
     }
 
     private boolean canGoForward() {
-        return mWebView != null && mWebView.canGoForward();
+        return mWebView.canGoForward();
     }
 
     private void tryShowBackButton() {
@@ -148,6 +142,16 @@ public class WebPresenter implements WebContract.Presenter, WebProgressListener 
     public void onStart(long timestamp, @NonNull String url) {
         Log.d(TAG, "Started loading " + url);
         mUrl = url;
+    }
+
+    @Override
+    public void onFavicon(long timestamp, @NonNull String url, @Nullable Bitmap favicon) {
+        Log.d(TAG, "onFavicon");
+    }
+
+    @Override
+    public void onScreenshot(long timestamp, @NonNull String url, @Nullable Bitmap screenshot) {
+        Log.d(TAG, "onScreenshot");
     }
 
     @Override

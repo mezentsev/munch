@@ -6,8 +6,8 @@ import com.munch.browser.main.MainActivityModule;
 import com.munch.browser.main.MainActivity;
 import com.munch.browser.suggest.SuggestActivity;
 import com.munch.browser.suggest.SuggestActivityModule;
-import com.munch.browser.web.view.WebActivity;
-import com.munch.browser.web.WebActivityModule;
+import com.munch.browser.web.MunchWebActivityModule;
+import com.munch.browser.web.view.MunchWebActivity;
 import com.munch.mvp.ActivityScoped;
 
 import dagger.Module;
@@ -24,8 +24,8 @@ public abstract class ActivityBindingModule {
     abstract SuggestActivity suggestActivity();
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = WebActivityModule.class)
-    abstract WebActivity webActivity();
+    @ContributesAndroidInjector(modules = MunchWebActivityModule.class)
+    abstract MunchWebActivity webActivity();
 
     @ActivityScoped
     @ContributesAndroidInjector(modules = HistoryActivityModule.class)
