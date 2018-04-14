@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,11 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
         linearLayoutManager.setStackFromEnd(false);
         mHistoryView.setLayoutManager(linearLayoutManager);
         mHistoryView.setAdapter(mHistoryAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
+                new HistoryAdapter.SwipeHelper(getContext(), 0, ItemTouchHelper.LEFT)
+        );
+        itemTouchHelper.attachToRecyclerView(mHistoryView);
 
         setRetainInstance(true);
 
