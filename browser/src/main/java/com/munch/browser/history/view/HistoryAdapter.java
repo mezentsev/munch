@@ -11,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.munch.browser.R;
-import com.munch.webview.helpers.ImageHelper;
+import com.munch.browser.helpers.ImageHelper;
 import com.munch.browser.history.HistoryContract;
 import com.munch.history.model.History;
 

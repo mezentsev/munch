@@ -41,6 +41,11 @@ public interface MunchWebContract extends MvpContract {
         void useUrl(@NonNull String url);
 
         /**
+         * Reload current page.
+         */
+        void reload();
+
+        /**
          * Go to previous page.
          */
         void goBack();

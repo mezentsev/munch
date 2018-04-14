@@ -176,6 +176,10 @@ public final class History implements Parcelable {
         mUrl = url;
     }
 
+    public void setTitle(@Nullable String title) {
+        mTitle = title;
+    }
+
     @Override
     public int describeContents() {
         return 0;

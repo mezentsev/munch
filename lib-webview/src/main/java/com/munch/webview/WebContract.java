@@ -24,18 +24,18 @@ public interface WebContract extends MvpContract {
         void loadUrl(@NonNull String url);
 
         /**
-         * Set progress listener.
+         * Add progress listener to list.
          *
          * @param progressListener
          */
-        void setProgressListener(@Nullable WebProgressListener progressListener);
+        void addProgressListener(@NonNull WebProgressListener progressListener);
 
         /**
-         * Save web view to file.
+         * Remove progress listener from list.
          *
-         * @param webArchiveListener save listener
+         * @param progressListener
          */
-        void setWebArchiveListener(@NonNull WebArchiveListener webArchiveListener);
+        void removeProgressListener(@NonNull WebProgressListener progressListener);
 
         /**
          * Set scroll change listener.

@@ -1,4 +1,4 @@
-package com.munch.webview.helpers;
+package com.munch.browser.helpers;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

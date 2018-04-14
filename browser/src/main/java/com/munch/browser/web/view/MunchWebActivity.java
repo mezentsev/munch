@@ -3,9 +3,7 @@ package com.munch.browser.web.view;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -28,7 +26,7 @@ public class MunchWebActivity extends DaggerAppCompatActivity implements MunchWe
     protected WebContract.View mWebView;
 
     @Inject
-    protected MunchWebContract.Presenter mWebPresenter;
+    protected MunchWebContract.Presenter mPresenter;
 
     @NonNull
     private ProgressBar mProgressBar;
@@ -38,9 +36,6 @@ public class MunchWebActivity extends DaggerAppCompatActivity implements MunchWe
     private FloatingActionButton mBackButton;
     @NonNull
     private MunchWebLayout mWebViewLayout;
-
-    @Nullable
-    private String mUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,48 +47,44 @@ public class MunchWebActivity extends DaggerAppCompatActivity implements MunchWe
         mBackButton = findViewById(R.id.munch_webview_action_button_back);
         mForwardButton = findViewById(R.id.munch_webview_action_button_forward);
 
+        mPresenter.attachView(this);
         mWebViewLayout.attachWebView(mWebView.obtainWebView());
-        // TODO: 10.04.18 not here
-        mProgressBar.setMax(100);
-        mProgressBar.setProgress(0);
 
         mWebViewLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mWebView.reload();
+                mPresenter.reload();
             }
         });
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mWebPresenter.goBack();
+                mPresenter.goBack();
             }
         });
-
         mForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mWebPresenter.goForward();
+                mPresenter.goForward();
             }
         });
 
-        mWebPresenter.attachView(this);
+        mProgressBar.setMax(100);
+        mProgressBar.setProgress(0);
 
-        if (savedInstanceState == null) {
-            mUrl = getIntent().getStringExtra(EXTRA_URI);
-        } else {
-            mUrl = "about:blank";
-        }
+        String intentUrl = savedInstanceState != null
+                ? "about:blank"
+                : getIntent().getStringExtra(EXTRA_URI);
 
-        mWebView.loadUrl("https://yandex.ru");
+        mWebView.loadUrl(intentUrl);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         mWebViewLayout.detachWebView();
-        mWebPresenter.detachView();
+        mPresenter.detachView();
     }
 
     @Override
@@ -135,9 +126,5 @@ public class MunchWebActivity extends DaggerAppCompatActivity implements MunchWe
     @Override
     public void enableRefreshBySwipe(boolean enable) {
         mWebViewLayout.setEnabled(enable);
-    }
-
-    private void showToast(@NonNull String toast) {
-        Snackbar.make(mWebViewLayout, toast, Snackbar.LENGTH_SHORT);
     }
 }
