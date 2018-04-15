@@ -3,9 +3,9 @@ package com.munch.browser.history;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.munch.history.HistoryRepository;
 import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
+import com.munch.mvp.FlowableRepository;
 
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -19,7 +19,7 @@ import io.reactivex.Flowable;
  * Implementation to load history from database.
  */
 @Singleton
-final class HistoryRepositoryImpl implements HistoryRepository {
+final class HistoryRepository implements FlowableRepository<History> {
     @NonNull
     private final Executor mExecutor;
     @NonNull
@@ -28,24 +28,24 @@ final class HistoryRepositoryImpl implements HistoryRepository {
     private static final String TAG = "[HistoryRepoImpl]";
 
     @Inject
-    public HistoryRepositoryImpl(@NonNull Executor executor,
-                                 @NonNull HistoryDataSource localDataSource) {
+    public HistoryRepository(@NonNull Executor executor,
+                             @NonNull HistoryDataSource localDataSource) {
         mExecutor = executor;
         mLocalDataSource = localDataSource;
     }
 
     @Override
-    public Flowable<List<History>> getHistory() {
+    public Flowable<List<History>> get() {
         return mLocalDataSource.getHistoryList();
     }
 
     @Override
-    public void saveHistory(@NonNull final History history) {
+    public void save(@NonNull final History history) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 Log.d(TAG, "Saving history: title=" + history.getTitle() +
-                "; url=" + history.getUrl() + "; isFavicon=" + (history.getFavicon() != null));
+                        "; url=" + history.getUrl() + "; isFavicon=" + (history.getFavicon() != null));
 
                 mLocalDataSource.saveHistory(history);
             }
@@ -53,7 +53,7 @@ final class HistoryRepositoryImpl implements HistoryRepository {
     }
 
     @Override
-    public void removeHistory(@NonNull final History history) {
+    public void remove(@NonNull final History history) {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {

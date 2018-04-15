@@ -4,12 +4,12 @@ import android.app.Application;
 import android.arch.persistence.room.Room;
 
 import com.munch.browser.utils.IOExecutor;
-import com.munch.history.HistoryRepository;
 import com.munch.history.data.local.HistoryDao;
 import com.munch.history.data.local.HistoryDatabase;
 import com.munch.history.data.local.LocalHistoryDataSource;
+import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
-import com.munch.history.Local;
+import com.munch.mvp.FlowableRepository;
 
 import javax.inject.Singleton;
 
@@ -37,15 +37,14 @@ public abstract class HistoryRepositoryModule {
 
     @Singleton
     @Provides
-    @Local
     static HistoryDataSource provideTasksLocalDataSource(HistoryDao historyDao) {
         return new LocalHistoryDataSource(historyDao);
     }
 
     @Singleton
     @Provides
-    static HistoryRepository provideHistoryRepository(IOExecutor ioExecutor,
-                                                      LocalHistoryDataSource localHistoryDataSource) {
-        return new HistoryRepositoryImpl(ioExecutor, localHistoryDataSource);
+    static FlowableRepository<History> provideHistoryRepository(IOExecutor ioExecutor,
+                                                       LocalHistoryDataSource localHistoryDataSource) {
+        return new HistoryRepository(ioExecutor, localHistoryDataSource);
     }
 }

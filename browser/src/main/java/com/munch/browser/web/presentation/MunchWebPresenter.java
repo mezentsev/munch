@@ -8,9 +8,9 @@ import android.webkit.WebView;
 
 import com.munch.browser.helpers.ImageHelper;
 import com.munch.browser.web.MunchWebContract;
-import com.munch.history.HistoryRepository;
 import com.munch.history.model.History;
 import com.munch.mvp.ActivityScoped;
+import com.munch.mvp.FlowableRepository;
 import com.munch.webview.WebContract;
 import com.munch.webview.WebProgressListener;
 
@@ -21,7 +21,7 @@ public class MunchWebPresenter implements MunchWebContract.Presenter, WebProgres
     private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
-    private final HistoryRepository mHistoryRepository;
+    private final FlowableRepository<History> mHistoryRepository;
     @NonNull
     private final WebContract.View mWebView;
 
@@ -35,7 +35,7 @@ public class MunchWebPresenter implements MunchWebContract.Presenter, WebProgres
 
     @Inject
     public MunchWebPresenter(@NonNull WebContract.View webView,
-                             @NonNull HistoryRepository historyRepository) {
+                             @NonNull FlowableRepository<History> historyRepository) {
         mWebView = webView;
         mHistoryRepository = historyRepository;
     }
@@ -170,7 +170,7 @@ public class MunchWebPresenter implements MunchWebContract.Presenter, WebProgres
 
     private void tryToSaveHistory() {
         if (mHistory != null && mHistory.getTitle() != null && mHistory.getFavicon() != null) {
-            mHistoryRepository.saveHistory(mHistory);
+            mHistoryRepository.save(mHistory);
             Log.d(TAG,"History saved!");
         }
     }

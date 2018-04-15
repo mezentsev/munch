@@ -5,8 +5,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.munch.browser.history.HistoryContract;
-import com.munch.history.HistoryRepository;
 import com.munch.history.model.History;
+import com.munch.mvp.FlowableRepository;
 import com.munch.mvp.FragmentScoped;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     private final String TAG = "[MNCH:HPresenter]";
 
     @NonNull
-    private final HistoryRepository mHistoryRepository;
+    private final FlowableRepository<History> mHistoryRepository;
     @NonNull
     private final Executor mMainThreadExecutor;
 
@@ -35,7 +35,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     private HistoryContract.View mView;
 
     @Inject
-    public HistoryPresenter(@NonNull HistoryRepository historyRepository,
+    public HistoryPresenter(@NonNull FlowableRepository<History> historyRepository,
                             @NonNull Executor mainThreadExecutor) {
         mHistoryRepository = historyRepository;
         mMainThreadExecutor = mainThreadExecutor;
@@ -89,7 +89,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
             }
         };
 
-        mHistoryRepository.getHistory()
+        mHistoryRepository.get()
                 .observeOn(Schedulers.from(mMainThreadExecutor))
                 .take(1)
                 .subscribe(disposableSubscriber);
@@ -97,6 +97,6 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
 
     @Override
     public void removeHistory(@NonNull History history) {
-        mHistoryRepository.removeHistory(history);
+        mHistoryRepository.remove(history);
     }
 }
