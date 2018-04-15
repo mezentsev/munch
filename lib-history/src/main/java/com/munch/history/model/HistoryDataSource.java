@@ -28,4 +28,10 @@ public interface HistoryDataSource {
      * @param history
      */
     void saveHistory(@NonNull History history);
+
+    /**
+     * Remove history from database.
+     * @param history
+     */
+    void removeHistory(@NonNull History history);
 }

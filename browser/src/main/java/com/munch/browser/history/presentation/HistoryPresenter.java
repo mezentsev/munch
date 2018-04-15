@@ -7,8 +7,6 @@ import android.util.Log;
 import com.munch.browser.history.HistoryContract;
 import com.munch.history.HistoryRepository;
 import com.munch.history.model.History;
-import com.munch.history.model.HistoryDataSource;
-import com.munch.mvp.ActivityScoped;
 import com.munch.mvp.FragmentScoped;
 
 import java.util.List;
@@ -16,7 +14,6 @@ import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
-import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
@@ -71,25 +68,35 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
 
     @Override
     public void loadHistory() {
+        Log.d(TAG, "Try to load history");
+
+        DisposableSubscriber<List<History>> disposableSubscriber = new DisposableSubscriber<List<History>>() {
+            @Override
+            public void onNext(List<History> historyList) {
+                if (mView != null) {
+                    mView.showHistory(historyList);
+                }
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        };
+
         mHistoryRepository.getHistory()
                 .observeOn(Schedulers.from(mMainThreadExecutor))
-                .subscribe(new DisposableSubscriber<List<History>>() {
-                    @Override
-                    public void onNext(List<History> historyList) {
-                        if (mView != null) {
-                            mView.informHistoryLoaded(historyList);
-                        }
-                    }
+                .take(1)
+                .subscribe(disposableSubscriber);
+    }
 
-                    @Override
-                    public void onError(Throwable t) {
-                        Log.e(TAG, "Error loading history list", t);
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "Done");
-                    }
-                });
+    @Override
+    public void removeHistory(@NonNull History history) {
+        mHistoryRepository.removeHistory(history);
     }
 }

@@ -19,4 +19,9 @@ public interface HistoryRepository {
      * Insert new history to db.
      */
     void saveHistory(@NonNull History history);
+
+    /**
+     * Remove history from list.
+     */
+    void removeHistory(@NonNull History history);
 }

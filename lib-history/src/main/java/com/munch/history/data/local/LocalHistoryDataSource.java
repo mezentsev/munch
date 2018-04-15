@@ -11,7 +11,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Flowable;
-import io.reactivex.Single;
 
 /**
  * Concrete implementation of a data source as a db.
@@ -39,5 +38,10 @@ public class LocalHistoryDataSource implements HistoryDataSource {
     @Override
     public void saveHistory(@NonNull History history) {
         mHistoryDao.insertHistory(history);
+    }
+
+    @Override
+    public void removeHistory(@NonNull History history) {
+        mHistoryDao.removeHistory(history);
     }
 }

@@ -1,17 +1,10 @@
 package com.munch.browser.history.view;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,19 +22,13 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements HistoryAdapterListener {
-    private static final int DATE_HOLDER = 0;
-    private static final int HISTORY_ITEM_HOLDER = 1;
+    protected static final int DATE_HOLDER = 0;
+    protected static final int HISTORY_ITEM_HOLDER = 1;
 
     @Nullable
     private HistoryContract.HistoryListener mHistoryListener;
-    @Nullable
-    private List<History> mHistoryList;
-    @Nullable
-    private List<String> mDateList;
-    @Nullable
-    private List<Integer> mIndexer;
-    private int mDateSize = 0;
-    private int mHistorySize = 0;
+    @NonNull
+    private List<History> mHistoryList = new ArrayList<>();
 
     HistoryAdapter() {
     }
@@ -53,6 +40,22 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
      */
     public void setHistoryListener(@Nullable HistoryContract.HistoryListener historyListener) {
         mHistoryListener = historyListener;
+    }
+
+    /**
+     * Remove history item from adapter.
+     *
+     * @param position
+     */
+    public void removeItem(@IntRange(from = 0) int position) {
+        if (position >= 0) {
+            History history = mHistoryList.remove(position);
+            notifyItemRemoved(position);
+
+            if (mHistoryListener != null) {
+                mHistoryListener.onHistoryRemoved(history);
+            }
+        }
     }
 
     @Override
@@ -74,8 +77,8 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                         context,
                         layoutInflater
                                 .inflate(R.layout.munch_browser_history_holder, parent, false),
-                                this
-                        );
+                        this
+                );
             default:
                 throw new IllegalStateException("Not supported");
         }
@@ -84,85 +87,36 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder,
                                  int position) {
-        Integer dateIndex = mIndexer.get(position);
-        if (dateIndex >= mHistorySize) {
-            ((HistoryDateHolder) holder).bind(mDateList.get(dateIndex - mHistorySize));
-        } else {
-            ((HistoryItemHolder) holder).bind(mHistoryList.get(dateIndex));
-        }
+        ((HistoryItemHolder) holder).bind(mHistoryList.get(position));
     }
 
     @Override
     public int getItemViewType(int position) {
-        Integer dateIndex = mIndexer.get(position);
-
-        return dateIndex >= mHistorySize
-                ? DATE_HOLDER
-                : HISTORY_ITEM_HOLDER;
+        return HISTORY_ITEM_HOLDER;
     }
 
     @Override
     public int getItemCount() {
-        return mHistorySize + mDateSize;
+        return mHistoryList.size();
     }
 
     /**
      * Update history list in adapter.
      */
-    public void setData(@Nullable List<History> historyList) {
+    public void setData(@NonNull List<History> historyList) {
         mHistoryList = historyList;
-
-        if (historyList != null) {
-            mHistorySize = historyList.size();
-            mIndexer = new ArrayList<>(2 * mHistorySize);
-            mDateList = new ArrayList<>();
-
-            String lastHistoryDate = null;
-            int lastDateId = 0;
-            for (int i = 0; i < mHistorySize; ++i) {
-                History curHistory = historyList.get(i);
-                String curHistoryDate = curHistory.getDate();
-
-                if (lastHistoryDate != null && lastHistoryDate.equals(curHistoryDate)) {
-                    // set history holder
-                    mIndexer.add(i);
-                } else {
-                    mIndexer.add(mHistorySize + lastDateId);
-                    mIndexer.add(i);
-                    mDateList.add(curHistoryDate);
-                    lastDateId++;
-                }
-
-                lastHistoryDate = curHistoryDate;
-            }
-
-            mDateSize = mDateList.size();
-        } else {
-            mDateList = null;
-            mIndexer = null;
-            mHistorySize = 0;
-            mDateSize = 0;
-        }
-
         notifyDataSetChanged();
     }
 
     @Override
-    public void onClicked(int adapterPosition) {
-        if (mHistoryListener != null) {
-            Integer index = mIndexer.get(adapterPosition);
-            if (index >= mHistorySize) {
-                return;
-            } else {
-                mHistoryListener.onHistoryClicked(mHistoryList.get(index));
-            }
+    public void onClicked(int position) {
+        if (mHistoryListener != null && position >= 0) {
+            mHistoryListener.onHistoryClicked(mHistoryList.get(position));
         }
     }
 
     static class HistoryDateHolder extends RecyclerView.ViewHolder {
 
-        @NonNull
-        private final Context mContext;
         @NonNull
         private final TextView mDateView;
 
@@ -170,7 +124,6 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                           @NonNull View itemView) {
             super(itemView);
 
-            mContext = context;
             mDateView = itemView.findViewById(R.id.munch_history_date);
         }
 
@@ -229,85 +182,6 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         public void onClick(@NonNull View v) {
             if (mHistoryClickListener != null) {
                 mHistoryClickListener.onClicked(getAdapterPosition());
-            }
-        }
-    }
-
-    static class SwipeHelper extends ItemTouchHelper.SimpleCallback {
-        private final Context mContext;
-        @NonNull
-        private final Paint mClearPaint;
-        @NonNull
-        private final Drawable mBackground;
-        @NonNull
-        private final Drawable mDeleteIcon;
-
-        private int mIntrinsicWidth;
-        private int mIntrinsicHeight;
-
-        public SwipeHelper(Context context, int dragDirs, int swipeDirs) {
-            super(dragDirs, swipeDirs);
-            mContext = context;
-            mClearPaint = new Paint();
-            mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
-
-            mBackground = new ColorDrawable(Color.parseColor("#f44336"));
-
-            mDeleteIcon = ContextCompat.getDrawable(mContext, R.drawable.ic_delete_white_24);
-            mIntrinsicWidth = mDeleteIcon.getIntrinsicWidth();
-            mIntrinsicHeight = mDeleteIcon.getIntrinsicHeight();
-        }
-
-        @Override
-        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-            return false;
-        }
-
-        @Override
-        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-            if (viewHolder.getItemViewType() == DATE_HOLDER) {
-                return;
-            }
-        }
-
-        @Override
-        public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
-            View itemView = viewHolder.itemView;
-            float itemHeight = itemView.getBottom() - itemView.getTop();
-            boolean isCanceled = dX == 0f && !isCurrentlyActive;
-
-            if (isCanceled) {
-                clearCanvas(c, itemView.getRight() + dX, itemView.getTop(), itemView.getRight(), itemView.getBottom());
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-                return;
-            }
-
-            // Draw the red delete background
-            mBackground.setBounds(
-                    itemView.getRight() + (int) dX,
-                    itemView.getTop(),
-                    itemView.getRight(),
-                    itemView.getBottom()
-            );
-            mBackground.draw(c);
-
-            // Calculate position of delete icon
-            int iconTop = itemView.getTop() + (int) (itemHeight - mIntrinsicHeight) / 2;
-            int iconMargin = (int) (itemHeight - mIntrinsicHeight) / 2;
-            int iconLeft = itemView.getRight() - iconMargin - mIntrinsicWidth;
-            int iconRight = itemView.getRight() - iconMargin;
-            int iconBottom = iconTop + mIntrinsicHeight;
-
-            // Draw the delete icon
-            mDeleteIcon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
-            mDeleteIcon.draw(c);
-
-            super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
-        }
-
-        private void clearCanvas(@Nullable Canvas c, float left, float top, float right, float bottom) {
-            if (c != null) {
-                c.drawRect(left, top, right, bottom, mClearPaint);
             }
         }
     }

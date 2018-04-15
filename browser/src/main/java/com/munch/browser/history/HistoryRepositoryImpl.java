@@ -34,17 +34,11 @@ final class HistoryRepositoryImpl implements HistoryRepository {
         mLocalDataSource = localDataSource;
     }
 
-    /**
-     * Fetch history list.
-     */
     @Override
     public Flowable<List<History>> getHistory() {
         return mLocalDataSource.getHistoryList();
     }
 
-    /**
-     * Insert new history to db.
-     */
     @Override
     public void saveHistory(@NonNull final History history) {
         mExecutor.execute(new Runnable() {
@@ -54,6 +48,19 @@ final class HistoryRepositoryImpl implements HistoryRepository {
                 "; url=" + history.getUrl() + "; isFavicon=" + (history.getFavicon() != null));
 
                 mLocalDataSource.saveHistory(history);
+            }
+        });
+    }
+
+    @Override
+    public void removeHistory(@NonNull final History history) {
+        mExecutor.execute(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Removing history: title=" + history.getTitle() +
+                        "; url=" + history.getUrl() + "; isFavicon=" + (history.getFavicon() != null));
+
+                mLocalDataSource.removeHistory(history);
             }
         });
     }

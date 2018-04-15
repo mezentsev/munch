@@ -63,7 +63,12 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
         mHistoryView.setAdapter(mHistoryAdapter);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new HistoryAdapter.SwipeHelper(getContext(), 0, ItemTouchHelper.LEFT)
+                new BaseSwipeCallback(getContext(), 0, ItemTouchHelper.LEFT) {
+                    @Override
+                    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                        mHistoryAdapter.removeItem(viewHolder.getAdapterPosition());
+                    }
+                }
         );
         itemTouchHelper.attachToRecyclerView(mHistoryView);
 
@@ -76,8 +81,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     public void onResume() {
         super.onResume();
         mHistoryPresenter.attachView(this);
-
-        showHistory();
+        mHistoryPresenter.loadHistory();
     }
 
     @Override
@@ -87,13 +91,7 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     }
 
     @Override
-    public void showHistory() {
-        Log.d(TAG, "showHistory");
-        mHistoryPresenter.loadHistory();
-    }
-
-    @Override
-    public void informHistoryLoaded(@NonNull List<History> historyList) {
+    public void showHistory(@NonNull List<History> historyList) {
         if (historyList.size() == 0) {
             Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
         } else {
@@ -106,11 +104,11 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
         }
     }
 
-    private void setData(@Nullable List<History> historyList) {
+    private void setData(@NonNull List<History> historyList) {
         mHistoryAdapter.setData(historyList);
     }
 
-    private static class HistoryListener implements HistoryContract.HistoryListener {
+    private class HistoryListener implements HistoryContract.HistoryListener {
 
         @NonNull
         private final Context mContext;
@@ -124,6 +122,12 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
             Intent intent = new Intent(mContext, MunchWebActivity.class);
             intent.putExtra(MunchWebActivity.EXTRA_URI, history.getUrl());
             mContext.startActivity(intent);
+        }
+
+        @Override
+        public void onHistoryRemoved(@NonNull History history) {
+            Log.d(TAG, "removeHistory");
+            mHistoryPresenter.removeHistory(history);
         }
     }
 }

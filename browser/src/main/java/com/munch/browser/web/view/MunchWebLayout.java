@@ -2,12 +2,16 @@ package com.munch.browser.web.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
 public class MunchWebLayout extends SwipeRefreshLayout {
+
+    @Nullable
+    private WebView mWebView;
 
     public MunchWebLayout(Context context) {
         super(context);
@@ -18,12 +22,19 @@ public class MunchWebLayout extends SwipeRefreshLayout {
     }
 
     public void attachWebView(@NonNull WebView webView) {
-        webView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+        if (mWebView != null) {
+            removeView(mWebView);
+        }
+
+        mWebView = webView;
+        mWebView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-        addView(webView);
+        addView(mWebView);
     }
 
     public void detachWebView() {
-        removeAllViews();
+        if (mWebView != null) {
+            removeView(mWebView);
+        }
     }
 }
