@@ -17,10 +17,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class MunchWebClient extends WebViewClient {
+    private static final String TAG = "[MNCH:MunchWebClient]";
 
     private static final String ERROR_WITH_DESCRIPTION = "<html><title>Munch Error</title><body><p style='line-height:400px; vertical-align: middle; text-align: center;'>%s</p></body></html>";
     private static final String NO_DATA = String.format(ERROR_WITH_DESCRIPTION, "MAIN MUNCH ERROR");
-    private static final String TAG = "[MunchWebClient]";
 
     @NonNull
     private final WebProgressListener mProgressListener;

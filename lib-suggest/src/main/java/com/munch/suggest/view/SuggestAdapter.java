@@ -19,7 +19,7 @@ import java.util.List;
 
 final class SuggestAdapter extends RecyclerView.Adapter<SuggestAdapter.SuggestViewHolder>
         implements ItemClickListener {
-    private final static String TAG = SuggestAdapter.class.getSimpleName();
+    private final static String TAG = "[MNCH:SuggestAdapter]";
 
     @NonNull
     private final Context mContext;

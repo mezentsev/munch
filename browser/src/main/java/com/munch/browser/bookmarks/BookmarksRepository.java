@@ -21,11 +21,12 @@ import io.reactivex.Flowable;
 @Singleton
 public final class BookmarksRepository implements FlowableRepository<Bookmark> {
     @NonNull
+    private static final String TAG = "[MNCH:BookmarksRepo]";
+
+    @NonNull
     private final Executor mExecutor;
     @NonNull
     private final BookmarksDataSource mLocalDataSource;
-    @NonNull
-    private static final String TAG = "[BookmarksRepository]";
 
     @Inject
     public BookmarksRepository(@NonNull Executor executor,

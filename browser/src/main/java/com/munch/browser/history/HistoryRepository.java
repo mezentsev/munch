@@ -25,7 +25,7 @@ public final class HistoryRepository implements FlowableRepository<History> {
     @NonNull
     private final HistoryDataSource mLocalDataSource;
     @NonNull
-    private static final String TAG = "[HistoryRepoImpl]";
+    private static final String TAG = "[MNCH:HistoryRepoImpl]";
 
     @Inject
     public HistoryRepository(@NonNull Executor executor,
