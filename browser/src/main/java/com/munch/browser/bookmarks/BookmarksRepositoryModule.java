@@ -9,6 +9,7 @@ import com.munch.bookmarks.model.BookmarksDataSource;
 import com.munch.browser.utils.IOExecutor;
 import com.munch.bookmarks.data.local.BookmarksDatabase;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -35,6 +36,7 @@ public abstract class BookmarksRepositoryModule {
 
     @Singleton
     @Provides
+    @Named(value = "local")
     static BookmarksDataSource provideTasksLocalDataSource(BookmarksDao bookmarksDao) {
         return new LocalBookmarksDataSource(bookmarksDao);
     }
@@ -42,7 +44,7 @@ public abstract class BookmarksRepositoryModule {
     @Singleton
     @Provides
     static BookmarksRepository provideHistoryRepository(IOExecutor ioExecutor,
-                                                        BookmarksDataSource dataSource) {
+                                                        @Named(value = "local") BookmarksDataSource dataSource) {
         return new BookmarksRepository(ioExecutor, dataSource);
     }
 }

@@ -9,6 +9,7 @@ import com.munch.history.data.local.HistoryDatabase;
 import com.munch.history.data.local.LocalHistoryDataSource;
 import com.munch.history.model.HistoryDataSource;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -35,6 +36,7 @@ public abstract class HistoryRepositoryModule {
 
     @Singleton
     @Provides
+    @Named(value = "local")
     static HistoryDataSource provideTasksLocalDataSource(HistoryDao historyDao) {
         return new LocalHistoryDataSource(historyDao);
     }
@@ -42,7 +44,7 @@ public abstract class HistoryRepositoryModule {
     @Singleton
     @Provides
     static HistoryRepository provideHistoryRepository(IOExecutor ioExecutor,
-                                                      HistoryDataSource localHistoryDataSource) {
-        return new HistoryRepository(ioExecutor, localHistoryDataSource);
+                                                      @Named(value = "local") HistoryDataSource dataSource) {
+        return new HistoryRepository(ioExecutor, dataSource);
     }
 }
