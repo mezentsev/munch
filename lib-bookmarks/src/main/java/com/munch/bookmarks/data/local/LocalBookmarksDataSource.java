@@ -27,16 +27,16 @@ public class LocalBookmarksDataSource implements BookmarksDataSource {
 
     @Override
     public Flowable<List<Bookmark>> getBookmarksList() {
-        return mBookmarksDao.getHistoryList();
+        return mBookmarksDao.getBookmarkList();
     }
 
     @Override
     public void saveBookmark(@NonNull Bookmark history) {
-        mBookmarksDao.insertHistory(history);
+        mBookmarksDao.insertBookmark(history);
     }
 
     @Override
     public void removeBookmark(@NonNull Bookmark history) {
-        mBookmarksDao.removeHistory(history);
+        mBookmarksDao.removeBookmark(history);
     }
 }

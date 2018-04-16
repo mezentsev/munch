@@ -20,34 +20,34 @@ import io.reactivex.Flowable;
 public interface BookmarksDao {
 
     /**
-     * Select all history from the History table.
+     * Select all bookmarks from the Boorkars table.
      *
-     * @return all history.
+     * @return all bookmarks.
      */
-    @Query("SELECT * FROM Bookmark ORDER BY timestamp DESC")
-    Flowable<List<Bookmark>> getHistoryList();
+    @Query("SELECT * FROM Bookmarks ORDER BY timestamp DESC")
+    Flowable<List<Bookmark>> getBookmarkList();
 
     /**
-     * Select limited history count from the History table.
+     * Select limited bookmarks count from the Bookmarks table.
      *
-     * @return all history.
+     * @return all bookmarks.
      */
-    @Query("SELECT * FROM Bookmark ORDER BY timestamp DESC LIMIT :selectCount OFFSET :offsetCount")
-    Flowable<List<Bookmark>> getLastHistory(int selectCount, int offsetCount);
+    @Query("SELECT * FROM Bookmarks ORDER BY timestamp DESC LIMIT :selectCount OFFSET :offsetCount")
+    Flowable<List<Bookmark>> getLastBookmarks(int selectCount, int offsetCount);
 
     /**
-     * Insert a history in the database. If the history already exists, replace it.
+     * Insert a bookmark in the database. If the bookmark already exists, replace it.
      *
-     * @param history the task to be inserted.
+     * @param bookmark the task to be inserted.
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertHistory(@NonNull Bookmark history);
+    void insertBookmark(@NonNull Bookmark bookmark);
 
     /**
-     * Remove history form database.
+     * Remove bookmark form database.
      *
-     * @param history the task to be inserted.
+     * @param bookmark the bookmark to be removed.
      */
     @Delete
-    void removeHistory(@NonNull Bookmark history);
+    void removeBookmark(@NonNull Bookmark bookmark);
 }

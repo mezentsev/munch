@@ -19,7 +19,7 @@ import io.reactivex.Flowable;
  * Implementation to load history from database.
  */
 @Singleton
-final class HistoryRepository implements FlowableRepository<History> {
+public final class HistoryRepository implements FlowableRepository<History> {
     @NonNull
     private final Executor mExecutor;
     @NonNull

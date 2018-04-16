@@ -3,6 +3,7 @@ package com.munch.browser.di;
 import android.app.Application;
 
 import com.munch.browser.MunchApplication;
+import com.munch.browser.bookmarks.BookmarksRepositoryModule;
 import com.munch.browser.history.HistoryRepositoryModule;
 import com.munch.browser.web.MunchWebActivityModule;
 
@@ -25,6 +26,7 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Singleton
 @Component(modules = {
         HistoryRepositoryModule.class,
+        BookmarksRepositoryModule.class,
         MunchWebActivityModule.class,
         ApplicationModule.class,
         ActivityBindingModule.class,

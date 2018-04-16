@@ -1,10 +1,10 @@
-package com.munch.history.data.local;
+package com.munch.bookmarks.data.local;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 import android.support.annotation.NonNull;
 
-import com.munch.history.model.Bookmark;
+import com.munch.bookmarks.model.Bookmark;
 
 /**
  * The Room Database that contains the History table.
@@ -13,5 +13,5 @@ import com.munch.history.model.Bookmark;
 public abstract class BookmarksDatabase extends RoomDatabase {
 
     @NonNull
-    public abstract BookmarksDao historyDao();
+    public abstract BookmarksDao bookmarksDao();
 }

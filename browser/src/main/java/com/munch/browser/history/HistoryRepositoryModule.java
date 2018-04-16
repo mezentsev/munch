@@ -7,9 +7,7 @@ import com.munch.browser.utils.IOExecutor;
 import com.munch.history.data.local.HistoryDao;
 import com.munch.history.data.local.HistoryDatabase;
 import com.munch.history.data.local.LocalHistoryDataSource;
-import com.munch.history.model.History;
 import com.munch.history.model.HistoryDataSource;
-import com.munch.mvp.FlowableRepository;
 
 import javax.inject.Singleton;
 
@@ -43,8 +41,8 @@ public abstract class HistoryRepositoryModule {
 
     @Singleton
     @Provides
-    static FlowableRepository<History> provideHistoryRepository(IOExecutor ioExecutor,
-                                                       LocalHistoryDataSource localHistoryDataSource) {
+    static HistoryRepository provideHistoryRepository(IOExecutor ioExecutor,
+                                                      HistoryDataSource localHistoryDataSource) {
         return new HistoryRepository(ioExecutor, localHistoryDataSource);
     }
 }

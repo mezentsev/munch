@@ -7,10 +7,10 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import com.munch.browser.helpers.ImageHelper;
+import com.munch.browser.history.HistoryRepository;
 import com.munch.browser.web.MunchWebContract;
 import com.munch.history.model.History;
 import com.munch.mvp.ActivityScoped;
-import com.munch.mvp.FlowableRepository;
 import com.munch.webview.WebContract;
 import com.munch.webview.WebProgressListener;
 
@@ -21,7 +21,7 @@ public class MunchWebPresenter implements MunchWebContract.Presenter, WebProgres
     private static final String TAG = "[MNCH:WebPresenter]";
 
     @NonNull
-    private final FlowableRepository<History> mHistoryRepository;
+    private final HistoryRepository mHistoryRepository;
     @NonNull
     private final WebContract.View mWebView;
 
@@ -35,7 +35,7 @@ public class MunchWebPresenter implements MunchWebContract.Presenter, WebProgres
 
     @Inject
     public MunchWebPresenter(@NonNull WebContract.View webView,
-                             @NonNull FlowableRepository<History> historyRepository) {
+                             @NonNull HistoryRepository historyRepository) {
         mWebView = webView;
         mHistoryRepository = historyRepository;
     }
