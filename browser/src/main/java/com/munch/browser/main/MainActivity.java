@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.munch.browser.R;
+import com.munch.browser.bookmarks.view.BookmarksFragment;
 
 import dagger.android.support.DaggerAppCompatActivity;
 
@@ -26,6 +27,7 @@ public class MainActivity extends DaggerAppCompatActivity {
 
             mFragmentManager
                     .beginTransaction()
+                    .add(R.id.munch_bookmarks_container, new BookmarksFragment())
                     .add(R.id.munch_main_container, new MainFragment())
                     .commit();
         }

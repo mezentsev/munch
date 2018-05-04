@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import dagger.android.support.DaggerFragment;
 
 public class MainFragment extends DaggerFragment {
-    private static final String TAG = "[MNCH:HistoryFragment]";
+    private static final String TAG = "[MNCH:BookmarksFragment]";
 
     @Inject
     Context mContext;

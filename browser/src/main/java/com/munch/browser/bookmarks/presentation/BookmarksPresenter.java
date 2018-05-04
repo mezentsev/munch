@@ -1,16 +1,18 @@
-package com.munch.browser.history.presentation;
+package com.munch.browser.bookmarks.presentation;
 
+import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.munch.browser.history.HistoryContract;
-import com.munch.history.model.History;
+import com.munch.bookmarks.model.Bookmark;
+import com.munch.browser.bookmarks.BookmarksContract;
 import com.munch.mvp.FlowableRepository;
 import com.munch.mvp.FragmentScoped;
 
 import java.util.List;
 import java.util.concurrent.Executor;
+import java.util.logging.Handler;
 
 import javax.inject.Inject;
 
@@ -19,28 +21,29 @@ import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subscribers.DisposableSubscriber;
 
 @FragmentScoped
-public final class HistoryPresenter implements HistoryContract.Presenter {
+public final class BookmarksPresenter implements BookmarksContract.Presenter {
 
     @NonNull
-    private final String TAG = "[MNCH:HPresenter]";
+    private final String TAG = "[MNCH:BPresenter]";
 
     @NonNull
-    private final FlowableRepository<History> mHistoryRepository;
+    private final FlowableRepository<Bookmark> mBookmarksRepository;
     @NonNull
     private final Executor mMainThreadExecutor;
     @NonNull
     private final CompositeDisposable mCompositeDisposable;
 
     @Nullable
-    private HistoryContract.View mView;
+    private BookmarksContract.View mView;
 
     @Inject
-    public HistoryPresenter(@NonNull FlowableRepository<History> historyRepository,
-                            @NonNull Executor mainThreadExecutor) {
-        mHistoryRepository = historyRepository;
+    public BookmarksPresenter(@NonNull FlowableRepository<Bookmark> bookmarksRepository,
+                              @NonNull Executor mainThreadExecutor) {
+        mBookmarksRepository = bookmarksRepository;
         mMainThreadExecutor = mainThreadExecutor;
-
         mCompositeDisposable = new CompositeDisposable();
+
+        mBookmarksRepository.get();
     }
 
     @Override
@@ -54,7 +57,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     }
 
     @Override
-    public void attachView(@NonNull HistoryContract.View view) {
+    public void attachView(@NonNull BookmarksContract.View view) {
         mView = view;
     }
 
@@ -70,19 +73,19 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     }
 
     @Override
-    public void loadHistory() {
-        Log.d(TAG, "Try to load history");
+    public void loadBookmarks() {
+        Log.d(TAG, "Try to load bookmarks");
 
         mCompositeDisposable.clear();
         mCompositeDisposable.add(
-                mHistoryRepository.get()
+                mBookmarksRepository.get()
                         .observeOn(Schedulers.from(mMainThreadExecutor))
-                        .take(1)
-                        .subscribeWith(new DisposableSubscriber<List<History>>() {
+                        .subscribeWith(new DisposableSubscriber<List<Bookmark>>() {
                             @Override
-                            public void onNext(List<History> historyList) {
+                            public void onNext(List<Bookmark> bookmarkList) {
                                 if (mView != null) {
-                                    mView.showHistory(historyList);
+                                    mView.showBookmarks(bookmarkList);
+                                    Log.d(TAG, "onNext " + bookmarkList);
                                 } else {
                                     Log.d(TAG, "No view attached. Ignored.");
                                 }
@@ -99,10 +102,5 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
                             }
                         })
         );
-    }
-
-    @Override
-    public void removeHistory(@NonNull History history) {
-        mHistoryRepository.remove(history);
     }
 }

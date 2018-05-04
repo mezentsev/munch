@@ -27,7 +27,7 @@ import dagger.android.support.DaggerFragment;
 
 public class HistoryFragment extends DaggerFragment implements HistoryContract.View {
     @NonNull
-    private static final String TAG = "[MNCH:HistoryFragment]";
+    private static final String TAG = "[MNCH:BookmarksFragment]";
     @NonNull
     private static final String NO_HISTORY = "No History";
 
@@ -51,8 +51,8 @@ public class HistoryFragment extends DaggerFragment implements HistoryContract.V
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.munch_browser_history_fragment, container, false);
-        mHistoryView = view.findViewById(R.id.munch_history_view);
+        View view = inflater.inflate(R.layout.munch_browser_recycler_fragment, container, false);
+        mHistoryView = view.findViewById(R.id.munch_recycler_view);
 
         mHistoryAdapter = new HistoryAdapter();
         mHistoryAdapter.setHistoryListener(new HistoryListener(getActivity()));

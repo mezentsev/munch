@@ -1,6 +1,7 @@
 package com.munch.browser.history.view;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
@@ -12,6 +13,7 @@ import dagger.android.support.DaggerAppCompatActivity;
 
 public class HistoryActivity extends DaggerAppCompatActivity {
 
+    @NonNull
     private static final String TAG = "[MNCH:HistoryActivity]";
 
     @Inject
@@ -22,7 +24,7 @@ public class HistoryActivity extends DaggerAppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
-        setContentView(R.layout.munch_browser_main_activity);
+        setContentView(R.layout.munch_browser_simple_activity);
         FragmentManager mFragmentManager = getSupportFragmentManager();
 
         HistoryFragment historyFragment = (HistoryFragment) mFragmentManager

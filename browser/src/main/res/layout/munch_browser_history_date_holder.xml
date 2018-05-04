@@ -4,7 +4,7 @@
     android:layout_height="@dimen/munch_history_date_height">
 
     <TextView
-        android:id="@+id/munch_history_date"
+        android:id="@+id/munch_bookmark_item"
         android:layout_width="match_parent"
         android:layout_height="@dimen/munch_history_date_height"
         android:background="@color/munch_history_date_background"

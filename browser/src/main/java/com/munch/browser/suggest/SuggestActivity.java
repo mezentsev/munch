@@ -2,7 +2,6 @@ package com.munch.browser.suggest;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
 
@@ -25,7 +24,7 @@ public class SuggestActivity extends DaggerAppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.munch_browser_main_activity);
+        setContentView(R.layout.munch_browser_simple_activity);
         FragmentManager mFragmentManager = getSupportFragmentManager();
 
         SuggestFragment suggestFragment = (SuggestFragment) mFragmentManager

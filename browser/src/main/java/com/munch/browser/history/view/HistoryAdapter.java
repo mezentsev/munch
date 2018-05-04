@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.munch.browser.R;
+import com.munch.browser.helpers.DateHelper;
 import com.munch.browser.helpers.ImageHelper;
 import com.munch.browser.history.HistoryContract;
 import com.munch.history.model.History;
@@ -124,7 +125,7 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                           @NonNull View itemView) {
             super(itemView);
 
-            mDateView = itemView.findViewById(R.id.munch_history_date);
+            mDateView = itemView.findViewById(R.id.munch_bookmark_item);
         }
 
         void bind(@NonNull String date) {
@@ -142,10 +143,10 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         private final TextView mTitleView;
         @NonNull
         private final TextView mTimestampView;
-        @Nullable
-        private final HistoryAdapterListener mHistoryClickListener;
         @NonNull
         private final ImageView mFaviconView;
+        @Nullable
+        private final HistoryAdapterListener mHistoryClickListener;
 
         HistoryItemHolder(@NonNull Context context,
                           @NonNull View itemView,
@@ -175,7 +176,7 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
 
             mTitleView.setText(history.getTitle());
-            mTimestampView.setText(history.getTime());
+            mTimestampView.setText(DateHelper.getTime(history.getTimestamp()));
         }
 
         @Override

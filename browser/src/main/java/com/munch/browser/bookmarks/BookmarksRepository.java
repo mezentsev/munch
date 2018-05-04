@@ -58,7 +58,7 @@ public final class BookmarksRepository implements FlowableRepository<Bookmark> {
         mExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "Removing history: title=" + bookmark.getTitle() +
+                Log.d(TAG, "Removing bookmark: title=" + bookmark.getTitle() +
                         "; url=" + bookmark.getUrl() + "; isFavicon=" + (bookmark.getFavicon() != null));
 
                 mLocalDataSource.removeBookmark(bookmark);

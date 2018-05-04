@@ -146,28 +146,6 @@ public final class History implements Parcelable {
         return "History url " + mUrl;
     }
 
-    @NonNull
-    public String getDate() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM", Locale.US);
-            Date netDate = (new Date(mTimestamp));
-            return sdf.format(netDate);
-        } catch (Exception ex) {
-            return "xx";
-        }
-    }
-
-    @NonNull
-    public String getTime() {
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.US);
-            Date netDate = (new Date(mTimestamp));
-            return sdf.format(netDate);
-        } catch (Exception ex) {
-            return "xx";
-        }
-    }
-
     public void setFavicon(@NonNull String favicon) {
         mFavicon = favicon;
     }
