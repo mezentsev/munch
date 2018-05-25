@@ -9,15 +9,14 @@ import android.view.View;
 import android.widget.ProgressBar;
 
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseActivity;
 import com.munch.browser.main.MainActivity;
 import com.munch.browser.web.MunchWebContract;
 import com.munch.webview.WebContract;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
-public class MunchWebActivity extends DaggerAppCompatActivity implements MunchWebContract.View {
+public class MunchWebActivity extends BaseActivity implements MunchWebContract.View {
 
     @NonNull
     public static final String EXTRA_URI = "URI";

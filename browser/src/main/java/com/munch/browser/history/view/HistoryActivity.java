@@ -6,12 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseActivity;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
-public class HistoryActivity extends DaggerAppCompatActivity {
+public class HistoryActivity extends BaseActivity {
 
     @NonNull
     private static final String TAG = "[MNCH:HistoryActivity]";

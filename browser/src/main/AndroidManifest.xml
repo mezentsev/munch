@@ -21,8 +21,7 @@
 
         <activity
             android:name=".main.MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:fitsSystemWindows="true">
+            android:configChanges="orientation|screenSize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,9 +30,9 @@
         </activity>
 
         <activity
-            android:name=".suggest.SuggestActivity"
-            android:configChanges="orientation|screenSize"
-            android:fitsSystemWindows="true" />
+            android:name=".suggest.view.SuggestActivity"
+            android:fitsSystemWindows="true"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".web.view.MunchWebActivity"
             android:configChanges="orientation|screenSize"

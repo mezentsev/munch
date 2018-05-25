@@ -1,4 +1,4 @@
-package com.munch.browser.suggest;
+package com.munch.browser.suggest.view;
 
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseFragment;
 import com.munch.browser.helpers.KeyboardHelper;
 import com.munch.browser.web.view.MunchWebActivity;
 import com.munch.suggest.SuggestContract;
@@ -27,9 +28,7 @@ import com.munch.suggest.model.SuggestInteractor;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-
-public class SuggestFragment extends DaggerFragment {
+public class SuggestFragment extends BaseFragment {
 
     private static String TAG = "[MNCH:SuggestFragment]";
 
@@ -46,10 +45,6 @@ public class SuggestFragment extends DaggerFragment {
 
     @Inject
     SuggestInteractor.Factory mSuggestInteractorFactory;
-
-    @Inject
-    public SuggestFragment() {
-    }
 
     @NonNull
     @Override

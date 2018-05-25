@@ -3,9 +3,6 @@ package com.munch.browser.di;
 import android.app.Application;
 
 import com.munch.browser.MunchApplication;
-import com.munch.browser.bookmarks.BookmarksRepositoryModule;
-import com.munch.browser.history.HistoryRepositoryModule;
-import com.munch.browser.web.MunchWebActivityModule;
 
 import javax.inject.Singleton;
 

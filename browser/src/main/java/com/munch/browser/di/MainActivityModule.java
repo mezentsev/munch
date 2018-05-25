@@ -1,9 +1,10 @@
-package com.munch.browser.main;
+package com.munch.browser.di;
 
 import com.munch.browser.bookmarks.BookmarksContract;
 import com.munch.browser.bookmarks.BookmarksRepository;
 import com.munch.browser.bookmarks.presentation.BookmarksPresenter;
 import com.munch.browser.bookmarks.view.BookmarksFragment;
+import com.munch.browser.main.MainFragment;
 import com.munch.browser.utils.MainThreadExecutor;
 import com.munch.mvp.ActivityScoped;
 import com.munch.mvp.FragmentScoped;

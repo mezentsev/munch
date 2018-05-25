@@ -1,5 +1,6 @@
-package com.munch.browser.suggest;
+package com.munch.browser.di;
 
+import com.munch.browser.suggest.view.SuggestFragment;
 import com.munch.mvp.ActivityScoped;
 import com.munch.mvp.FragmentScoped;
 import com.munch.suggest.model.GoSuggestInteractor;

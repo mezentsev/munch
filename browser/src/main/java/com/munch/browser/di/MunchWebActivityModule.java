@@ -1,6 +1,7 @@
-package com.munch.browser.web;
+package com.munch.browser.di;
 
 import com.munch.browser.history.HistoryRepository;
+import com.munch.browser.web.MunchWebContract;
 import com.munch.browser.web.presentation.MunchWebPresenter;
 import com.munch.mvp.ActivityScoped;
 import com.munch.webview.WebContract;

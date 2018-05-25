@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseFragment;
 import com.munch.browser.history.HistoryContract;
 import com.munch.browser.web.view.MunchWebActivity;
 import com.munch.history.model.History;
@@ -23,9 +24,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-
-public class HistoryFragment extends DaggerFragment implements HistoryContract.View {
+public class HistoryFragment extends BaseFragment implements HistoryContract.View {
     @NonNull
     private static final String TAG = "[MNCH:BookmarksFragment]";
     @NonNull

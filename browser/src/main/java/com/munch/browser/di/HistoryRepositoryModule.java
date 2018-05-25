@@ -1,8 +1,9 @@
-package com.munch.browser.history;
+package com.munch.browser.di;
 
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
+import com.munch.browser.history.HistoryRepository;
 import com.munch.browser.utils.IOExecutor;
 import com.munch.history.data.local.HistoryDao;
 import com.munch.history.data.local.HistoryDatabase;

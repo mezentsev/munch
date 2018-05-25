@@ -1,12 +1,8 @@
 package com.munch.browser.di;
 
-import com.munch.browser.history.HistoryActivityModule;
 import com.munch.browser.history.view.HistoryActivity;
-import com.munch.browser.main.MainActivityModule;
 import com.munch.browser.main.MainActivity;
-import com.munch.browser.suggest.SuggestActivity;
-import com.munch.browser.suggest.SuggestActivityModule;
-import com.munch.browser.web.MunchWebActivityModule;
+import com.munch.browser.suggest.view.SuggestActivity;
 import com.munch.browser.web.view.MunchWebActivity;
 import com.munch.mvp.ActivityScoped;
 

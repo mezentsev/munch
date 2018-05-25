@@ -13,18 +13,14 @@ import android.view.ViewGroup;
 
 import com.munch.bookmarks.model.Bookmark;
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseFragment;
 import com.munch.browser.bookmarks.BookmarksContract;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-
-public class BookmarksFragment extends DaggerFragment implements BookmarksContract.View {
-    @NonNull
-    private static final String TAG = "[MNCH:BookmarksFragment]";
-
+public class BookmarksFragment extends BaseFragment implements BookmarksContract.View {
     @Inject
     Context mContext;
 

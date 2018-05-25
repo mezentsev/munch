@@ -1,5 +1,7 @@
-package com.munch.browser.history;
+package com.munch.browser.di;
 
+import com.munch.browser.history.HistoryContract;
+import com.munch.browser.history.HistoryRepository;
 import com.munch.browser.history.presentation.HistoryPresenter;
 import com.munch.browser.history.view.HistoryFragment;
 import com.munch.browser.utils.MainThreadExecutor;

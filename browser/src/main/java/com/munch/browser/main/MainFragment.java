@@ -5,40 +5,41 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseFragment;
 import com.munch.browser.callbacks.StaticOmniboxListener;
 import com.munch.browser.history.view.HistoryActivity;
-import com.munch.browser.suggest.SuggestActivity;
+import com.munch.browser.suggest.view.SuggestActivity;
 
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
-import dagger.android.support.DaggerFragment;
-
-public class MainFragment extends DaggerFragment {
-    private static final String TAG = "[MNCH:BookmarksFragment]";
-
+public class MainFragment extends BaseFragment {
     @Inject
     Context mContext;
 
-    @Nonnull
+    @NonNull
     private StaticOmniboxListener mOnClickCallback = new StaticOmniboxListener() {
         @Override
         public void onOmniboxClick() {
-            Log.d(TAG, "onOmniboxClick");
             Intent intent = new Intent(mContext, SuggestActivity.class);
-            MainFragment.this.startActivity(intent);
+            startActivity(intent);
         }
     };
 
     @Inject
     public MainFragment() {
 
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setRetainInstance(true);
     }
 
     @NonNull
@@ -61,11 +62,9 @@ public class MainFragment extends DaggerFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext, HistoryActivity.class);
-                MainFragment.this.startActivity(intent);
+                startActivity(intent);
             }
         });
-
-        setRetainInstance(true);
 
         return view;
     }

@@ -1,4 +1,4 @@
-package com.munch.browser.bookmarks;
+package com.munch.browser.di;
 
 import android.app.Application;
 import android.arch.persistence.db.SupportSQLiteDatabase;
@@ -11,6 +11,7 @@ import com.munch.bookmarks.data.local.BookmarksDao;
 import com.munch.bookmarks.data.local.LocalBookmarksDataSource;
 import com.munch.bookmarks.model.Bookmark;
 import com.munch.bookmarks.model.BookmarksDataSource;
+import com.munch.browser.bookmarks.BookmarksRepository;
 import com.munch.browser.utils.IOExecutor;
 import com.munch.bookmarks.data.local.BookmarksDatabase;
 
@@ -81,7 +82,7 @@ public class BookmarksRepositoryModule {
     @Singleton
     @Provides
     static BookmarksRepository provideHistoryRepository(IOExecutor ioExecutor,
-                                                 @Named(value = "local") BookmarksDataSource dataSource) {
+                                                        @Named(value = "local") BookmarksDataSource dataSource) {
         return new BookmarksRepository(ioExecutor, dataSource);
     }
 }

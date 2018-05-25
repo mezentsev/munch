@@ -1,21 +1,13 @@
 package com.munch.browser.main;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 
 import com.munch.browser.R;
+import com.munch.browser.base.view.BaseActivity;
 import com.munch.browser.bookmarks.view.BookmarksFragment;
 
-import dagger.android.support.DaggerAppCompatActivity;
-
-public class MainActivity extends DaggerAppCompatActivity {
-
-    @NonNull
-    private final String TAG = "[MNCH:Main]";
-
-    private int backPressedCounter = 0;
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +23,5 @@ public class MainActivity extends DaggerAppCompatActivity {
                     .add(R.id.munch_main_container, new MainFragment())
                     .commit();
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        ++backPressedCounter;
-        Log.d(TAG, "onBackPressed " + backPressedCounter + " times.");
     }
 }
