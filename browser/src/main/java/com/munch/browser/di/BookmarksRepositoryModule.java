@@ -30,7 +30,10 @@ public class BookmarksRepositoryModule {
     @NonNull
     private final static List<Bookmark> sBookmarkList = Arrays.asList(
             new Bookmark("https://google.com", "Google"),
-            new Bookmark("https://facebook.com", "Facebook.com")
+            new Bookmark("https://facebook.com", "Facebook"),
+            new Bookmark("https://twitter.com", "Twitter"),
+            new Bookmark("https://instagram.com", "Instagram"),
+            new Bookmark("https://youtube.com", "Youtube")
     );
 
     @NonNull

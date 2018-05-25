@@ -30,7 +30,7 @@ final class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Bookm
 
         return new BookmarkItemHolder(
                 layoutInflater
-                        .inflate(R.layout.munch_browser_bookmark_date_holder, parent, false)
+                        .inflate(R.layout.munch_browser_bookmark_icon_view, parent, false)
         );
     }
 
@@ -71,6 +71,9 @@ final class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Bookm
             if (title != null) {
                 mTitleView.setText(title.substring(0, 1));
                 mDescriptionView.setText(title);
+            } else {
+                mTitleView.setText("");
+                mDescriptionView.setText(R.string.munch_bookmark_unnamed_description);
             }
         }
     }

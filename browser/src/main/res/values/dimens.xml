@@ -7,4 +7,6 @@
     <dimen name="munch_history_favicon_size">26dp</dimen>
 
     <dimen name="munch_bookmark_item_height">60dp</dimen>
+    <dimen name="munch_bookmark_item_text_width">70dp</dimen>
+    <dimen name="munch_bookmark_item_padding">15dp</dimen>
 </resources>

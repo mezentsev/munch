@@ -1,3 +1,4 @@
 <resources>
     <string name="munch_omnibox_placeholder_text">Search…</string>
+    <string name="munch_bookmark_unnamed_description">Unnamed</string>
 </resources>

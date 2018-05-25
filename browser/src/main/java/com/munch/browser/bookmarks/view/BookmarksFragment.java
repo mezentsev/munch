@@ -21,6 +21,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 public class BookmarksFragment extends BaseFragment implements BookmarksContract.View {
+    private static final int SPAN_COUNT = 3;
+
     @Inject
     Context mContext;
 
@@ -32,10 +34,6 @@ public class BookmarksFragment extends BaseFragment implements BookmarksContract
     @NonNull
     private BookmarksAdapter mBookmarksAdapter;
 
-    @Inject
-    public BookmarksFragment() {
-    }
-
     @NonNull
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -46,14 +44,19 @@ public class BookmarksFragment extends BaseFragment implements BookmarksContract
 
         mBookmarksAdapter = new BookmarksAdapter();
 
-        LinearLayoutManager linearLayoutManager = new GridLayoutManager(mContext, 3, LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager linearLayoutManager = new GridLayoutManager(mContext, SPAN_COUNT, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(false);
         mBookmarksView.setLayoutManager(linearLayoutManager);
         mBookmarksView.setAdapter(mBookmarksAdapter);
 
-        setRetainInstance(true);
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setRetainInstance(true);
     }
 
     @Override
