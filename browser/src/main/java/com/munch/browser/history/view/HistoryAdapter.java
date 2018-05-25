@@ -54,7 +54,7 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             notifyItemRemoved(position);
 
             if (mHistoryListener != null) {
-                mHistoryListener.onHistoryRemoved(history);
+                mHistoryListener.onRemoved(history);
             }
         }
     }
@@ -67,12 +67,6 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 .from(context);
 
         switch (viewType) {
-            case DATE_HOLDER:
-                return new HistoryDateHolder(
-                        context,
-                        layoutInflater
-                                .inflate(R.layout.munch_browser_history_date_holder, parent, false)
-                );
             case HISTORY_ITEM_HOLDER:
                 return new HistoryItemHolder(
                         context,
@@ -112,24 +106,7 @@ final class HistoryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onClicked(int position) {
         if (mHistoryListener != null && position >= 0) {
-            mHistoryListener.onHistoryClicked(mHistoryList.get(position));
-        }
-    }
-
-    static class HistoryDateHolder extends RecyclerView.ViewHolder {
-
-        @NonNull
-        private final TextView mDateView;
-
-        HistoryDateHolder(@NonNull Context context,
-                          @NonNull View itemView) {
-            super(itemView);
-
-            mDateView = itemView.findViewById(R.id.munch_bookmark_item);
-        }
-
-        void bind(@NonNull String date) {
-            mDateView.setText(date);
+            mHistoryListener.onClicked(mHistoryList.get(position));
         }
     }
 

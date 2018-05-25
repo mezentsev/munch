@@ -32,7 +32,6 @@ public class MainFragment extends BaseFragment {
 
     @Inject
     public MainFragment() {
-
     }
 
     @Override
@@ -57,14 +56,14 @@ public class MainFragment extends BaseFragment {
             }
         });
 
-        View showHistoryButton = view.findViewById(R.id.munch_show_history_button);
-        showHistoryButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mContext, HistoryActivity.class);
-                startActivity(intent);
-            }
-        });
+//        View showHistoryButton = view.findViewById(R.id.munch_show_history_button);
+//        showHistoryButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(mContext, HistoryActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         return view;
     }

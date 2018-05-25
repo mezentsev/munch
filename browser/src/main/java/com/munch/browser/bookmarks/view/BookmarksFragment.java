@@ -1,6 +1,7 @@
 package com.munch.browser.bookmarks.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,12 +16,14 @@ import com.munch.bookmarks.model.Bookmark;
 import com.munch.browser.R;
 import com.munch.browser.base.view.BaseFragment;
 import com.munch.browser.bookmarks.BookmarksContract;
+import com.munch.browser.web.view.MunchWebActivity;
 
 import java.util.List;
 
 import javax.inject.Inject;
 
-public class BookmarksFragment extends BaseFragment implements BookmarksContract.View {
+public class BookmarksFragment extends BaseFragment
+        implements BookmarksContract.View, BookmarksContract.BookmarkListener {
     private static final int SPAN_COUNT = 3;
 
     @Inject
@@ -42,7 +45,7 @@ public class BookmarksFragment extends BaseFragment implements BookmarksContract
         View view = inflater.inflate(R.layout.munch_browser_recycler_fragment, container, false);
         mBookmarksView = view.findViewById(R.id.munch_recycler_view);
 
-        mBookmarksAdapter = new BookmarksAdapter();
+        mBookmarksAdapter = new BookmarksAdapter(this);
 
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(mContext, SPAN_COUNT, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(false);
@@ -63,7 +66,7 @@ public class BookmarksFragment extends BaseFragment implements BookmarksContract
     public void onResume() {
         super.onResume();
         mBookmarksPresenter.attachView(this);
-        mBookmarksPresenter.loadBookmarks();
+        mBookmarksPresenter.loadAll();
     }
 
     @Override
@@ -73,11 +76,18 @@ public class BookmarksFragment extends BaseFragment implements BookmarksContract
     }
 
     @Override
-    public void showBookmarks(@NonNull List<Bookmark> bookmarkList) {
+    public void show(@NonNull List<Bookmark> bookmarkList) {
         setData(bookmarkList);
     }
 
     private void setData(@NonNull List<Bookmark> bookmarkList) {
         mBookmarksAdapter.setData(bookmarkList);
+    }
+
+    @Override
+    public void onClick(@NonNull Bookmark bookmark) {
+        Intent intent = new Intent(mContext, MunchWebActivity.class);
+        intent.putExtra(MunchWebActivity.EXTRA_URI, bookmark.getUrl());
+        mContext.startActivity(intent);
     }
 }

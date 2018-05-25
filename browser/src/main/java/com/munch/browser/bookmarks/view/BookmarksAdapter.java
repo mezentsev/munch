@@ -2,6 +2,7 @@ package com.munch.browser.bookmarks.view;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,15 +11,19 @@ import android.widget.TextView;
 
 import com.munch.bookmarks.model.Bookmark;
 import com.munch.browser.R;
+import com.munch.browser.bookmarks.BookmarksContract;
 
 import java.util.ArrayList;
 import java.util.List;
 
 final class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.BookmarkItemHolder> {
     @NonNull
+    private final BookmarksContract.BookmarkListener mBookmarkListener;
+    @NonNull
     private List<Bookmark> mBookmarksList = new ArrayList<>();
 
-    BookmarksAdapter() {
+    BookmarksAdapter(@NonNull BookmarksContract.BookmarkListener bookmarkListener) {
+        mBookmarkListener = bookmarkListener;
     }
 
     @Override
@@ -30,7 +35,8 @@ final class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Bookm
 
         return new BookmarkItemHolder(
                 layoutInflater
-                        .inflate(R.layout.munch_browser_bookmark_icon_view, parent, false)
+                        .inflate(R.layout.munch_browser_bookmark_icon_view, parent, false),
+                mBookmarkListener
         );
     }
 
@@ -52,21 +58,32 @@ final class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Bookm
         notifyDataSetChanged();
     }
 
-    static class BookmarkItemHolder extends RecyclerView.ViewHolder {
+    static class BookmarkItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         @NonNull
-        private final TextView mTitleView;
+        protected final BookmarksContract.BookmarkListener mBookmarkListener;
         @NonNull
-        private final TextView mDescriptionView;
+        protected final TextView mTitleView;
+        @NonNull
+        protected final TextView mDescriptionView;
 
-        BookmarkItemHolder(@NonNull View itemView) {
+        @Nullable
+        protected Bookmark mBookmark;
+
+        BookmarkItemHolder(@NonNull View itemView,
+                           @NonNull BookmarksContract.BookmarkListener bookmarkListener) {
             super(itemView);
 
             mTitleView = itemView.findViewById(R.id.munch_bookmark_title);
             mDescriptionView = itemView.findViewById(R.id.munch_bookmark_description);
+            mBookmarkListener = bookmarkListener;
+
+            itemView.setOnClickListener(this);
         }
 
         void bind(@NonNull Bookmark bookmark) {
+            mBookmark = bookmark;
+
             String title = bookmark.getTitle();
             if (title != null) {
                 mTitleView.setText(title.substring(0, 1));
@@ -74,6 +91,13 @@ final class BookmarksAdapter extends RecyclerView.Adapter<BookmarksAdapter.Bookm
             } else {
                 mTitleView.setText("");
                 mDescriptionView.setText(R.string.munch_bookmark_unnamed_description);
+            }
+        }
+
+        @Override
+        public void onClick(@NonNull View v) {
+            if (mBookmark != null) {
+                mBookmarkListener.onClick(mBookmark);
             }
         }
     }

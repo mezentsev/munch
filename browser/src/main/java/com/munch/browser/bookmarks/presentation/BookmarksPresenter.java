@@ -1,6 +1,5 @@
 package com.munch.browser.bookmarks.presentation;
 
-import android.os.HandlerThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,7 +11,6 @@ import com.munch.mvp.FragmentScoped;
 
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.logging.Handler;
 
 import javax.inject.Inject;
 
@@ -73,7 +71,7 @@ public final class BookmarksPresenter implements BookmarksContract.Presenter {
     }
 
     @Override
-    public void loadBookmarks() {
+    public void loadAll() {
         Log.d(TAG, "Try to load bookmarks");
 
         mCompositeDisposable.clear();
@@ -84,7 +82,7 @@ public final class BookmarksPresenter implements BookmarksContract.Presenter {
                             @Override
                             public void onNext(List<Bookmark> bookmarkList) {
                                 if (mView != null) {
-                                    mView.showBookmarks(bookmarkList);
+                                    mView.show(bookmarkList);
                                     Log.d(TAG, "onNext " + bookmarkList);
                                 } else {
                                     Log.d(TAG, "No view attached. Ignored.");

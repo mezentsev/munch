@@ -26,12 +26,9 @@ import javax.inject.Inject;
 
 public class HistoryFragment extends BaseFragment implements HistoryContract.View {
     @NonNull
-    private static final String TAG = "[MNCH:BookmarksFragment]";
+    private static final String TAG = "[MNCH:BookFragment]";
     @NonNull
     private static final String NO_HISTORY = "No History";
-
-    @Inject
-    Context mContext;
 
     @Inject
     HistoryContract.Presenter mHistoryPresenter;
@@ -40,9 +37,13 @@ public class HistoryFragment extends BaseFragment implements HistoryContract.Vie
     private RecyclerView mHistoryView;
     @NonNull
     private HistoryAdapter mHistoryAdapter;
+    @NonNull
+    private Context mContext;
 
-    @Inject
-    public HistoryFragment() {
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mContext = context;
     }
 
     @NonNull
@@ -54,15 +55,16 @@ public class HistoryFragment extends BaseFragment implements HistoryContract.Vie
         mHistoryView = view.findViewById(R.id.munch_recycler_view);
 
         mHistoryAdapter = new HistoryAdapter();
-        mHistoryAdapter.setHistoryListener(new HistoryListener(getActivity()));
+        mHistoryAdapter.setHistoryListener(new HistoryListener(mContext));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext, LinearLayoutManager.VERTICAL, false);
         linearLayoutManager.setStackFromEnd(false);
         mHistoryView.setLayoutManager(linearLayoutManager);
         mHistoryView.setAdapter(mHistoryAdapter);
+        mHistoryView.setHasFixedSize(false);
 
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(
-                new BaseSwipeCallback(getContext(), 0, ItemTouchHelper.LEFT) {
+                new BaseSwipeCallback(mContext, 0, ItemTouchHelper.LEFT, HistoryAdapter.DATE_HOLDER) {
                     @Override
                     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                         mHistoryAdapter.removeItem(viewHolder.getAdapterPosition());
@@ -71,16 +73,21 @@ public class HistoryFragment extends BaseFragment implements HistoryContract.Vie
         );
         itemTouchHelper.attachToRecyclerView(mHistoryView);
 
-        setRetainInstance(true);
-
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        setRetainInstance(true);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mHistoryPresenter.attachView(this);
-        mHistoryPresenter.loadHistory();
+        mHistoryPresenter.loadAll();
     }
 
     @Override
@@ -90,14 +97,14 @@ public class HistoryFragment extends BaseFragment implements HistoryContract.Vie
     }
 
     @Override
-    public void showHistory(@NonNull List<History> historyList) {
+    public void show(@NonNull List<History> historyList) {
         if (historyList.size() == 0) {
-            Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
+            //Snackbar.make(mHistoryView, NO_HISTORY, Snackbar.LENGTH_LONG).show();
         } else {
-            int historyCount = historyList.size();
-            String url = historyList.get(0).getUrl();
-            String informText = "Shown History count: " + historyCount + ". Last added: " + url;
-            Snackbar.make(mHistoryView, informText, Snackbar.LENGTH_LONG).show();
+            //int historyCount = historyList.size();
+            //String url = historyList.get(0).getUrl();
+            //String informText = "Shown History count: " + historyCount + ". Last added: " + url;
+            //Snackbar.make(mHistoryView, informText, Snackbar.LENGTH_LONG).show();
 
             setData(historyList);
         }
@@ -117,16 +124,16 @@ public class HistoryFragment extends BaseFragment implements HistoryContract.Vie
         }
 
         @Override
-        public void onHistoryClicked(@NonNull History history) {
+        public void onClicked(@NonNull History history) {
             Intent intent = new Intent(mContext, MunchWebActivity.class);
             intent.putExtra(MunchWebActivity.EXTRA_URI, history.getUrl());
             mContext.startActivity(intent);
         }
 
         @Override
-        public void onHistoryRemoved(@NonNull History history) {
-            Log.d(TAG, "removeHistory");
-            mHistoryPresenter.removeHistory(history);
+        public void onRemoved(@NonNull History history) {
+            Log.d(TAG, "remove");
+            mHistoryPresenter.remove(history);
         }
     }
 }

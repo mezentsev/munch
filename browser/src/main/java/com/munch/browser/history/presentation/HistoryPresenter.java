@@ -70,7 +70,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     }
 
     @Override
-    public void loadHistory() {
+    public void loadAll() {
         Log.d(TAG, "Try to load history");
 
         mCompositeDisposable.clear();
@@ -82,7 +82,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
                             @Override
                             public void onNext(List<History> historyList) {
                                 if (mView != null) {
-                                    mView.showHistory(historyList);
+                                    mView.show(historyList);
                                 } else {
                                     Log.d(TAG, "No view attached. Ignored.");
                                 }
@@ -102,7 +102,7 @@ public final class HistoryPresenter implements HistoryContract.Presenter {
     }
 
     @Override
-    public void removeHistory(@NonNull History history) {
+    public void remove(@NonNull History history) {
         mHistoryRepository.remove(history);
     }
 }

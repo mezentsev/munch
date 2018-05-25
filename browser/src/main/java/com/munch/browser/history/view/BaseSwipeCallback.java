@@ -21,6 +21,7 @@ import javax.annotation.Nullable;
 abstract class BaseSwipeCallback extends ItemTouchHelper.SimpleCallback {
     @NonNull
     private final Context mContext;
+    private final int mHolderType;
     @NonNull
     private final Paint mClearPaint;
     @NonNull
@@ -33,9 +34,13 @@ abstract class BaseSwipeCallback extends ItemTouchHelper.SimpleCallback {
     private int mIntrinsicWidth;
     private int mIntrinsicHeight;
 
-    public BaseSwipeCallback(Context context, int dragDirs, int swipeDirs) {
+    public BaseSwipeCallback(@NonNull Context context,
+                             int dragDirs,
+                             int swipeDirs,
+                             int holderType) {
         super(dragDirs, swipeDirs);
         mContext = context;
+        mHolderType = holderType;
         mClearPaint = new Paint();
         mClearPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
 
@@ -47,21 +52,30 @@ abstract class BaseSwipeCallback extends ItemTouchHelper.SimpleCallback {
     }
 
     @Override
-    public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+    public int getMovementFlags(@NonNull RecyclerView recyclerView,
+                                @NonNull RecyclerView.ViewHolder viewHolder) {
         int dragFlags = 0;
         int swipeFlags = ItemTouchHelper.LEFT;
-        return viewHolder.getItemViewType() == HistoryAdapter.DATE_HOLDER
+        return viewHolder.getItemViewType() == mHolderType
                 ? 0
                 : makeMovementFlags(dragFlags, swipeFlags);
     }
 
     @Override
-    public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+    public boolean onMove(@NonNull RecyclerView recyclerView,
+                          @NonNull RecyclerView.ViewHolder viewHolder,
+                          @NonNull RecyclerView.ViewHolder target) {
         return false;
     }
 
     @Override
-    public void onChildDraw(Canvas c, RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+    public void onChildDraw(@NonNull Canvas c,
+                            @NonNull RecyclerView recyclerView,
+                            @NonNull RecyclerView.ViewHolder viewHolder,
+                            float dX,
+                            float dY,
+                            int actionState,
+                            boolean isCurrentlyActive) {
         View itemView = viewHolder.itemView;
         float itemHeight = itemView.getBottom() - itemView.getTop();
         boolean isCanceled = dX == 0f && !isCurrentlyActive;
@@ -95,7 +109,11 @@ abstract class BaseSwipeCallback extends ItemTouchHelper.SimpleCallback {
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
     }
 
-    private void clearCanvas(@Nullable Canvas c, float left, float top, float right, float bottom) {
+    private void clearCanvas(@Nullable Canvas c,
+                             float left,
+                             float top,
+                             float right,
+                             float bottom) {
         if (c != null) {
             c.drawRect(left, top, right, bottom, mClearPaint);
         }

@@ -9,10 +9,14 @@ import java.util.List;
 
 public interface BookmarksContract extends MvpContract {
     interface View extends MvpContract.View {
-        void showBookmarks(@NonNull List<Bookmark> bookmarkList);
+        void show(@NonNull List<Bookmark> bookmarkList);
     }
 
     interface Presenter extends MvpContract.Presenter<View> {
-        void loadBookmarks();
+        void loadAll();
+    }
+
+    interface BookmarkListener {
+        void onClick(@NonNull Bookmark bookmark);
     }
 }

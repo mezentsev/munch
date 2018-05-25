@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import com.munch.browser.R;
 import com.munch.browser.base.view.BaseActivity;
 import com.munch.browser.bookmarks.view.BookmarksFragment;
+import com.munch.browser.history.view.HistoryFragment;
 
 public class MainActivity extends BaseActivity {
 
@@ -21,6 +22,7 @@ public class MainActivity extends BaseActivity {
                     .beginTransaction()
                     .add(R.id.munch_bookmarks_container, new BookmarksFragment())
                     .add(R.id.munch_main_container, new MainFragment())
+                    .add(R.id.munch_history_container, new HistoryFragment())
                     .commit();
         }
     }
