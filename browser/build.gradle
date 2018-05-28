@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.munch.browser"
+        applicationId "pro.mezentsev.munch.browser"
         minSdkVersion 16
         targetSdkVersion 27
         multiDexEnabled false
@@ -21,7 +21,8 @@ android {
 
     buildTypes {
         debug {
-            minifyEnabled false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             debuggable true
         }
 

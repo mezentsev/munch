@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep interface com.munch.mvp { public *; }
+-keep interface pro.mezentsev.munch.mvp { public *; }

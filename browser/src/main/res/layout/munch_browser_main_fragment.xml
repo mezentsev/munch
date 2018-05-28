@@ -9,7 +9,7 @@
     android:orientation="vertical"
     tools:context=".main.MainActivity">
 
-    <com.munch.omnibox.StaticOmniboxView
+    <pro.mezentsev.munch.omnibox.StaticOmniboxView
         android:id="@+id/munch_static_omnibox_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

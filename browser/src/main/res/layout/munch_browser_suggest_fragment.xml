@@ -8,13 +8,13 @@
     android:orientation="vertical"
     tools:context=".main.MainActivity">
 
-    <com.munch.suggest.view.SuggestView
+    <pro.mezentsev.munch.suggest.view.SuggestView
         android:id="@+id/munch_suggest_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/munch_omnibox_view"/>
 
-    <com.munch.omnibox.OmniboxView
+    <pro.mezentsev.munch.omnibox.OmniboxView
         android:id="@+id/munch_omnibox_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

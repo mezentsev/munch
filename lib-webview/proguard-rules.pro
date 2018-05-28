@@ -20,7 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.munch.** { public *; }
+-keep class pro.mezentsev.munch** { public *; }
 -keepclassmembers class fqcn.of.javascript.interface.for.webview {
    public *;
 }

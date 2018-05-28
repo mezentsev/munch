@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.munch.browser.web.view.MunchWebLayout
+    <pro.mezentsev.munch.browser.web.view.MunchWebLayout
         android:id="@+id/munch_webview_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
